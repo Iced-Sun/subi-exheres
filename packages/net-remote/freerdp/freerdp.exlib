@@ -1,0 +1,38 @@
+# Copyright 2009,2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require sourceforge [[ suffix=tar.gz ]]
+
+SUMMARY="FreeRDP is a fork of the rdesktop project that intends to rapidly start moving forward and
+implement features that rdesktop lacks the most"
+DESCRIPTION="FreeRDP is a fork of the rdesktop project that intends to rapidly start moving forward and implement features that rdesktop lacks the most.
+
+Some of the planned features include:
+
+* New keyboard input system, based on the XKB configuration database
+* Separating the GUI (currently X Window) from the rest, making a library for RDP and allowing easier integration of various GUI systems (GTK+ would be nice)
+* Starting the work on RDP 6.0 and 7.0 (rdesktop currently supports 4.0 and 5.0)
+* Implementing the RemoteApp extension, introduced in RDP 6.1
+"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-tls
+    --enable-iconv
+    --enable-ipv6
+    --enable-largefile
+    --disable-smartcard
+    --with-crypto=openssl
+    --without-libvncserver
+    --with-sound=alsa
+    --without-libsamplerate
+    --with-printer=no
+    --with-x
+)
+

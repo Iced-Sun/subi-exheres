@@ -1,0 +1,5 @@
+require remmina-plugins
+
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+

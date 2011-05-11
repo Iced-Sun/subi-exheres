@@ -1,0 +1,43 @@
+# Copyright 2009,2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require sourceforge [[ suffix=tar.gz ]] freedesktop-desktop
+
+SUMMARY="The GTK+ Remote Desktop Client"
+DESCRIPTION="Remmina is a remote desktop client written in GTK+, aiming to be useful for system
+administrators and travellers, who need to work with lots of remote computers in front of either
+large monitors or tiny netbooks. Remmina supports multiple network protocols in an integrated and
+consistant user interface. Currently RDP, VNC, XDMCP and SSH are supported. "
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS="avahi ssh
+    ssh [[ description = [ Provide secure tunneling of all the other protocols ] ]]
+"
+
+DEPENDENCIES="
+    build:
+        dev-util/intltool[>=0.35.0]
+    build+run:
+        dev-libs/glib:2
+        x11-libs/gtk+:2[>=2.16]
+        dev-libs/unique
+        dev-libs/libgcrypt
+
+        ssh? (
+            net-libs/libssh[>=0.4]
+            dev-libs/vte
+        )
+        avahi? ( net-dns/avahi )
+    recommendation:
+        net-remote/remmina-plugins[>=0.9.0]
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-nls
+    --enable-unique
+    --enable-gcrypt
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( avahi ssh "ssh vte" )
+

@@ -1,0 +1,1 @@
+(autoload 'predictive-mode "predictive" "Turn on Predictive Completion Mode." t)

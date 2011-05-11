@@ -1,0 +1,24 @@
+# Copyright 2009-2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require freedesktop-desktop
+
+SUMMARY="A free open source Linux program for photo editing and collection management"
+DESCRIPTION="Fotoxx is a free open source Linux program for photo editing and collection management.
+The goal is to meet most user needs while remaining fast and easy to use."
+HOMEPAGE="http://kornelix.squarespace.com/${PN}"
+DOWNLOADS="http://kornelix.squarespace.com/storage/downloads/${PNV}.tar.gz"
+
+LICENCES="GPL-3"
+SLOT="0"
+
+DEPENDENCIES="
+    build+run:
+        x11-libs/gtk+:2
+        x11-apps/xdg-utils
+        media-libs/ExifTool
+        media-libs/tiff
+    suggestion:
+        media-gfx/ufraw
+"
+

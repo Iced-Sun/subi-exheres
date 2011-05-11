@@ -1,0 +1,4 @@
+require fotoxx
+
+PLATFORMS="~amd64"
+

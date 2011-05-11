@@ -1,0 +1,22 @@
+
+require googlecode [[ suffix=tar.gz ]] distutils
+
+SUMMARY="Ailurus aims at making Linux easier to use"
+DESCRIPTION="Ailurus is cross-Linux-distribution GPL software, which aims at making Linux easier to use, for newcomers."
+PLATFORMS="~amd64"
+SLOT="0"
+
+DEPENDENCIES="
+    build:
+        dev-python/distutils-extra
+    recommendation:
+        dev-libs/vte[python]
+"
+
+src_install() {
+    default
+    distutils_src_install
+
+    keepdir /usr/share/omf/ailurus
+}
+

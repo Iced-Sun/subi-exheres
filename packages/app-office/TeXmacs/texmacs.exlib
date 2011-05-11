@@ -1,0 +1,70 @@
+# Copyright 2009,2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+export_exlib_phases src_prepare src_install
+
+# TODO: switch to cmake
+
+SUMMARY="GNU TeXmacs is a free wysiwyw (what you see is what you want) editing platform with special
+features for scientists."
+DESCRIPTION=" GNU TeXmacs is a free wysiwyw (what you see is what you want) editing platform with special features for scientists. The software aims to provide a unified and user friendly framework for editing structured documents with different types of content (text, graphics, mathematics, interactive content, etc.). The rendering engine uses high-quality typesetting algorithms so as to produce professionally looking documents, which can either be printed out or presented from a laptop.
+
+    The software includes a text editor with support for mathematical formulas, a small technical picture editor and a tool for making presentations from a laptop. Moreover, TeXmacs can be used as an interface for many external systems for computer algebra, numerical analysis, statistics, etc. New presentation styles can be written by the user and new features can be added to the editor using the Scheme extension language. A native spreadsheet and tools for collaborative authoring are planned for later.
+"
+HOMEPAGE="http://www.texmacs.org/"
+DOWNLOADS="ftp://ftp.texmacs.org/pub/${PN}/targz/${PNV}-src.tar.gz"
+
+SLOT="0"
+LICENCES="GPL-3"
+MYOPTIONS="X qt imlib2 spell postscript pdf examples
+    ( X qt ) [[ number-selected = exactly-one ]]
+"
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/guile
+        media-libs/freetype
+
+        X? ( x11-libs/libX11 )
+        qt? ( x11-libs/qt:4 )
+
+        postscript? ( app-text/ghostscript )
+
+        imlib2? ( media-libs/imlib2 )
+        !imlib2? ( media-libs/libpng )
+    run:
+        spell? ( app-spell/aspell )
+"
+# not mature yet
+#        cairo? ( x11-libs/cairo )
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-fastalloc
+    --disable-experimental
+    --without-axel
+    --disable-optimize
+)
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt "pdf pdf-renderer" )
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" "postscript gs" )
+
+WORK=${WORK}-src
+
+texmacs_src_prepare() {
+    default
+
+    # Don't strip
+    edo sed -i Makefile.in -e 's/$(STRIP)/#$(STRIP)/'
+}
+
+texmacs_src_install() {
+    default
+
+    keepdir /usr/libexec/TeXmacs/lib
+
+    if option examples; then
+        keepdir /usr/share/TeXmacs/examples/plugins/{formula,input,markup,menus,minimal,multiline,mutator,nested,prompt,secure,world,complete,handler,substitute,pnambic,dynlink}/{bin,lib}
+    else
+        edo rm -rf ${IMAGE}/usr/share/TeXmacs/examples
+    fi
+}
+

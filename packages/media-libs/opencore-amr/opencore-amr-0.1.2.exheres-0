@@ -1,0 +1,12 @@
+# Copyright 2009 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require sourceforge [ suffix=tar.gz ]
+
+SUMMARY="Library of OpenCORE Framework implementation of Adaptive Multi Rate Narrowband and Wideband
+speech codec."
+
+LICENCES="Apache-2.0"
+SLOT="0"
+PLATFORMS="~amd64"
+

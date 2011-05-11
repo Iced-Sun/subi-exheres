@@ -1,0 +1,163 @@
+# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require multilib gnu [ subdir=$PV ]
+
+SUMMARY="Gnash is a GNU Flash movie player"
+DESCRIPTION="
+Features:
+* Runs standalone
+    Gnash can run standalone to play flash movies.
+* Browser plugin
+    Gnash can also run as a plugin from within most Mozilla derived browsers, such as Firefox. Gnash also has support for Konqueror.
+* SWF v7+ compliant
+    Gnash can play many current flash movies.
+* Streaming Video
+    Gnash supports the viewing of streaming video from popular video sharing sites like Lulu.tv or YouTube.com.
+* XML Message server
+    Gnash also supports an XML based message system as documented in the Flash Format specification.
+* High Quality Output
+    Gnash uses OpenGL for rendering the graphics on the desktop, and AntiGrain (AGG) for embedded framebuffer only devices.
+* Free Software
+    Gnash is 100% free software. For more information on the GPL, go to the Free Software Foundation web site.
+* Better Security
+    Gnash pays extra attention to all network connections, and allows the user to control access.
+* Extensible
+    Gnash supports extending ActionScript by creating your own. You can write wrappers for any development library, and import them into the player.
+"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+# FIXME: the following choices are not well supported.
+#    sdl [[ description = [ Use SDL as the GUI library (poorly supported). ] ]]
+#        sdl? ( media-libs/SDL[X] )
+#
+#    gstreamer [[ description = [ Use Gstreamer as the sound handler??? ] ]]
+# TODO: use suboptions?
+MYOPTIONS="
+    agg [[ description = [ Use AGG as the graphics renderer (recommended). ] ]]
+    opengl [[ description = [ Use OpenGL as the graphics renderer. ] ]]
+    cairo [[ description = [ Use Cairo as the graphics renderer (least supported). ] ]]
+
+    gtk [[ description = [ Use GTK as the GUI library. ] ]]
+    kde [[ description = [ Use KDE4 as the GUI library. ] ]]
+
+    sdl [[ description = [ Use SDL as the sound handler (recommended). ] ]]
+
+    ffmpeg [[ description = [ Use FFmpeg as the decoder. ] ]]
+    gstreamer [[ description = [ Use Gstreamer as the decoder. ] ]]
+
+    mozilla [[ description = [ Build the NPAPI (mozilla) plugin. ] ]]
+    konqueror [[ description = [ Build the Konqueror plugin. ] ]]
+
+    cygnal [[ description = [ Build the Cygnal streaming media server. ] ]]
+
+    kde [[ requires = opengl ]]
+    mozilla [[ requires = gtk ]]
+    konqueror [[ requires = kde ]]
+
+    ( gtk kde ) [[ number-selected = at-least-one ]]
+    ( agg opengl cairo ) [[ number-selected = at-least-one ]]
+    ( ffmpeg gstreamer ) [[ number-selected = at-least-one ]]
+    ( sdl ) [[ number-selected = at-least-one ]]
+"
+
+DEPENDENCIES="
+    build+run:
+        dev-libs/boost[>=1.3.2]
+
+        media-libs/jpeg
+        media-libs/libpng
+        media-libs/giflib
+
+        dev-libs/openssl
+        net-libs/libssh
+
+        agg? ( x11-libs/agg[>=2.4] )
+        opengl? ( x11-dri/mesa )
+        cairo? ( x11-libs/cairo )
+
+        gtk? ( x11-libs/gtk+[>=2.2]
+               opengl? ( x11-libs/gtkglext )
+        )
+        kde? ( kde/kdelibs[>=4.0.0] )
+
+        sdl? ( media-libs/SDL )
+
+        gstreamer? ( media-libs/gstreamer
+                     media-plugins/gst-ffmpeg
+                     media-plugins/gst-plugins-ugly[gstreamer_plugins:mad]
+                     media-plugins/gst-plugins-bad[gstreamer_plugins:faad]
+        )
+        ffmpeg? ( media/ffmpeg )
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-nls
+    --enable-menus
+    --enable-swftree
+    --disable-hwaccel
+    --disable-doublebuf
+    --disable-offscreen
+    --enable-jemalloc
+
+    --disable-lirc
+    --disable-ssh
+    --disable-ssl
+    --disable-avm2 #!!!
+    --disable-write
+    --disable-sa-launcher
+    --disable-extensions
+    --disable-testsuite
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=(
+    cygnal
+
+    "mozilla npapi"
+    "konqueror kparts4"
+
+    "opengl glext"
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=(
+    "mozilla npapi-plugindir ${IMAGE}/usr/$(get_libdir)/mozilla/plugins"
+)
+
+src_configure() {
+    local MYCONF
+    # GUI Toolkit
+    GUI="--enable-gui="
+    option gtk && GUI+="gtk,"
+    option kde && GUI+="kde4,"
+    # Sound handler
+    SOUND="--enable-sound="
+    option sdl && SOUND+="sdl" || SOUND+="no"
+    # Renderer
+    RENDERER="--enable-renderer="
+    option agg && RENDERER+="agg,"
+    option opengl && RENDERER+="opengl,"
+    option cairo && RENDERER+="cairo,"
+    # Media handler
+    MEDIA="--enable-media="
+    option ffmpeg && MEDIA+="ffmpeg,"
+    option gstreamer && MEDIA+="gst,"
+
+    econf \
+        "${GUI}" "${SOUND}" "${RENDERER}" "${MEDIA}" \
+        "${DEFAULT_SRC_CONFIGURE_PARAMS[@]}" \
+        $(for s in "${DEFAULT_SRC_CONFIGURE_OPTION_ENABLES[@]}" ; do \
+            option_enable ${s} ; \
+        done ) \
+        $(for s in "${DEFAULT_SRC_CONFIGURE_OPTION_WITHS[@]}" ; do \
+            option_with ${s} ; \
+        done )
+}
+
+src_install() {
+    default
+
+    ( option mozilla || option konqueror ) && emake install-plugins
+}
+

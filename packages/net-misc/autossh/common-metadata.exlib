@@ -1,0 +1,12 @@
+SUMMARY="automatically restart SSH sessions and tunnels"
+DESCRIPTION="a program to start a copy of ssh and monitor it,
+restarting it as necessary should it die or stop passing traffic."
+HOMEPAGE="http://www.harding.motd.ca/autossh"
+DOWNLOADS="http://www.harding.motd.ca/${PN}/${PNV}.tgz"
+LICENCES="as-is"
+
+BUGS_TO="timothy@redaelli.eu"
+
+REMOTE_IDS="freshmeat:${PN}"
+
+UPSTREAM_CHANGELOG="http://www.harding.motd.ca/autossh/CHANGES"

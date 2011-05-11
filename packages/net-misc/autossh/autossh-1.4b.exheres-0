@@ -1,0 +1,25 @@
+# Copyright 2009 Timothy Redaelli
+# Distributed under the terms of the GNU General Public License v2
+
+require common-metadata
+
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        net-misc/openssh
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --hates=docdir
+)
+
+src_install() {
+    dobin ${PN}
+    dodoc CHANGES README
+    insinto /usr/share/doc/${PNVR}/examples
+    doins autossh.host rscreen
+    doman autossh.1
+}

@@ -1,0 +1,11 @@
+# Copyright 2009 Bing Sun (subi.the.dream.walker@gmail.com)
+# Distributed under the terms of the GNU General Public License v2
+
+SCM_REPOSITORY="http://git.participatoryculture.org/miro"
+require miro scm-git
+
+SLOT="0"
+PLATFORMS="~amd64"
+
+WORK="${WORK}/tv/linux"
+

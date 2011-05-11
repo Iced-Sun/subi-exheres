@@ -1,0 +1,20 @@
+# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require cmake
+
+SUMMARY="Yet Another JSON Library"
+DESCRIPTION="YAJL is a small event-driven (SAX-style) JSON parser written in ANSI C, and a small validating JSON generator."
+HOMEPAGE="http://lloyd.github.com/yajl/"
+LICENCES="BSD"
+DEPENDENCIES="
+    build:
+    build+run:
+    "
+DOWNLOADS="http://github.com/lloyd/yajl/tarball/${PV} -> ${PNV}.tar.gz"
+
+SLOT="0"
+PLATFORMS="~amd64"
+
+WORK=${WORKBASE}/lloyd-yajl-f4baae0
+

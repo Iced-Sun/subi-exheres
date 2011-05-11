@@ -1,0 +1,13 @@
+SCM_REPOSITORY="git://freerdp.git.sourceforge.net/gitroot/freerdp/freerdp"
+
+require scm-git freerdp autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.10 1.11 ] ]
+
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+
+src_prepare() {
+    edo sed -i "s/ -Wall -Werror//" ${WORK}/configure.ac
+
+    autotools_src_prepare
+}
+
