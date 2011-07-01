@@ -1,0 +1,33 @@
+# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require cmake
+
+SUMMARY=""
+DESCRIPTION=""
+
+HOMEPAGE="http://www.csync.org"
+DOWNLOADS="${HOMEPAGE}/files/${PNV}.tar.gz"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS="sftp"
+
+DEPENDENCIES="
+    build:
+        dev-libs/check
+        dev-libs/iniparser
+    build+run:
+        dev-db/sqlite:3
+        net-libs/libsmbclient[>=3.2]
+    run:
+        sftp? ( net-libs/libssh[>=0.4] )
+"
+
+#        log4c[>=1.2]
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DWITH_LOG4C:BOOL=OFF
+)
+

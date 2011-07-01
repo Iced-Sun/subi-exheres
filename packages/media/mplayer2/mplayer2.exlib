@@ -1,7 +1,6 @@
 # Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require multilib
 export_exlib_phases src_prepare src_configure src_install
 
 SUMMARY="mplayer2 is an advanced general-purpose video player"
@@ -291,7 +290,7 @@ mplayer2_src_install() {
     default
 
     # FIXME: stupid make target always creates libdir
-    edo rmdir "${IMAGE}/usr/$(get_libdir)"
+    edo rmdir "${IMAGE}/usr/${LIBDIR}"
 
     insinto /etc/mplayer
     newins "${WORK}/etc/example.conf" mplayer.conf

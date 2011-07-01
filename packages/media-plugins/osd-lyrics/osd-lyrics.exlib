@@ -12,11 +12,11 @@ DOWNLOADS="http://${PN}.googlecode.com/files/${PNV/osd-lyrics/osdlyrics}.tar.gz"
 
 LICENCES="GPL-3"
 SLOT="0"
-PLATFORMS="~amd64"
 MYOPTIONS="mpd"
 
 DEPENDENCIES="
     build+run:
+        dev-libs/dbus-glib:1
         x11-libs/gtk+[>=2.12.0]
         dev-libs/dbus-glib
         net-misc/curl

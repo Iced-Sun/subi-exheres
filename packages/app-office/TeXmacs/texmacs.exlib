@@ -1,9 +1,7 @@
-# Copyright 2009,2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2011 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 export_exlib_phases src_prepare src_install
-
-# TODO: switch to cmake
 
 SUMMARY="GNU TeXmacs is a free wysiwyw (what you see is what you want) editing platform with special
 features for scientists."
@@ -16,36 +14,43 @@ DOWNLOADS="ftp://ftp.texmacs.org/pub/${PN}/targz/${PNV}-src.tar.gz"
 
 SLOT="0"
 LICENCES="GPL-3"
-MYOPTIONS="X qt imlib2 spell postscript pdf examples
+MYOPTIONS="X qt imlib2 spell postscript examples
     ( X qt ) [[ number-selected = exactly-one ]]
 "
 
 DEPENDENCIES="
     build+run:
-        dev-lang/guile
+        dev-lang/guile:1.8
         media-libs/freetype
 
         X? ( x11-libs/libX11 )
         qt? ( x11-libs/qt:4 )
 
-        postscript? ( app-text/ghostscript )
-
         imlib2? ( media-libs/imlib2 )
         !imlib2? ( media-libs/libpng )
     run:
         spell? ( app-spell/aspell )
+    recommendation:
+        app-text/texlive
 "
 # not mature yet
 #        cairo? ( x11-libs/cairo )
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-fastalloc
-    --disable-experimental
-    --without-axel
     --disable-optimize
+
+    --enable-pdf-renderer
+    --without-gs
+
+    --with-axel
+
+    # broken
+#    --enable-experimental
+#    --with-cairo
 )
-DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt "pdf pdf-renderer" )
-DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" "postscript gs" )
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt )
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" )
 
 WORK=${WORK}-src
 

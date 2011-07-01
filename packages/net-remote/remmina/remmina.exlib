@@ -21,7 +21,7 @@ DEPENDENCIES="
     build+run:
         dev-libs/glib:2
         x11-libs/gtk+:2[>=2.16]
-        dev-libs/unique
+        dev-libs/unique:1
         dev-libs/libgcrypt
 
         ssh? (

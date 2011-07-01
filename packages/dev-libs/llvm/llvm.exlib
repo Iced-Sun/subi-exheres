@@ -1,0 +1,47 @@
+# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require cmake
+
+SUMMARY="Low Level Virtual Machine (LLVM)"
+DESCRIPTION="
+The LLVM Project is a collection of modular and reusable compiler and toolchain
+technologies.
+
+The LLVM Core libraries provide a modern source- and target-independent optimizer, along with code
+generation support for many popular CPUs (as well as some less common ones!) These libraries are
+built around a well specified code representation known as the LLVM intermediate representation
+(\"LLVM IR\"). The LLVM Core libraries are well documented, and it is particularly easy to invent your
+own language (or port an existing compiler) to use LLVM as an optimizer and code generator.
+"
+
+HOMEPAGE="http://llvm.org/"
+DOWNLOADS="${HOMEPAGE}/releases/${PV}/${PNV}.tgz"
+
+LICENCES="UoI-NCSA"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        sys-devel/gcc
+    test:
+        dev-util/dejagnu
+        dev-lang/tcl
+        dev-tcl/expect
+"
+
+REMOTE_IDS="freshmeat:${PN}"
+
+UPSTREAM_DOCUMENTATION="http://llvm.org/docs [[ lang = en ]]"
+UPSTREAM_RELEASE_NOTES="${HOMEPAGE}/releases/${PV}/docs/ReleaseNotes.html"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DCMAKE_BUILD_TYPE:STRING=Release
+    -DBUILD_SHARED_LIBS:BOOL=true
+    -DLLVM_TARGETS_TO_BUILD:STRING=X86
+
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr
+    -DLLVM_LIBDIR_SUFFIX:STRING=${LIBDIR/lib}
+)
+

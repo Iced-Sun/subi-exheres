@@ -1,7 +1,7 @@
 # Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-MY_PV=3.e-bf2
+MY_PV=3.e-bf3
 
 SUMMARY="i3 is a tiling window manager"
 HOMEPAGE="http://i3.zekjur.net/"

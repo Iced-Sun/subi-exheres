@@ -1,0 +1,89 @@
+# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+export_exlib_phases src_compile src_install
+
+HOMEPAGE="http://www.samba.org/"
+DOWNLOADS="mirror://samba/stable/samba-${PV}.tar.gz"
+
+BUGS_TO="philantrop@exherbo.org"
+REMOTE_IDS="freshmeat:samba"
+
+LICENCES="GPL-3"
+SLOT="0"
+
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        dev-libs/iniparser
+        dev-libs/popt
+        dev-libs/talloc[>=2.0.1]
+"
+
+WORK="${WORKBASE}/samba-${PV}/source3"
+CONFDIR="${FILES}"/config-3.4
+PRIVATE_DST=/var/lib/${PN}/private
+
+# The tests are partly broken and partly expect Samba to be installed and running
+# already.
+RESTRICT="test"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --without-cifsmount
+    --without-cifsumount
+    --without-fhs
+    --without-libnetapi
+    --without-libtdb
+    --with-libsmbclient
+    --without-libsmbsharemodes
+    --without-sendfile-support
+    --without-utmp
+    --without-included-popt
+    --without-included-iniparser
+    --without-cluster-support
+    --without-libaddns
+    --without-sqlite3
+    --enable-external-libtalloc
+    --disable-netapi
+    --disable-nss-wrapper
+    --enable-pthreadpool
+    --disable-socket-wrapper
+    --disable-dnssd
+    --disable-avahi
+    --disable-cups
+    --disable-iprint
+    --disable-debug
+    --disable-fam
+    --disable-swat
+    --without-acl-support
+    --without-ads
+    --without-cifsupcall
+    --without-dnsupdate
+    --without-krb5
+    --without-aio-support
+    --without-automount
+    --without-ldap
+    --without-pam
+    --without-pam_smbpass
+    --without-quotas
+    --without-sys-quotas
+    --without-readline
+    --without-syslog
+    --without-winbind
+    --without-cluster-support
+)
+
+libsmbclient_src_compile() {
+    emake -j3 libsmbclient
+}
+
+libsmbclient_src_install() {
+    # the default "make installlibsmbclient" creates lots of empty dirs.
+    insinto /usr/include
+    doins include/libsmbclient.h
+
+    dolib.so bin/libsmbclient.so.0
+    dosym libsmbclient.so.0 /usr/${LIBDIR}/libsmbclient.so
+}
+
