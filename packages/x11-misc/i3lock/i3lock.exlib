@@ -3,17 +3,19 @@
 
 export_exlib_phases src_install
 SUMMARY="i3lock is a simple screen locker like slock"
-HOMEPAGE="http://i3.zekjur.net/i3lock/"
+HOMEPAGE="http://i3wm.org/i3lock/"
 LICENCES="as-is"
 DEPENDENCIES="
     build:
         dev-util/pkg-config
     build+run:
         x11-libs/libxcb
+        x11-utils/xcb-util-image
+        x11-utils/xcb-util-keysyms
         sys-libs/pam
         x11-libs/cairo
     "
-DOWNLOADS="http://i3.zekjur.net/${PN}/${PNV}.tar.gz"
+DOWNLOADS="http://i3wm.org/${PN}/${PNV}.tar.bz2"
 
 SLOT="0"
 

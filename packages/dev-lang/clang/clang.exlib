@@ -3,7 +3,7 @@
 
 require cmake
 
-export_exlib_phases src_prepare src_install
+export_exlib_phases src_install
 
 SUMMARY="C language family frontend for LLVM"
 DESCRIPTION="
@@ -15,7 +15,7 @@ the sort of tool that can be built using the Clang frontend as a library to pars
 "
 
 HOMEPAGE="http://clang.llvm.org/"
-DOWNLOADS="http://llvm.org/releases/${PV}/${PNV}.tgz"
+DOWNLOADS="http://llvm.org/releases/${PV}/${PNV}.tar.gz"
 
 LICENCES="UoI-NCSA"
 SLOT="0"
@@ -27,7 +27,7 @@ DEPENDENCIES="
     build+run:
         dev-libs/llvm
     run:
-        sys-devel/gcc[<4.6]
+        sys-devel/gcc[>=4.5]
     test:
         dev-lang/python
 "
@@ -43,22 +43,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DBUILD_SHARED_LIBS:BOOL=true
     -DCLANG_PATH_TO_LLVM_BUILD:PATH=/usr
 )
-
-clang_src_prepare()
-{
-    local GCC_VERSION=$(best_version --slash 'sys-devel/gcc[<4.6]')
-    GCC_VERSION=${GCC_VERSION:14:5}
-
-    edo sed \
-        -e "/Exherbo/{N;N;N;s/4\.4\.3/${GCC_VERSION}/g}" \
-        -i lib/Frontend/InitHeaderSearch.cpp
-
-    edo sed \
-        -e "/const char\* GccVersions\[\] =/{s/4\.5\.2/${GCC_VERSION}/g}" \
-        -i lib/Driver/ToolChains.cpp
-
-    default
-}
 
 clang_src_install()
 {

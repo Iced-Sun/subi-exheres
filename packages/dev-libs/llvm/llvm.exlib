@@ -16,7 +16,7 @@ own language (or port an existing compiler) to use LLVM as an optimizer and code
 "
 
 HOMEPAGE="http://llvm.org/"
-DOWNLOADS="${HOMEPAGE}/releases/${PV}/${PNV}.tgz"
+DOWNLOADS="${HOMEPAGE}/releases/${PV}/${PNV}.tar.gz"
 
 LICENCES="UoI-NCSA"
 SLOT="0"

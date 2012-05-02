@@ -5,3 +5,5 @@ require llvm
 
 PLATFORMS="~amd64 ~x86"
 
+WORK=${WORK}.src
+
