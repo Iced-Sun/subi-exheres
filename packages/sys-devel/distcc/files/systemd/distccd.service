@@ -1,0 +1,6 @@
+[Unit]
+Description=distccd - distributed C/C++ compiler server
+
+[Service]
+User=nobody
+ExecStart=/usr/bin/distccd --allow 0.0.0.0/0 --no-detach

@@ -3,14 +3,14 @@
 
 AT_M4DIR="m4"
 
-require autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.10 ] ] googlecode
+require autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.10 ] ] googlecode systemd-service
 
 SUMMARY="distcc: a fast, free distributed C/C++ compiler"
 DESCRIPTION="
 distcc is a program to distribute builds of C, C++, Objective C
 or Objective C++ code across several machines on a network.
 distcc should always generate the same results as a local build,
-is simple to install and use, and is usually much faster than a local compile. 
+is simple to install and use, and is usually much faster than a local compile.
 "
 
 LICENCES="GPL-2"
@@ -24,8 +24,6 @@ DEPENDENCIES="
     build+run:
         dev-lang/python:=[>=2.4]
         dev-libs/popt
-        user/distcc
-        group/distcc
         avahi? ( net-dns/avahi )
         gtk? (
             x11-libs/gtk+:2
@@ -65,11 +63,14 @@ src_install() {
         dosym /usr/bin/distcc /usr/libexec/distcc/${f}
     done
 
-    keepdir /run/distccd
-    edo chown distcc:distcc "${IMAGE}"/run/distccd
+#    keepdir /run/distccd
+    rmdir /run/distccd
+#    edo chown distcc:distcc "${IMAGE}"/run/distccd
     if option baselayout ; then
         newinitd "${FILES}/${PNV}-initd" distccd
         newconfd "${FILES}/${PNV}-confd" distccd
     fi
+
+    install_systemd_files
 }
 
