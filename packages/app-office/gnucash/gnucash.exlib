@@ -1,8 +1,6 @@
 # Copyright 2009-2012 Wulf C. Krueger <philantrop@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
-require gnome-2
-
 export_exlib_phases src_configure src_test src_install
 
 SUMMARY="GnuCash is personal and small-business financial-accounting software"
