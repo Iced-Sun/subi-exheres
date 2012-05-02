@@ -1,0 +1,164 @@
+# Copyright 2008, 2009 Ingmar Vanhassel <ingmar@exherbo.org>
+# Copyright 2011 Bing Sun
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'emacs-22.2-r2.ebuild' from Gentoo, which is:
+#     Copyright 1999-2008 Gentoo Foundation.
+
+require alternatives elisp-module
+
+if [[ -z $(ever range 3) ]]; then
+    require gnu [ suffix=bz2 ]
+else
+    require gnu [ alpha=true subdir=pretest suffix=gz ]
+fi
+
+if [[ $(ever range 3) == rc* ]]; then
+    MY_PV=$(ever range 1-2)
+    MY_PNV=${PN}-${MY_PV}
+fi
+
+if ever is_scm; then
+    DOWNLOADS=""
+fi
+
+export_exlib_phases src_prepare src_install pkg_postinst pkg_postrm
+
+SUMMARY="The extensible, customizable, self-documenting, real-time display editor"
+LICENCES="GPL-3"
+SLOT="0"
+MYOPTIONS="
+    X alsa dbus freetype gif gpm gtk jpeg otf png svg tiff tiff xpm
+    ( freetype gif gtk jpeg otf png svg tiff tiff xpm ) [[ requires = X ]]
+    gconf [[
+        description = [ Allows emacs to determine the system font ]
+        requires = X
+    ]]
+    otf [[
+        description = [ Support for OpenType fonts ]
+        requires = freetype
+    ]]
+"
+
+DEPENDENCIES="
+    build:
+        sys-apps/texinfo[>=4.6] [[ description = [ Needed to build info pages for non-releases ] ]]
+        alsa? ( dev-util/pkg-config )
+        dbus? ( dev-util/pkg-config )
+        gtk? ( dev-util/pkg-config )
+        svg? ( dev-util/pkg-config )
+    build+run:
+        sys-libs/ncurses
+        net-libs/liblockfile
+        alsa? ( sys-sound/alsa-lib[>=1.0.0] )
+        X? (
+            x11-libs/libXmu
+            x11-libs/libXt
+            x11-data/xbitmaps
+            gif? ( media-libs/giflib )
+            gtk? (
+              dev-libs/glib:2[>=2.6]
+              x11-libs/gtk+:2[>=2.6]
+              x11-libs/libXft[>=0.13.0]
+            )
+            jpeg? ( media-libs/jpeg )
+            otf? ( dev-libs/libotf )
+            png? ( media-libs/libpng )
+            svg? ( gnome-desktop/librsvg:2[>=2.11.0] )
+            tiff? ( media-libs/tiff )
+            xpm? ( x11-libs/libXpm )
+        )
+        dbus? ( sys-apps/dbus[>=1.0.0] )
+        freetype? (
+            media-libs/fontconfig[>=2.2.0]
+            media-libs/freetype:2
+            x11-libs/libXft[>=0.13.0]
+        )
+        gconf? ( gnome-platform/GConf:2 )
+        gpm? ( sys-libs/gpm )
+   suggestion:
+        app-spell/aspell [[ description = [ For ispell and flyspell mode ] ]]
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --infodir=/usr/share/info/${PN}
+    --without-m17n-flt
+
+    --without-kerberos
+    --without-kerberos5
+    --without-hesiod
+
+    --without-pop
+    --without-xml2
+
+    --without-selinux
+    --without-gnutls
+    --without-makeinfo
+    --without-compress-info
+    --without-gameuser
+    --without-imagemagick
+    --without-gconf
+    --without-gsettings
+
+    --with-x-toolkit=gtk3
+#    --with-x-toolkit=gtk
+    --without-toolkit-scroll-bars
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=(
+    'X x'
+    'X xim'
+    'alsa sound'
+    'freetype xft'
+#    'gtk x-toolkit gtk' 'gtk toolkit-scroll-bars'
+    'otf libotf'
+    'svg rsvg'
+    'dbus' 'gconf' 'gif' 'gpm' 'jpeg' 'png' 'tiff' 'xpm'
+)
+
+# cedet, nxml
+REMOVED_ELISP=( org play erc eshell obsolete )
+
+myemacs_src_prepare () {
+    for d in ${REMOVED_ELISP[@]}; do
+        edo rm -rf lisp/$d
+    done
+
+    # Compressing *.el files saves 25MB diskspace, which is not worth it on modern systems
+    edo sed -i -e 's/@GZIP_PROG@//' {.,leim}/Makefile.in
+    default
+}
+
+myemacs_src_install() {
+    default
+
+    insinto ${ELISP_SITE_LISP}
+    hereins site-start.el <<EOF
+(require 'site-exherbo)
+EOF
+
+    local i
+    for i in "${IMAGE}"/usr/share/info/${PN}/*; do
+        edo mv "${i}" "${i}.info"
+    done
+
+    cd "${IMAGE}"
+    edo mv usr/share/man/man1/ctags{,-emacs}.1
+    edo mv usr/bin/ctags{,-emacs}
+    alternatives_for ctags emacs 500 \
+        /usr/bin/ctags ctags-emacs \
+        /usr/share/man/man1/ctags.1 ctags-emacs.1
+
+    hereenvd 70${PN} <<EOF
+INFOPATH="/usr/share/info/${PN}"
+EOF
+}
+
+myemacs_pkg_postinst() {
+    alternatives_pkg_postinst
+    elisp-generate-global-site-file
+}
+
+myemacs_pkg_postrm() {
+    :
+}
+

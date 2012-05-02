@@ -1,0 +1,33 @@
+# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Enca is an Extremely Naive Charset Analyser"
+DESCRIPTION="Enca is an Extremely Naive Charset Analyser. It detects character set and encoding of text files and can also convert them to other encodings using either a built-in converter or external libraries and tools like libiconv, librecode, or cstocs.
+
+Currently it supports Belarusian, Bulgarian, Croatian, Czech, Estonian, Hungarian, Latvian, Lithuanian, Polish, Russian, Slovak, Slovene, Ukrainian, Chinese, and some multibyte encodings independently on language.
+"
+HOMEPAGE="http://gitorious.org/${PN}"
+DOWNLOADS="http://dl.cihar.com/${PN}/${PNV}.tar.lzma"
+
+SLOT="0"
+LICENCES="GPL-2"
+PLATFORMS="~amd64"
+MYOPTIONS="doc"
+
+DEPENDENCIES="
+    build:
+        doc? ( dev-doc/gtk-doc )
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-external
+    --without-librecode
+)
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( "doc gtk-doc" )
+
+src_install() {
+    default
+
+    option doc || edo rm -rf "${IMAGE}"/usr/share/gtk-doc
+}
+

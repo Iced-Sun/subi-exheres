@@ -1,0 +1,4 @@
+require osd-lyrics
+
+PLATFORMS="~amd64"
+

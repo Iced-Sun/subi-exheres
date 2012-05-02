@@ -1,0 +1,5 @@
+[D-BUS Service]
+Name=org.wicd.daemon
+Exec=/usr/bin/wicd --no-daemon
+User=root
+SystemdService=wicd.service

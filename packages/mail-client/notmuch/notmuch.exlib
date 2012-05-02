@@ -1,0 +1,78 @@
+# Copyright 2009, 2010 Ingmar Vanhassel
+# Copyright 2010, 2011 Bing Sun
+# Distributed under the terms of the GNU General Public License v2
+
+require bash-completion zsh-completion elisp-optional [ source_directory=emacs ]
+
+export_exlib_phases src_compile src_install
+
+SUMMARY="Thread-based email index, search and tagging"
+DESCRIPTION="
+'Not much mail' is what Notmuch thinks about your email collection. Even if you
+receive 12000 messages per month or have on the order of millions of messages
+that you've been saving for decades. Regardless, Notmuch will be able to
+quickly search all of it. It's just plain not much mail.
+
+'Not much mail' is also what you should have in your inbox at any time. Notmuch
+gives you what you need, (tags and fast search), so that you can keep your
+inbox tamed and focus on what really matters in your life, (which is surely not
+email).
+
+Notmuch is an answer to Sup. Sup is a very good email program written by
+William Morgan (and others) and is the direct inspiration for Notmuch. Notmuch
+began as an effort to rewrite performance-critical pieces of Sup in C rather
+than ruby. From there, it grew into a separate project. One significant
+contribution Notmuch makes compared to Sup is the separation of the
+indexer/searcher from the user interface. (Notmuch provides a library interface
+so that its indexing/searching/tagging features can be integrated into any
+email program.)
+
+Notmuch is not much of an email program. It doesn't receive messages (no POP or
+IMAP suport). It doesn't send messages (no mail composer, no network code at
+all). And for what it does do (email search) that work is provided by an
+external library, Xapian. So if Notmuch provides no user interface and Xapian
+does all the heavy lifting, then what's left here? Not much.
+"
+HOMEPAGE="http://notmuchmail.org/"
+if ever is_scm; then
+    DOWNLOADS=""
+else
+    DOWNLOADS="${HOMEPAGE}/releases/${PNV}.tar.gz"
+fi
+LICENCES="GPL-3"
+SLOT="0"
+
+DEPENDENCIES="
+    build:
+        dev-util/pkg-config
+    build+run:
+        dev-db/xapian-core
+        dev-libs/talloc
+        net-utils/gmime:2.4
+"
+
+BUGS_TO="ingmar@exherbo.org"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --hates={docdir,disable-silent-rules,enable-fast-install}
+    --without-{emacs,bash-completion,zsh-completion}
+)
+DEFAULT_SRC_COMPILE_PARAMS=( V=1 )
+BASH_COMPLETIONS=( 'completion/notmuch-completion.bash notmuch' )
+ZSH_COMPLETIONS=( 'completion/notmuch-completion.zsh _notmuch' )
+ELISP_COMPILE_FLAGS=( --directory "${WORK}"/emacs )
+
+notmuch_src_compile() {
+    default
+    elisp-optional_src_compile
+}
+
+notmuch_src_install() {
+    default
+
+    bash-completion_src_install
+    install-zsh-completions
+
+    elisp-optional_src_install
+}
+

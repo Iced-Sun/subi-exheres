@@ -1,0 +1,13 @@
+# Copyright 2009 Ali Polatel <alip@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+SCM_REPOSITORY="git://repo.or.cz/elinks.git"
+
+require elinks autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.11 ] ] scm-git
+
+PLATFORMS="~amd64"
+
+src_prepare() {
+    ./autogen.sh || die "./autogen.sh failed"
+}
+

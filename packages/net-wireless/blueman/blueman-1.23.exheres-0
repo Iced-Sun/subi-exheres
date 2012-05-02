@@ -1,0 +1,38 @@
+# Copyright 2009 Jonathan Dahan <jedahan@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'blueman-1.10.ebuild', which is:
+#   Copyright 1999-2009 Gentoo Foundation
+
+require launchpad [ branch=1.2 ] multilib python
+
+SUMMARY="GTK+ Bluetooth Manager, designed to be simple and intuitive for everyday bluetooth tasks."
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS="gconf policykit pulseaudio"
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/python[>=2.5]
+        gnome-bindings/pygobject
+        net-wireless/bluez[>=4.25]
+    build:
+        dev-libs/glib:2
+        dev-python/Pyrex[>=0.9.8]
+        dev-util/intltool
+        x11-libs/gtk+:2[>=2.14]
+        x11-libs/startup-notification
+    run:
+        dev-python/dbus-python
+        dev-python/notify-python
+        gnome-bindings/pygtk
+        net-wireless/obex-data-server[>=0.4.3]
+        sys-apps/dbus
+        virtual/notification-daemon
+        gconf? ( gnome-bindings/gnome-python[gconf] )
+        policykit? ( gnome-desktop/PolicyKit-gnome )
+        pulseaudio? ( media-sound/pulseaudio[>=0.9.15] )
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=( --with-no-runtime-deps-check --enable-nls )
+

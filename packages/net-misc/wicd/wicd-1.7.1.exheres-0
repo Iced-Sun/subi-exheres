@@ -1,0 +1,4 @@
+require wicd
+
+PLATFORMS="~amd64 ~x86"
+

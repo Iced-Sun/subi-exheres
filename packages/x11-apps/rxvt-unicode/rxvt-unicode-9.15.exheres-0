@@ -1,0 +1,68 @@
+# Copyright 2008 Anders Ossowicki <arkanoid@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Clone of rxvt with support for unicode and xft"
+DESCRIPTION="rxvt-unicode (binary name urxvt) is a modern clone of rxvt
+with several additional features. rxvt-unicode comes with a daemon mode,
+embedded perl for endless customization and improvement opportunities,
+regex-driven customisable selection that can properly select shell arguments,
+urls, etc and much more."
+HOMEPAGE="http://software.schmorp.de/pkg/rxvt-unicode.html"
+DOWNLOADS="http://dist.schmorp.de/rxvt-unicode/${PNV}.tar.bz2"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS="
+    perl       [[ description = [ Include an embedded perl interpreter ] ]]
+    xft        [[ description = [ Use the X FreeType interface for font handling when needed (ARGB transparency requires it) ] ]]
+    xim        [[ description = [ Add support for the X Input Method server ] ]]
+"
+
+DEPENDENCIES="
+    build:
+        x11-proto/xextproto
+        xft? ( x11-proto/renderproto )
+    build+run:
+        media-libs/freetype
+        sys-libs/ncurses
+        x11-libs/libICE
+        x11-libs/libSM
+        x11-libs/libX11
+        x11-libs/libXext
+        xft? (
+            media-libs/fontconfig
+            x11-libs/libXft
+            x11-libs/libXrender
+        )
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    "--disable-everything"
+    "--disable-256-color"
+    "--enable-font-styles"
+    "--enable-fading"
+    "--enable-rxvt-scroll"
+    "--enable-resources"
+    "--enable-swapscreen"
+    "--enable-selectionscrolling"
+    "--enable-mousewheel"
+    "--enable-slipwheeling"
+    "--enable-smart-resize"
+    "--enable-text-blink"
+    "--enable-pointer-blank"
+#    "--enable-frills"
+    "--with-codesets=no"
+    "--with-terminfo=/usr/share/terminfo"
+    "--with-x"
+)
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( perl xim xft )
+DEFAULT_SRC_INSTALL_EXTRA_DOCS=(
+    "doc/etc/rxvt-unicode.termcap"
+    "doc/etc/rxvt-unicode.terminfo"
+)
+
+src_install() {
+    TERMINFO="${IMAGE}"/usr/share/terminfo default
+}
+

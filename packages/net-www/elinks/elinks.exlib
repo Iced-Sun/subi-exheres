@@ -1,0 +1,107 @@
+# Copyright 2009 Ali Polatel <alip@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Full-Featured Text WWW Browser"
+DESCRIPTION="
+ELinks is an advanced and well-established feature-rich text mode web
+(HTTP/FTP/..) browser. ELinks can render both frames and tables, is highly
+customizable and can be extended via Lua or Guile scripts. It is quite portable
+and runs on a variety of platforms.
+"
+HOMEPAGE="http://elinks.or.cz/"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS="js gc"
+
+DEPENDENCIES="
+    build:
+        app-arch/unzip
+        sys-devel/gettext
+    build+run:
+        app-arch/bzip2
+        sys-libs/zlib
+        app-arch/xz
+        js? ( dev-libs/xulrunner )
+        gc? ( dev-libs/boehm-gc )
+"
+
+RESTRICT="test" # Tests fail without multilib on amd64
+BUGS_TO="alip@exherbo.org"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    # ui
+    --enable-nls
+    --enable-88-colors
+    --enable-256-colors
+    --enable-true-color
+    --enable-mouse
+    --enable-exmode
+
+    # rendering
+    --enable-utf-8
+    --enable-combining
+    --enable-marks
+    --enable-css
+    --enable-html-highlight
+
+    # http
+    --enable-uri-rewrite
+    --enable-cgi
+
+    # browser functions
+    --disable-bookmarks
+    --disable-xbel
+    --disable-cookies
+    --disable-formhist
+    --disable-globhist
+
+    # mime
+    --disable-mailcap
+    --disable-mimetypes
+
+    # protocols
+    --disable-bittorrent
+    --disable-data
+    --disable-finger
+    --disable-fsp
+    --disable-ftp
+    --disable-gopher
+    --disable-nntp
+    --disable-smb
+
+    # misc
+    --disable-leds
+
+    # build
+    --disable-debug
+    --disable-backtrace
+    --disable-own-libc
+    --enable-fastmem
+    --enable-small
+
+    --without-python
+    --without-guile
+    --without-perl
+    --without-lua
+
+    --without-gssapi
+    --without-gpm
+    --without-idn
+    --without-tre
+
+    --with-zlib
+    --with-bzlib
+    --with-lzma
+
+    --with-openssl
+    --without-gnutls
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=(
+    'js sm-scripting'
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( gc  'js spidermonkey' )
+
+

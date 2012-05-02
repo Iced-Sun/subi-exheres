@@ -1,0 +1,12 @@
+# Copyright 2009 Ali Polatel <alip@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require elinks
+
+DOWNLOADS="http://elinks.or.cz/download/elinks-current-0.13.tar.bz2"
+
+PLATFORMS="~amd64 ~x86"
+
+DATE=`date +%Y%m%d`
+WORK=${WORKBASE}/${PNV}-${DATE}
+

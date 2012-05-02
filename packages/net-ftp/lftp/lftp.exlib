@@ -1,0 +1,37 @@
+# Copyright (c) 2009 Markus Rothe <markus@unixforces.net>
+# Copyright (c) 2010, 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="ftp/http client, file transfer program supporting a number of network protocols"
+DESCRIPTION="LFTP is sophisticated ftp/http client, file transfer program supporting a number of network protocols. Like BASH, it has job control and uses readline library for input. It has bookmarks, built-in mirror, can transfer several files in parallel. It was designed with reliability in mind.
+"
+HOMEPAGE="http://lftp.yar.ru/"
+DOWNLOADS="http://ftp.yars.free.net/pub/source/lftp/${PNV}.tar.xz"
+
+LICENCES="GPL-3"
+SLOT="0"
+MYOPTIONS="openssl"
+
+DEPENDENCIES="
+    build:
+        sys-devel/gettext
+    build+run:
+        openssl? ( dev-libs/openssl )
+"
+
+BUGS_TO="markus@unixforces.net"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-nls
+    --enable-largefile
+    --with-modules
+
+    --without-included-regex
+    --without-gnutls
+    --without-libresolv
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=(
+    openssl
+)
+

@@ -1,0 +1,66 @@
+#require distutils sourceforge [ suffix=tar.bz2 ] systemd-service
+require distutils systemd-service
+export_exlib_phases src_configure src_install
+
+SUMMARY="A lightweight wired and wireless network manager for Linux"
+DESCRIPTION="Wicd is an open source wired and wireless network manager for Linux which aims to provide a simple interface to connect to networks with a wide variety of settings."
+HOMEPAGE="http://wicd.sourceforge.net/"
+DOWNLOADS="mirror://sourceforge/${PN}/${PNV}.tar.bz2"
+
+LICENCES="GPL-2"
+MYOPTIONS="
+    gtk [[ description = [ Install the gtk client: wicd-gtk ] ]]
+    curses [[ description = [ Install the ncurses client: wicd-curses ] ]]
+    "
+
+SLOT="0"
+
+DEPENDENCIES="
+    build+run:
+	    dev-lang/python[>=2.4&<3.0]
+    run:
+        dev-python/dbus-python
+        gtk? (
+            gnome-bindings/pygtk
+            gnome-bindings/pygobject
+        )
+        curses? ( dev-python/urwid[ncurses] )
+    recommendation:
+        sys-apps/net-tools
+	net-wireless/wireless_tools
+	    || (
+		    net-misc/dhcpcd
+		    net-misc/dhcp
+	    )
+    suggestion:
+        dev-python/notify-python [[ description = [ make Wicd show notifications ] ]]
+	    net-wireless/wpa_supplicant [[ description = [ If you need IEEE 802.11 authentication. ] ]]
+	    sys-power/pm-utils[>=1.2.4] [[ description = [ For suspend/resume integration ] ]]
+"
+
+wicd_src_configure() {
+    local myconf
+    option gtk || myconf+=" --no-install-gtk"
+    option curses || myconf+=" --no-install-ncurses"
+
+    edo ${PYTHON} -B setup.py configure \
+        --distro=gentoo \
+        --python="${PYTHON}" \
+        --lib="/usr/${LIBDIR}" \
+        --pmutils="/usr/${LIBDIR}/pm-utils/sleep.d/55wicd" \
+        --systemd="${SYSTEMDSYSTEMUNITDIR}" \
+        --no-install-init \
+        --no-install-kde \
+        --no-install-acpi \
+        --no-install-pmutils \
+        --no-install-docs \
+        --no-install-cli \
+        ${myconf}
+}
+
+wicd_src_install() {
+    distutils_src_install
+
+    edo rm -rf ${IMAGE}/etc/logrotate.d
+}
+

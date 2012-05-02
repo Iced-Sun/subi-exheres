@@ -1,0 +1,19 @@
+# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require systemd-service sourceforge [ suffix=tar.gz ]
+
+SUMMARY="Domain Name Relay Daemon"
+DESCRIPTION="
+Domain Name Relay Daemon is a caching, forwarding DNS proxy server. Most useful on vpn or dialup
+firewalls but it is also a nice DNS cache for minor networks and workstations.
+"
+
+SLOT="0"
+LICENCES=""
+MYOPTIONS=""
+
+DEPENDENCIES="
+"
+
+

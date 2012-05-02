@@ -1,0 +1,34 @@
+# Copyright 2009 Saleem Abdulrasool <compnerd@compnerd.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require gsettings
+
+SUMMARY="An alternative notification-daemon"
+HOMEPAGE="https://wiki.ubuntu.com/NotifyOSD"
+DOWNLOADS="https://launchpad.net/${PN}/precise/${PV}/+download/${PNV}.tar.gz"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        dev-util/pkg-config[>=0.20]
+        x11-libs/libnotify[>=0.4.5]
+    build+run:
+        dev-libs/glib:2[>=2.16]
+        dev-libs/dbus-glib:1[>=0.76]
+        gnome-desktop/libwnck:3.0
+        x11-libs/gtk+:3[>=3.1.6]
+    run:
+        gnome-desktop/gsettings-desktop-schemas
+"
+
+RESTRICT="test" # requires X
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-deprecations
+    --without-examples
+)
+

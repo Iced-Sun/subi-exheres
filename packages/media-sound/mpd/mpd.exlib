@@ -1,0 +1,109 @@
+# Copyright 2008 Richard Brown
+# Copyright 2009 Bo Ørsted Andresen
+# Copyright 2009 Thomas Anderson
+# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music"
+DESCRIPTION="
+Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music. Through plugins and libraries it can play a variety of sound files while being controlled by its network protocol.
+"
+HOMEPAGE="http://www.musicpd.org/"
+DOWNLOADS="mirror://sourceforge/musicpd/${PNV}.tar.bz2"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS="ffmpeg alsa"
+
+UPSTREAM_RELEASE_NOTES="http://sourceforge.net/projects/musicpd/files/${PN}/${PV}/${PNV}-release-notes.txt/download"
+
+DEPENDENCIES="
+    build:
+        dev-util/pkg-config
+    build+run:
+        dev-libs/glib:2[>=2.12]
+        alsa? ( sys-sound/alsa-lib )
+        ffmpeg? ( media/ffmpeg )
+"
+
+## For prereleases(alphas, betas) only.
+WORK="${WORKBASE}/${PNV/_/~}"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    # Audio Output
+    --disable-jack
+    --disable-pulse
+    --disable-ao
+    --disable-oss
+    --disable-mvp
+    --disable-ffado
+
+    # audio ouput: misc
+    --disable-fifo
+    --disable-pipe-output
+    --disable-recorder-output
+
+    # Audio output: streaming
+    --disable-httpd-output
+    --disable-shout
+
+    # audio output: streming encoder
+    --disable-vorbis-encoder
+    --disable-lame-encoder
+    --disable-twolame-encoder
+    --disable-wave-encoder
+
+    # clients
+    --enable-tcp
+    --disable-ipv6
+    --disable-un
+
+    # source
+    --disable-curl
+    --disable-lastfm
+    --disable-mms
+    --disable-bzip2
+    --disable-zzip
+    --disable-iso9660
+
+    # decoder
+    --disable-aac
+    --disable-audiofile
+    --disable-mikmod
+    --disable-mpg123
+    --disable-modplug
+    --disable-mpc
+    --disable-gme
+    --disable-sidplay
+    --disable-sndfile
+    --disable-fluidsynth
+    --disable-wildmidi
+    --disable-wavpack
+    --disable-mad
+
+    # metadata
+    --disable-cue
+    --disable-id3 # require zlib
+
+    # ogg, flac, vorbis
+    # for better tag display, enable the following
+    --disable-oggflac
+    --disable-flac # required to display metaflac tags; it's both a demuxer and a decoder
+    --disable-vorbis # Required to display vorbis tags (FLAC, ogg)
+
+    # misc
+    --enable-sqlite
+    --disable-lsr
+    --disable-inotify
+    --disable-largefile
+    --disable-libwrap
+    --disable-documentation
+
+    ###
+    --with-zeroconf=no
+    --without-tremor
+    --without-faad
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( alsa ffmpeg )
+

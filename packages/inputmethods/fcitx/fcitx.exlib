@@ -1,0 +1,100 @@
+# Copyright 2008,2009,2010 Hong Hao
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'fcitx-3.5.ebuild', which is:
+#    Copyright 1999-2008 Gentoo Foundation
+
+require cmake [ api=2 ] googlecode [ suffix=tar.xz ]
+export_exlib_phases src_prepare pkg_postinst pkg_postrm
+
+SUMMARY="A Flexible Input Method Framework"
+DESCRIPTION="
+Fcitx [ˈfaɪtɪks] is a input method framework with extension support. Currently it supports linux and Unix system, like freebsd. It has three builtin Input Method Engine, Pinyin, QuWei and Table-based input methods.
+
+Feature
+* Highly modularized (You can even drop all X support, if you only need fbterm based support).
+* fbterm support (fcitx-fbterm)
+* cloud pinyin support (fcitx-cloudpinyin)
+* themable user interface (builtin classic-ui)
+* kimpanel based user interface support (builtin kimpanel-ui)
+* xlib-only user interface support (fcitx-ui-light)
+* libgooglepinyin based pinyin engine (fcitx-googlepinyin)
+* sunpinyin based pinyin engine (fcitx-sunpinyin)
+* Integrated KDE Configure Tool (kcm-fcitx)
+* GTK Based Configure Tool (fcitx-configtool)
+Japanese(Anthy based), Koarean(Hangul based), and N9-Meego/Maliit support is under development."
+DOWNLOADS+="
+    ${HOMEPAGE}/files/table.tar.gz
+    table? ( ${HOMEPAGE}/files/pinyin.tar.gz )
+"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS="debug dbus opencc gtk gtk3 qt pango table classic-ui kimpanel-ui
+    ( gtk gtk3 qt ) [[ requires = [ dbus ] ]]
+    pango [[ requires = [ classic-ui ] description = [ Render UI text with Pango instead of fontconfig ] ]]
+"
+
+DEPENDENCIES="
+    build:
+        dev-util/intltool
+        sys-devel/gettext
+        x11-proto/xproto
+    build+run:
+        opencc? ( cjk/opencc[>=0.1.1] )
+
+        classic-ui? (
+            x11-libs/cairo[X]
+            !pango? ( media-libs/fontconfig )
+            pango? ( x11-libs/pango )
+        )
+
+        kimpanel-ui? ( kde/kdeplasma-addons )
+
+        x11-libs/libX11
+
+        dbus? ( sys-apps/dbus[>=1.1.0] )
+        gtk? (
+            dev-libs/dbus-glib
+            x11-libs/gtk+:2
+        )
+        gtk3? (
+            dev-libs/dbus-glib
+            x11-libs/gtk+:3
+        )
+        qt? ( x11-libs/qt:4[>=4.5][dbus] )
+    recommendation:
+        inputmethods/fcitx-configtool
+"
+# fcitx-config script:
+#        xdg-utils / fcitx-config
+
+BUGS_TO="oahong@gmail.com"
+RESTRICT="test"
+UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
+
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
+    DEBUG TABLE OPENCC
+    PANGO 'classic-ui CAIRO'
+    'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' 'qt QT_IM_MODULE'
+)
+
+update_gtk_immodules() {
+    option gtk && gtk-query-immodules-2.0 > "${ROOT}"/etc/gtk-2.0/gtk.immodules
+    if option gtk3 ; then
+        gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
+    fi
+}
+
+fcitx_src_prepare() {
+    edo cp "${FETCHEDDIR}"/pinyin.tar.gz ${CMAKE_SOURCE}/data
+#    edo cp "${FETCHEDDIR}"/table.tar.gz data/table
+}
+
+fcitx_pkg_postinst() {
+    update_gtk_immodules
+}
+
+fcitx_pkg_postrm() {
+    update_gtk_immodules
+}
+

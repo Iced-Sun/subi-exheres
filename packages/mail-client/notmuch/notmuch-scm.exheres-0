@@ -1,0 +1,6 @@
+SCM_REPOSITORY="git://notmuchmail.org/git/notmuch"
+
+require scm-git notmuch
+
+PLATFORMS="~amd64"
+

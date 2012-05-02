@@ -1,0 +1,80 @@
+# Copyright 2010 Johannes Nixdorf <mixi@user-helfen-usern.de>
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'schroot-1.4.3' from Gentoo, which is:
+#     Copyright 1999-2010 Gentoo Foundation
+
+require debian-upstream [ suffix=".orig.tar.bz2" ] bash-completion [  ]
+
+SUMMARY="Utility to execute commands in a chroot environment"
+HOMEPAGE="http://packages.debian.org/source/sid/schroot"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="lvm btrfs doc pam block-device loopback
+    block-device [[ description = [ Support block device chroots ] ]]
+    btrfs [[ description = [ Support btrfs snapshot chroots ] ]]
+    loopback [[ description = [ Support loopback chroots ] ]]
+    lvm [[ description = [ Support LVM snapshot chroots ] ]]
+"
+
+
+DEPENDENCIES="
+    build:
+        dev-util/pkg-config[>=0.20]
+        sys-devel/gettext
+    build+run:
+        dev-libs/boost[>=1.42.0]
+        sys-libs/pam
+        sys-apps/util-linux[>=2.16]
+        btrfs? ( sys-fs/btrfs-progs )
+        block-device? ( dev-libs/lockdev )
+        doc? (
+            app-doc/doxygen
+            media-gfx/graphviz
+        )
+        lvm? (
+            dev-libs/lockdev
+            sys-fs/lvm2
+        )
+"
+
+# Tests require root
+RESTRICT="test"
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=(
+    'block-device'
+    'btrfs btrfs-snapshot'
+    'doc doxygen'
+    'lvm lvm-snapshot'
+)
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --localstatedir=/var
+
+    --enable-nls
+    --enable-pam
+    --disable-debug
+
+    --enable-environment-filter
+    --enable-shared
+    --enable-union
+    --enable-uuid
+
+    # don't build extra binaries
+    --disable-dchroot
+    --disable-dchroot-dsa
+    --disable-csbuild
+)
+
+BASH_COMPLETIONS=( 'etc/bash_completion.d/schroot schroot' )
+
+src_install() {
+    default
+
+    bash-completion_src_install
+    edo rm -rf ${IMAGE}/etc/bash_completion.d
+
+    keepdir /etc/schroot/chroot.d /var/lib/schroot/{mount,session,unpack} /var/lib/schroot/union/{overlay,underlay}
+}
+

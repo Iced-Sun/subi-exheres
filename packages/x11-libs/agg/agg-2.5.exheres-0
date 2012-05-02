@@ -1,0 +1,49 @@
+# Copyright 2010 Bing SUN <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.11 1.10 ] ]
+
+SUMMARY="A High Quality Rendering Engine for C++"
+DESCRIPTION="Anti-Grain  Geometry (AGG) is an Open Source, free of charge graphic library, written in industrially standard C++. The terms and conditions of use AGG are described on The License page. AGG doesn't depend on any graphic API or technology. Basically, you can think of AGG as of a rendering engine that produces pixel images in memory from some vectorial data. But of course, AGG can do much more than that. The ideas and the philosophy of AGG are:
+
+    * Anti-Aliasing.
+    * Subpixel Accuracy.
+    * The highest possible quality.
+    * High performance.
+    * Platform independence and compatibility.
+    * Flexibility and extensibility.
+    * Lightweight design.
+    * Reliability and stability (including numerical stability).
+"
+HOMEPAGE="http://antigrain.com/"
+DOWNLOADS="http://antigrain.com/${PNV}.tar.gz"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="sdl truetype X"
+
+DEPENDENCIES="
+    build+run:
+        sdl? ( media-libs/SDL )
+        X? ( x11-libs/libX11 )
+        truetype? ( media-libs/freetype:2 )
+"
+
+BUGS_TO="timothy@redaelli.eu"
+
+DEFAULT_SRC_PREPARE_PATCHES=( ${FILES}/${PNV}-autoconf.patch )
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-gpc
+    --disable-ctrl
+    --disable-examples
+)
+
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( "X x" )
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=(
+    "truetype freetype"
+    "X platform x11"
+    "sdl platform sdl"
+)
+

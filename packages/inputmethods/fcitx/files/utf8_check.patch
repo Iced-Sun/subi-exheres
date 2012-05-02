@@ -1,0 +1,7 @@
+--- src/ui/cairostuff/cairostuff.c	2012-04-30 17:49:15.003221159 +0800
++++ src/ui/cairostuff/cairostuff.c	2012-04-30 17:51:16.405896799 +0800
+@@ -191,3 +191,3 @@
+         return;
+-    if (!utf8_check_string(str))
++    if (!fcitx_utf8_check_string(str))
+         return;

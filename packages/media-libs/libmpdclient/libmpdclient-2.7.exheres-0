@@ -1,0 +1,6 @@
+# Copyright 2009 Ali Polatel <alip@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require sourceforge [ project=musicpd ] libmpdclient
+
+PLATFORMS="~amd64 ~x86"

@@ -1,0 +1,4 @@
+require dnrd
+
+PLATFORMS="~amd64 ~x86"
+
