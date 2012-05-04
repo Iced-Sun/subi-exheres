@@ -7,7 +7,7 @@
 #  'synergy-1.4.3.ebuild' from Gentoo, which is:
 #     Copyright 1999-2011 Gentoo Foundation
 
-require cmake [ api=2 ]
+require cmake [ api=2 ] systemd-service
 
 export_exlib_phases src_install
 
@@ -55,5 +55,10 @@ synergy_src_install() {
     dodoc doc/synergy.conf.example*
 
     edo popd
+
+    if option systemd ; then
+        insinto /usr/${LIBDIR}/systemd/user
+        doins "${FILES}"/systemd/user/synergy.service
+    fi
 }
 
