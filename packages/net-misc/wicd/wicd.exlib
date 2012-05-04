@@ -12,7 +12,6 @@ MYOPTIONS="
     gtk [[ description = [ Install the gtk client: wicd-gtk ] ]]
     curses [[ description = [ Install the ncurses client: wicd-curses ] ]]
     "
-
 SLOT="0"
 
 DEPENDENCIES="
@@ -27,14 +26,14 @@ DEPENDENCIES="
         curses? ( dev-python/urwid[ncurses] )
     recommendation:
         sys-apps/net-tools
-	net-wireless/wireless_tools
+        net-wireless/wireless_tools
+	    net-wireless/wpa_supplicant
 	    || (
 		    net-misc/dhcpcd
 		    net-misc/dhcp
 	    )
     suggestion:
         dev-python/notify-python [[ description = [ make Wicd show notifications ] ]]
-	    net-wireless/wpa_supplicant [[ description = [ If you need IEEE 802.11 authentication. ] ]]
 	    sys-power/pm-utils[>=1.2.4] [[ description = [ For suspend/resume integration ] ]]
 "
 
