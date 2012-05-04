@@ -4,7 +4,6 @@
 FONT=${PN%-*}
 CODENAME=FightingState
 MY_PN=${PN/font/song}
-require xfont
 
 SUMMARY="WenQuanYi Bitmap Song CJK font"
 HOMEPAGE="http://wqy.sourceforge.net/en/"

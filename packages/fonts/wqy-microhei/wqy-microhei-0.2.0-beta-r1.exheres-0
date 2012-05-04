@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Purpose License v2
 
 FONT="TTF"
-require xfont
 
 SUMMARY="A high quality sans-serif style cjk outline font derived from \"Droid Sans Fallback\""
 HOMEPAGE="http://wenq.org/enindex.cgi?action=browse&id=MicroHei(en)"
@@ -35,3 +34,4 @@ src_install() {
     insinto /usr/share/fonts/X11/${FONT}
     doins *.ttc
 }
+
