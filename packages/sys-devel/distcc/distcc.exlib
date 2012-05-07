@@ -48,6 +48,10 @@ distcc_src_install() {
     emake DESTDIR="${IMAGE}" install-programs install-include-server
     python_bytecompile
 
+    # http://code.google.com/p/distcc/issues/detail?id=110
+    edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/bin/pump
+    edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/bin/pump
+
     dodir /usr/libexec/distcc
     insinto /usr/libexec/distcc
     local f
