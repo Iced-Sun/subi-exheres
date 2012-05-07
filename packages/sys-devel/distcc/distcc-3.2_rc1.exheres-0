@@ -1,0 +1,7 @@
+require distcc
+
+PLATFORMS="~amd64 ~x86"
+DOWNLOADS="http://distcc.googlecode.com/files/distcc-3.2rc1.tar.bz2"
+
+WORK=${WORKBASE}/distcc-3.2rc1
+
