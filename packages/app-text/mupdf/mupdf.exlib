@@ -1,6 +1,10 @@
 # Copyright 2010, 2011 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
+MY_PNV=${PNV}-source
+WORK=${WORKBASE}/${MY_PNV}
+require googlecode [ suffix=tar.gz ]
+
 export_exlib_phases src_compile src_install
 
 SUMMARY="a lightweight PDF and XPS viewer"
@@ -12,7 +16,6 @@ MuPDF is also small, fast, and yet complete. It supports PDF 1.7 with transparen
 hyperlinks, annotations, searching and more. It also reads OpenXPS documents. "
 
 HOMEPAGE="http://www.mupdf.com"
-DOWNLOADS="${HOMEPAGE}/download/${PNV}-source.tar.gz"
 
 SLOT="0"
 LICENCES="GPL-3"
@@ -28,12 +31,10 @@ DEPENDENCIES="
 "
 
 mupdf_src_compile() {
-    # build=* will set CFLAGS, remove it
-    edo sed -e "s/.*error unknown build setting.*//" -i ${WORK}/Makerules
-    emake OS=Linux build=none verbose=1
+    emake CC=${CC} LD=${LD} OS=Linux build=$(option debug && echo debug || echo release) verbose=1
 }
 
 mupdf_src_install() {
-    emake build=none prefix=${IMAGE}/usr install
+    emake build=$(option debug && echo debug || echo release) prefix=${IMAGE}/usr libdir=${IMAGE}/${LIBDIR} install
 }
 
