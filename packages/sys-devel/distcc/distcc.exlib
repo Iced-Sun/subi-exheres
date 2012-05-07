@@ -68,6 +68,6 @@ distcc_src_install() {
     fi
 
     install_systemd_files
-    option systemd && newconfd "${FILES}/systemd/distccd.conf" distccd
+    option systemd && newconfd "${FILES}/systemd/distccd.conf" distccd.conf
 }
 
