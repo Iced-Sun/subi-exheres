@@ -116,7 +116,7 @@ DEFAULT_SRC_CONFIGURE_OPTION_WITHS=(
 )
 
 # cedet, nxml
-REMOVED_ELISP=( org play erc eshell obsolete )
+REMOVED_ELISP=( org play erc obsolete )
 
 myemacs_src_prepare () {
     for d in ${REMOVED_ELISP[@]}; do
