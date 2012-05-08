@@ -8,17 +8,26 @@ SUMMARY="Simple configuration tool for fcitx"
 LICENCES="GPL-2"
 SLOT="0"
 PLATFORMS="~amd64"
-MYOPTIONS=""
+MYOPTIONS="gtk gtk3"
 
 DEPENDENCIES="
     build:
         dev-util/intltool
         sys-devel/gettext
     build+run:
-        dev-libs/unique:1
         inputmethods/fcitx[>=4.0.1]
-        x11-libs/gtk+:2[>=2.22]
+        app-text/iso-codes
+        gtk? (
+            dev-libs/unique:1
+            x11-libs/gtk+:2[>=2.22]
+        )
+        gtk3? (
+            x11-libs/gtk+:3
+            dev-libs/glib:2[>=2.26]
+        )
 "
 
 BUGS_TO="oahong@gmail.com"
+
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( 'gtk GTK2' GTK3 )
 
