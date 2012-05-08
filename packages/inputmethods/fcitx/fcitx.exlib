@@ -3,8 +3,8 @@
 # Based in part upon 'fcitx-3.5.ebuild', which is:
 #    Copyright 1999-2008 Gentoo Foundation
 
-require cmake [ api=2 ] googlecode [ suffix=tar.xz ]
-export_exlib_phases src_prepare pkg_postinst pkg_postrm
+require cmake [ api=2 ] googlecode [ suffix=tar.xz ] systemd-service
+export_exlib_phases src_prepare src_install pkg_postinst pkg_postrm
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
@@ -23,8 +23,8 @@ Feature
 * GTK Based Configure Tool (fcitx-configtool)
 Japanese(Anthy based), Koarean(Hangul based), and N9-Meego/Maliit support is under development."
 DOWNLOADS+="
-    ${HOMEPAGE}/files/table.tar.gz
-    table? ( ${HOMEPAGE}/files/pinyin.tar.gz )
+    http://fcitx.googlecode.com/files/pinyin.tar.gz
+    table? ( http://fcitx.googlecode.com/files/table.tar.gz )
 "
 
 LICENCES="GPL-2"
@@ -65,8 +65,6 @@ DEPENDENCIES="
     recommendation:
         inputmethods/fcitx-configtool
 "
-# fcitx-config script:
-#        xdg-utils / fcitx-config
 
 BUGS_TO="oahong@gmail.com"
 RESTRICT="test"
@@ -87,7 +85,16 @@ update_gtk_immodules() {
 
 fcitx_src_prepare() {
     edo cp "${FETCHEDDIR}"/pinyin.tar.gz ${CMAKE_SOURCE}/data
-#    edo cp "${FETCHEDDIR}"/table.tar.gz data/table
+    option table && edo cp "${FETCHEDDIR}"/table.tar.gz data/table
+}
+
+fcitx_src_install() {
+    default
+
+    if option systemd ; then
+        insinto /usr/${LIBDIR}/systemd/user
+        doins "${FILES}"/systemd/user/${PN}.service
+    fi
 }
 
 fcitx_pkg_postinst() {
