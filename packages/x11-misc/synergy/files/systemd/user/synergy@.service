@@ -1,0 +1,5 @@
+[Unit]
+Description=Synergy client @ host of %i
+
+[Service]
+ExecStart=/usr/bin/synergyc --no-daemon --restart --debug NOTE %i
