@@ -1,0 +1,15 @@
+Source: upstream
+Upstream: yes
+Reason: compile failure using gcc-4.6
+
+--- dosbox/trunk/include/dos_inc.h	2011/03/29 12:44:15	3690
++++ dosbox/trunk/include/dos_inc.h	2011/03/31 19:31:21	3691
+@@ -28,6 +28,8 @@
+ #include "mem.h"
+ #endif
+ 
++#include <stddef.h> //for offsetof
++
+ #ifdef _MSC_VER
+ #pragma pack (1)
+ #endif
