@@ -29,7 +29,7 @@ DOWNLOADS+="
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug dbus opencc gtk gtk3 qt pango table classic-ui kimpanel-ui
+MYOPTIONS="debug dbus opencc gtk gtk3 qt pango table classic-ui kimpanel-ui gobject-introspection
     ( gtk gtk3 qt ) [[ requires = [ dbus ] ]]
     pango [[ requires = [ classic-ui ] description = [ Render UI text with Pango instead of fontconfig ] ]]
 "
@@ -62,6 +62,14 @@ DEPENDENCIES="
             x11-libs/gtk+:3
         )
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
+
+        gobject-introspection? ( gnome-desktop/gobject-introspection )
+
+        app-spell/enchant
+        app-text/iso-codes
+        x11-libs/libxkbfile
+        dev-libs/icu
+        dev-libs/libxml2
     recommendation:
         inputmethods/fcitx-configtool
 "
@@ -74,6 +82,7 @@ CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
     DEBUG TABLE OPENCC
     PANGO 'classic-ui CAIRO'
     'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' 'qt QT_IM_MODULE'
+    'gobject-introspection GIR'
 )
 
 update_gtk_immodules() {
