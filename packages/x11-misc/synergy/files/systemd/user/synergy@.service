@@ -2,4 +2,6 @@
 Description=Synergy client @ host of %i
 
 [Service]
-ExecStart=/usr/bin/synergyc --no-daemon --restart --debug NOTE %i
+Restart=on-failure
+RestartSec=10min
+ExecStart=/usr/bin/synergyc --no-daemon --no-restart --debug NOTE %i
