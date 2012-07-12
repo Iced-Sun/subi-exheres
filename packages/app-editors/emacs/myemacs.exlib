@@ -27,8 +27,8 @@ SUMMARY="The extensible, customizable, self-documenting, real-time display edito
 LICENCES="GPL-3"
 SLOT="0"
 MYOPTIONS="
-    X alsa dbus freetype gif gpm gtk jpeg otf png svg tiff tiff xpm
-    ( freetype gif gtk jpeg otf png svg tiff tiff xpm ) [[ requires = X ]]
+    X alsa dbus freetype gif gpm gtk gtk3 jpeg otf png svg tiff tiff xpm
+    ( freetype gif gtk gtk3 jpeg otf png svg tiff tiff xpm ) [[ requires = X ]]
     gconf [[
         description = [ Allows emacs to determine the system font ]
         requires = X
@@ -40,12 +40,6 @@ MYOPTIONS="
 "
 
 DEPENDENCIES="
-    build:
-        sys-apps/texinfo[>=4.6] [[ description = [ Needed to build info pages for non-releases ] ]]
-        alsa? ( dev-util/pkg-config )
-        dbus? ( dev-util/pkg-config )
-        gtk? ( dev-util/pkg-config )
-        svg? ( dev-util/pkg-config )
     build+run:
         sys-libs/ncurses
         net-libs/liblockfile
@@ -59,6 +53,9 @@ DEPENDENCIES="
               dev-libs/glib:2[>=2.6]
               x11-libs/gtk+:2[>=2.6]
               x11-libs/libXft[>=0.13.0]
+            )
+            gtk3? (
+              x11-libs/gtk+:3
             )
             jpeg? ( media-libs/jpeg )
             otf? ( dev-libs/libotf )
@@ -99,8 +96,6 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --without-gconf
     --without-gsettings
 
-    --with-x-toolkit=gtk3
-#    --with-x-toolkit=gtk
     --without-toolkit-scroll-bars
 )
 
@@ -109,7 +104,8 @@ DEFAULT_SRC_CONFIGURE_OPTION_WITHS=(
     'X xim'
     'alsa sound'
     'freetype xft'
-#    'gtk x-toolkit gtk' 'gtk toolkit-scroll-bars'
+    'gtk x-toolkit gtk'
+    'gtk3 x-toolkit gtk3'
     'otf libotf'
     'svg rsvg'
     'dbus' 'gconf' 'gif' 'gpm' 'jpeg' 'png' 'tiff' 'xpm'
