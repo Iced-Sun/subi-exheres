@@ -10,7 +10,7 @@ DESCRIPTION=" GNU TeXmacs is a free wysiwyw (what you see is what you want) edit
     The software includes a text editor with support for mathematical formulas, a small technical picture editor and a tool for making presentations from a laptop. Moreover, TeXmacs can be used as an interface for many external systems for computer algebra, numerical analysis, statistics, etc. New presentation styles can be written by the user and new features can be added to the editor using the Scheme extension language. A native spreadsheet and tools for collaborative authoring are planned for later.
 "
 HOMEPAGE="http://www.texmacs.org/"
-DOWNLOADS="ftp://ftp.texmacs.org/pub/${PN}/targz/${PNV}-src.tar.gz"
+DOWNLOADS="http://www.texmacs.org/Download/ftp/tmftp/source/${PNV}-src.tar.gz"
 
 SLOT="0"
 LICENCES="GPL-3"
@@ -28,29 +28,32 @@ DEPENDENCIES="
 
         imlib2? ( media-libs/imlib2 )
         !imlib2? ( media-libs/libpng )
+
+        postscript? ( app-text/ghostscript )
     run:
         spell? ( app-spell/aspell )
     recommendation:
         app-text/texlive
+    suggestion:
+        app-spell/aspell
+        media-gfx/ImageMagick
 "
-# not mature yet
-#        cairo? ( x11-libs/cairo )
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-fastalloc
     --disable-optimize
 
     --enable-pdf-renderer
-    --without-gs
 
-    --with-axel
+    --without-axel
 
     # broken
+#    cairo? ( x11-libs/cairo )
 #    --enable-experimental
 #    --with-cairo
 )
 DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt )
-DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" )
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" "postscript gs")
 
 WORK=${WORK}-src
 
@@ -64,12 +67,15 @@ texmacs_src_prepare() {
 texmacs_src_install() {
     default
 
-    keepdir /usr/libexec/TeXmacs/lib
-
-    if option examples; then
-        keepdir /usr/share/TeXmacs/examples/plugins/{formula,input,markup,menus,minimal,multiline,mutator,nested,prompt,secure,world,complete,handler,substitute,pnambic,dynlink}/{bin,lib}
-    else
+    if ! option examples; then
         edo rm -rf ${IMAGE}/usr/share/TeXmacs/examples
     fi
+
+    pushd ${IMAGE}
+    for dir in $(find ./usr/share/TeXmacs -type d -empty); do
+        keepdir "${dir#.}"
+    done
+    keepdir /usr/libexec/TeXmacs/lib
+    popd
 }
 
