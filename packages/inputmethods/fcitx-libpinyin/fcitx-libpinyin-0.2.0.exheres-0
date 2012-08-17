@@ -1,0 +1,6 @@
+# Copyright 2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require fcitx-libpinyin
+PLATFORMS="~amd64 ~x86"
+
