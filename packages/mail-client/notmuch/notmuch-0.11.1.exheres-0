@@ -1,4 +1,0 @@
-require notmuch
-
-PLATFORMS="~amd64"
-
