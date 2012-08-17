@@ -1,7 +1,7 @@
 # Copyright 2008 Richard Brown
 # Copyright 2009 Bo Ørsted Andresen
 # Copyright 2009 Thomas Anderson
-# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2012 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 SUMMARY="Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music"
@@ -30,24 +30,25 @@ DEPENDENCIES="
 WORK="${WORKBASE}/${PNV/_/~}"
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
-    # Audio Output
+    # sink
     --disable-jack
     --disable-pulse
     --disable-ao
     --disable-oss
     --disable-mvp
     --disable-ffado
+    --disable-roar
 
-    # audio ouput: misc
+    # misc sink
     --disable-fifo
     --disable-pipe-output
     --disable-recorder-output
 
-    # Audio output: streaming
+    # stream sink
     --disable-httpd-output
     --disable-shout
 
-    # audio output: streming encoder
+    # stream sink: encoder
     --disable-vorbis-encoder
     --disable-lame-encoder
     --disable-twolame-encoder
@@ -59,12 +60,19 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-un
 
     # source
-    --disable-curl
-    --disable-lastfm
-    --disable-mms
+    --disable-cdio-paranoia
+
+    # archive source
     --disable-bzip2
     --disable-zzip
     --disable-iso9660
+
+    # stream source
+    --disable-curl
+    --disable-lastfm
+    --disable-mms
+    --disable-soundcloud
+    --disable-soup
 
     # decoder
     --disable-aac
@@ -82,19 +90,17 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-mad
 
     # metadata
-    --disable-cue
     --disable-id3 # require zlib
 
     # ogg, flac, vorbis
     # for better tag display, enable the following
-    --disable-oggflac
     --disable-flac # required to display metaflac tags; it's both a demuxer and a decoder
     --disable-vorbis # Required to display vorbis tags (FLAC, ogg)
 
     # misc
     --enable-sqlite
     --disable-lsr
-    --disable-inotify
+    --enable-inotify
     --disable-largefile
     --disable-libwrap
     --disable-documentation
@@ -103,6 +109,8 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --with-zeroconf=no
     --without-tremor
     --without-faad
+
+    --enable-systemd-daemon
 )
 
 DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( alsa ffmpeg )
