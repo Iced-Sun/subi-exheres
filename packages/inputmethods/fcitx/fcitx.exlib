@@ -11,17 +11,21 @@ DESCRIPTION="
 Fcitx [ˈfaɪtɪks] is a input method framework with extension support. Currently it supports linux and Unix system, like freebsd. It has three builtin Input Method Engine, Pinyin, QuWei and Table-based input methods.
 
 Feature
-* Highly modularized (You can even drop all X support, if you only need fbterm based support).
-* fbterm support (fcitx-fbterm)
-* cloud pinyin support (fcitx-cloudpinyin)
-* themable user interface (builtin classic-ui)
-* kimpanel based user interface support (builtin kimpanel-ui)
-* xlib-only user interface support (fcitx-ui-light)
-* libgooglepinyin based pinyin engine (fcitx-googlepinyin)
-* sunpinyin based pinyin engine (fcitx-sunpinyin)
-* Integrated KDE Configure Tool (kcm-fcitx)
-* GTK Based Configure Tool (fcitx-configtool)
-Japanese(Anthy based), Koarean(Hangul based), and N9-Meego/Maliit support is under development."
+*    Highly modularized (You can even drop all X support, if you only need fbterm based support).
+*    fbterm support (fcitx-fbterm)
+*    cloud pinyin support (fcitx-cloudpinyin)
+*    themable user interface (builtin classic-ui)
+*    kimpanel based user interface support (builtin kimpanel-ui)
+*    xlib-only user interface support (fcitx-ui-light)
+*    libgooglepinyin based pinyin engine (fcitx-googlepinyin)
+*    sunpinyin based pinyin engine (fcitx-sunpinyin)
+*    Integrated KDE Configure Tool (kcm-fcitx)
+*    GTK Based Configure Tool (fcitx-configtool)
+*    Korean support (fcitx-hangul)
+*    Japanese support (fcitx-mozc)
+*    M17N support (fcitx-m17n)
+*    Keyboard layout support (fcitx-keyboard)
+"
 DOWNLOADS+="
     http://fcitx.googlecode.com/files/pinyin.tar.gz
     table? ( http://fcitx.googlecode.com/files/table.tar.gz )
@@ -29,10 +33,7 @@ DOWNLOADS+="
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug dbus opencc gtk gtk3 qt pango table classic-ui kimpanel-ui gobject-introspection
-    ( gtk gtk3 qt ) [[ requires = [ dbus ] ]]
-    pango [[ requires = [ classic-ui ] description = [ Render UI text with Pango instead of fontconfig ] ]]
-"
+MYOPTIONS="debug opencc gtk gtk3 qt table classic-ui kimpanel-ui gobject-introspection lua"
 
 DEPENDENCIES="
     build:
@@ -40,19 +41,17 @@ DEPENDENCIES="
         sys-devel/gettext
         x11-proto/xproto
     build+run:
-        opencc? ( cjk/opencc[>=0.1.1] )
+        app-text/iso-codes
+        x11-libs/libxkbfile
+        dev-libs/icu
+        dev-libs/libxml2
 
         classic-ui? (
             x11-libs/cairo[X]
-            !pango? ( media-libs/fontconfig )
-            pango? ( x11-libs/pango )
+            x11-libs/pango
         )
-
         kimpanel-ui? ( kde/kdeplasma-addons )
 
-        x11-libs/libX11
-
-        dbus? ( sys-apps/dbus[>=1.1.0] )
         gtk? (
             dev-libs/dbus-glib
             x11-libs/gtk+:2
@@ -64,12 +63,8 @@ DEPENDENCIES="
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
 
         gobject-introspection? ( gnome-desktop/gobject-introspection )
-
-        app-spell/enchant
-        app-text/iso-codes
-        x11-libs/libxkbfile
-        dev-libs/icu
-        dev-libs/libxml2
+        lua? ( dev-lang/lua )
+        opencc? ( cjk/opencc[>=0.1.1] )
     recommendation:
         inputmethods/fcitx-configtool
 "
@@ -78,9 +73,14 @@ BUGS_TO="oahong@gmail.com"
 RESTRICT="test"
 UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
 
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DENABLE_ENCHANT:BOOL=False
+    -DENABLE_PRESAGE:BOOL=False
+)
+
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG TABLE OPENCC
-    PANGO 'classic-ui CAIRO'
+    DEBUG TABLE OPENCC LUA
+    'classic-ui CAIRO' 'classic-ui PANGO'
     'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' 'qt QT_IM_MODULE'
     'gobject-introspection GIR'
 )
