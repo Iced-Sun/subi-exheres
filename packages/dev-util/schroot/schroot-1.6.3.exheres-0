@@ -3,7 +3,7 @@
 # Based in part upon 'schroot-1.4.3' from Gentoo, which is:
 #     Copyright 1999-2010 Gentoo Foundation
 
-require debian-upstream [ suffix=".orig.tar.bz2" ] bash-completion [  ]
+require debian-upstream [ suffix=".orig.tar.xz" ] bash-completion [  ]
 
 SUMMARY="Utility to execute commands in a chroot environment"
 HOMEPAGE="http://packages.debian.org/source/sid/schroot"

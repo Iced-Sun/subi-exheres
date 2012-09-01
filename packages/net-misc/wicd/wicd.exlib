@@ -1,11 +1,8 @@
 #require distutils sourceforge [ suffix=tar.bz2 ] systemd-service
-require distutils systemd-service
+require distutils launchpad systemd-service
 export_exlib_phases src_configure src_install
 
-SUMMARY="A lightweight wired and wireless network manager for Linux"
-DESCRIPTION="Wicd is an open source wired and wireless network manager for Linux which aims to provide a simple interface to connect to networks with a wide variety of settings."
-HOMEPAGE="http://wicd.sourceforge.net/"
-DOWNLOADS="mirror://sourceforge/${PN}/${PNV}.tar.bz2"
+SUMMARY="A network connection manager that aims to simplify wired and wireless networking in Linux"
 
 LICENCES="GPL-2"
 MYOPTIONS="
@@ -54,6 +51,7 @@ wicd_src_configure() {
         --no-install-pmutils \
         --no-install-docs \
         --no-install-cli \
+        --no-install-i18n-man \
         ${myconf}
 }
 
