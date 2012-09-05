@@ -21,7 +21,10 @@ SLOT="0"
 PLATFORMS="~amd64"
 
 DEPENDENCIES="
+    build:
+        dev-python/docutils
     run:
         x11-apps/xrandr
         gnome-bindings/pygtk
 "
+
