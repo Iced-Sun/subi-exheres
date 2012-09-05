@@ -1,8 +1,9 @@
-# Copyright 2009,2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2012 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require sourceforge [[ suffix=tar.gz ]] freedesktop-desktop
+require cmake github [[ user=FreeRDP suffix=tar.gz ]] freedesktop-desktop
 
+HOMEPAGE="http://remmina.sourceforge.net"
 SUMMARY="The GTK+ Remote Desktop Client"
 DESCRIPTION="Remmina is a remote desktop client written in GTK+, aiming to be useful for system
 administrators and travellers, who need to work with lots of remote computers in front of either
@@ -11,16 +12,19 @@ consistant user interface. Currently RDP, VNC, XDMCP and SSH are supported. "
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi ssh
-    ssh [[ description = [ Provide secure tunneling of all the other protocols ] ]]
+MYOPTIONS="avahi ssh rdp telepathy vnc xdmcp
+    ssh [[ description = [ Provide secure tunneling for all protocols, AND build the SSH plugin ] ]]
+    rdp [[ description = [ Build the RDP plugin ] ]]
+    telepathy [[ description = [ Build the telepathy plugin ] ]]
+    vnc [[ description = [ Build the VNC plugin ] ]]
+    xdmcp [[ description = [ Build the XDMCP plugin ] ]]
 "
 
 DEPENDENCIES="
     build:
         dev-util/intltool[>=0.35.0]
     build+run:
-        dev-libs/glib:2
-        x11-libs/gtk+:2[>=2.16]
+        x11-libs/gtk+:3
         dev-libs/unique:1
         dev-libs/libgcrypt
 
@@ -29,15 +33,35 @@ DEPENDENCIES="
             dev-libs/vte
         )
         avahi? ( net-dns/avahi )
-    recommendation:
-        net-remote/remmina-plugins[>=0.9.0]
+
+        x11-libs/libxkbfile
+        gnome-desktop/libgnome-keyring
+        rdp? ( net-remote/freerdp )
+        telepathy? ( net-im/telepathy-glib[>=0.9.0] )
+        vnc? (
+            dev-libs/gnutls
+            sys-libs/zlib
+            media-libs/jpeg
+        )
+    run:
+        x11-apps/setxkbmap
+        x11-apps/xprop
+
+        xdmcp? ( x11-server/xorg-server[xephyr] )
 "
 
-DEFAULT_SRC_CONFIGURE_PARAMS=(
-    --enable-nls
-    --enable-unique
-    --enable-gcrypt
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DWITH_PTHREAD=ON
+    -DWITH_GCRYPT=ON
+    -DWITH_GETTEXT=ON
+
+    -DWITH_APPINDICATOR=OFF
 )
 
-DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( avahi ssh "ssh vte" )
+CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
+    AVAHI
+    "ssh LIBSSH" "ssh VTE"
+    "rdp FREERDP"
+    "TELEPATHY"
+)
 

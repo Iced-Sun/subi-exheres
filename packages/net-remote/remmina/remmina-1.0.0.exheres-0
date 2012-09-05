@@ -3,3 +3,5 @@ require remmina
 SLOT="0"
 PLATFORMS="~amd64 ~x86"
 
+WORK="${WORKBASE}/FreeRDP-Remmina-356c033"
+
