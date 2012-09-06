@@ -12,8 +12,8 @@ consistant user interface. Currently RDP, VNC, XDMCP and SSH are supported. "
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi ssh rdp telepathy vnc xdmcp
-    ssh [[ description = [ Provide secure tunneling for all protocols, AND build the SSH plugin ] ]]
+MYOPTIONS="avahi ssh rdp telepathy vnc xdmcp gnomekeyring
+    ssh [[ description = [ Provide secure tunneling and build the SSH plugin ] ]]
     rdp [[ description = [ Build the RDP plugin ] ]]
     telepathy [[ description = [ Build the telepathy plugin ] ]]
     vnc [[ description = [ Build the VNC plugin ] ]]
@@ -25,7 +25,6 @@ DEPENDENCIES="
         dev-util/intltool[>=0.35.0]
     build+run:
         x11-libs/gtk+:3
-        dev-libs/unique:1
         dev-libs/libgcrypt
 
         ssh? (
@@ -35,22 +34,27 @@ DEPENDENCIES="
         avahi? ( net-dns/avahi )
 
         x11-libs/libxkbfile
-        gnome-desktop/libgnome-keyring
-        rdp? ( net-remote/freerdp )
+        rdp? ( net-remote/FreeRDP )
         telepathy? ( net-im/telepathy-glib[>=0.9.0] )
+
+        net-libs/libvncserver
         vnc? (
             dev-libs/gnutls
             sys-libs/zlib
             media-libs/jpeg
         )
-    run:
-        x11-apps/setxkbmap
-        x11-apps/xprop
 
+        gnomekeyring? ( gnome-desktop/libgnome-keyring )
+    run:
         xdmcp? ( x11-server/xorg-server[xephyr] )
 "
+#    run:
+#        x11-apps/setxkbmap
+#        x11-apps/xprop
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DCMAKE_INSTALL_LIBDIR:STRING=${LIBDIR}
+
     -DWITH_PTHREAD=ON
     -DWITH_GCRYPT=ON
     -DWITH_GETTEXT=ON
@@ -59,9 +63,12 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
-    AVAHI
-    "ssh LIBSSH" "ssh VTE"
-    "rdp FREERDP"
-    "TELEPATHY"
+    AVAHI GNOMEKEYRING TELEPATHY "ssh LIBSSH" "ssh VTE" "rdp FREERDP" "vnc ZLIB"
 )
+
+src_install() {
+    keepdir /usr/include/remmina
+
+    cmake_src_install
+}
 
