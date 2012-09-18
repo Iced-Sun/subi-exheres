@@ -28,6 +28,7 @@ Feature
 "
 DOWNLOADS+="
     http://fcitx.googlecode.com/files/pinyin.tar.gz
+    http://fcitx.googlecode.com/files/en_dict-20120815.tar.gz
     table? ( http://fcitx.googlecode.com/files/table.tar.gz )
 "
 
@@ -94,6 +95,7 @@ update_gtk_immodules() {
 
 fcitx_src_prepare() {
     edo cp "${FETCHEDDIR}"/pinyin.tar.gz ${CMAKE_SOURCE}/data
+    edo cp "${FETCHEDDIR}"/en_dict-20120815.tar.gz ${CMAKE_SOURCE}/data
     option table && edo cp "${FETCHEDDIR}"/table.tar.gz data/table
 }
 
