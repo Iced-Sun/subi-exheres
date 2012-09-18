@@ -1,4 +1,4 @@
-# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2012 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 SUMMARY="Enca is an Extremely Naive Charset Analyser"
@@ -6,8 +6,8 @@ DESCRIPTION="Enca is an Extremely Naive Charset Analyser. It detects character s
 
 Currently it supports Belarusian, Bulgarian, Croatian, Czech, Estonian, Hungarian, Latvian, Lithuanian, Polish, Russian, Slovak, Slovene, Ukrainian, Chinese, and some multibyte encodings independently on language.
 "
-HOMEPAGE="http://gitorious.org/${PN}"
-DOWNLOADS="http://dl.cihar.com/${PN}/${PNV}.tar.lzma"
+HOMEPAGE="http://cihar.com/software/enca/"
+DOWNLOADS="http://dl.cihar.com/enca/${PNV}.tar.bz2"
 
 SLOT="0"
 LICENCES="GPL-2"
