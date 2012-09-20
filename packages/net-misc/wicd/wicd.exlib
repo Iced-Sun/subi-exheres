@@ -1,6 +1,6 @@
 #require distutils sourceforge [ suffix=tar.bz2 ] systemd-service
 require distutils launchpad systemd-service
-export_exlib_phases src_configure src_install
+export_exlib_phases src_configure src_compile src_install
 
 SUMMARY="A network connection manager that aims to simplify wired and wireless networking in Linux"
 
@@ -12,6 +12,8 @@ MYOPTIONS="
 SLOT="0"
 
 DEPENDENCIES="
+    build:
+        sys-devel/gettext
     build+run:
 	    dev-lang/python[>=2.4&<3.0]
     run:
@@ -53,6 +55,16 @@ wicd_src_configure() {
         --no-install-cli \
         --no-install-i18n-man \
         ${myconf}
+}
+
+wicd_src_compile() {
+    distutils_src_compile
+
+    pushd ${WORK}
+    for loc in po/*.po; do
+        edo msgfmt ${loc} -o translations/`basename -s .po ${loc}`/LC_MESSAGES/wicd.mo
+    done
+    popd
 }
 
 wicd_src_install() {
