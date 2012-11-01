@@ -4,6 +4,9 @@
 # Copyright 2010-2012 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
+require systemd-service
+export_exlib_phases src_install
+
 SUMMARY="Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music"
 DESCRIPTION="
 Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music. Through plugins and libraries it can play a variety of sound files while being controlled by its network protocol.
@@ -109,9 +112,16 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --with-zeroconf=no
     --without-tremor
     --without-faad
-
-    --enable-systemd-daemon
 )
 
-DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( alsa ffmpeg )
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( alsa ffmpeg "systemd systemd-daemon")
+
+mpd_src_install() {
+    default
+
+    if option systemd; then
+        insinto /usr/${LIBDIR}/systemd/user
+        doins "${FILES}"/systemd/user/${PN}{.service,.socket,@.socket}
+    fi
+}
 
