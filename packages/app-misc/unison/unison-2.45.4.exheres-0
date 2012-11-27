@@ -12,7 +12,7 @@ DESCRIPTION="
     modified separately, and then brought up to date by propagating the
     changes in each replica to the other.
 "
-HOMEPAGE="http://www.cis.upenn.edu/~bcpierce/unison/"
+HOMEPAGE="http://www.seas.upenn.edu/~bcpierce/unison/"
 LICENCES="GPL-3"
 PLATFORMS="~amd64 ~ppc ~x86"
 
