@@ -22,7 +22,7 @@ DEPENDENCIES="
             gnome-bindings/pygtk
             gnome-bindings/pygobject
         )
-        curses? ( dev-python/urwid[ncurses] )
+        curses? ( dev-python/urwid[ncurses][<1.1.0] )
     recommendation:
         sys-apps/net-tools
         net-wireless/wireless_tools
