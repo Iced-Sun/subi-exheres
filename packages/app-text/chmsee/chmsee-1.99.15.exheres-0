@@ -1,7 +1,7 @@
 # Copyright 2012 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-GITHUB_REVISION=d5fb2760d5
+GITHUB_REVISION=f80d81df20
 require chmsee
 
 PLATFORMS="~amd64"
