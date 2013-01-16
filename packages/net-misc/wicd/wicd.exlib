@@ -1,4 +1,6 @@
-#require distutils sourceforge [ suffix=tar.bz2 ] systemd-service
+# Copyright 2012, 2013 Sun Bing
+# Distributed under the terms of the GNU General Public License v2
+
 require distutils launchpad systemd-service
 export_exlib_phases src_configure src_compile src_install
 
@@ -19,10 +21,10 @@ DEPENDENCIES="
     run:
         dev-python/dbus-python
         gtk? (
-            gnome-bindings/pygtk
-            gnome-bindings/pygobject
+            gnome-bindings/pygtk[:2]
+            gnome-bindings/pygobject[:2]
         )
-        curses? ( dev-python/urwid[ncurses][<1.1.0] )
+        curses? ( dev-python/urwid[ncurses] )
     recommendation:
         sys-apps/net-tools
         net-wireless/wireless_tools

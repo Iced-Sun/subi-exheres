@@ -2,3 +2,9 @@ require wicd
 
 PLATFORMS="~amd64 ~x86"
 
+src_prepare()
+{
+    expatch -p0 ${FILES}/${PNV}-urwid.patch
+    default
+}
+
