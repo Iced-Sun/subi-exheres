@@ -1,0 +1,14 @@
+require fotoxx
+
+PLATFORMS="~amd64"
+
+src_prepare()
+{
+    edo sed -i Makefile -e 's/xdg-desktop-menu/#xdg-desktop-menu/'
+}
+
+src_compile()
+{
+    emake LDFLAGS="${LDFLAGS} -lpthread"
+}
+

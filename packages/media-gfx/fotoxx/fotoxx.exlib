@@ -1,4 +1,4 @@
-# Copyright 2009-2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require freedesktop-desktop
@@ -15,10 +15,10 @@ SLOT="0"
 DEPENDENCIES="
     build+run:
         x11-libs/gtk+:3
-        x11-apps/xdg-utils
-        media-libs/ExifTool
         media-libs/tiff
-    suggestion:
+    run:
+        media-libs/ExifTool
+        media-gfx/dcraw
         media-gfx/ufraw
 "
 
