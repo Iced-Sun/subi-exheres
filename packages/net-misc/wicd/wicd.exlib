@@ -1,7 +1,7 @@
 # Copyright 2012, 2013 Sun Bing
 # Distributed under the terms of the GNU General Public License v2
 
-require distutils launchpad systemd-service
+require distutils launchpad
 export_exlib_phases src_configure src_compile src_install
 
 SUMMARY="A network connection manager that aims to simplify wired and wireless networking in Linux"
