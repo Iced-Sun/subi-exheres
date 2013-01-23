@@ -35,20 +35,19 @@ DEPENDENCIES="
 	    )
     suggestion:
         dev-python/notify-python [[ description = [ make Wicd show notifications ] ]]
-	    sys-power/pm-utils[>=1.2.4] [[ description = [ For suspend/resume integration ] ]]
 "
 
 wicd_src_configure() {
     local myconf
     option gtk || myconf+=" --no-install-gtk"
     option curses || myconf+=" --no-install-ncurses"
-    option systemd && myconf+=" --systemd=${SYSTEMDSYSTEMUNITDIR} --no-install-init --no-install-pmutils"
+    option systemd && myconf+=" --systemd=${SYSTEMDSYSTEMUNITDIR} --no-install-init"
 
     edo ${PYTHON} -B setup.py configure \
         --distro=gentoo \
         --python="${PYTHON}" \
         --lib="/usr/${LIBDIR}" \
-        --pmutils="/usr/${LIBDIR}/pm-utils/sleep.d/55wicd" \
+        --no-install-pmutils \
         --no-install-kde \
         --no-install-acpi \
         --no-install-docs \
@@ -71,5 +70,7 @@ wicd_src_install() {
     distutils_src_install
 
     edo rm -rf ${IMAGE}/etc/logrotate.d
+
+    install_systemd_files
 }
 
