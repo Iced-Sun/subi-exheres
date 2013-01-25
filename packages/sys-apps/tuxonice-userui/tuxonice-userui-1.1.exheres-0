@@ -1,6 +1,8 @@
 # Copyright 2009 Mike Kelly
 # Distributed under the terms of the GNU General Public License v2
 
+require systemd-service
+
 SUMMARY="user interface for suspend/resume with TuxOnIce"
 DESCRIPTION="
 The user interface for TuxOnIce, TuxOnIce-UserUI, is a separate program that
@@ -33,5 +35,7 @@ src_compile() {
 src_install() {
     dosbin tuxoniceui
     dodoc AUTHORS ChangeLog KERNEL_API README TODO USERUI_API
+
+    install_systemd_files
 }
 

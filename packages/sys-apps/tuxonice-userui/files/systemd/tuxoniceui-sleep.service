@@ -1,0 +1,15 @@
+[Unit]
+Description=tuxoniceui suspend hook
+Before=sleep.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/bash -c "echo `fgconsole` > %t/tuxoniceui"
+ExecStart=/bin/chvt 63
+ExecStop=-/bin/bash -c "chvt `< %t/tuxoniceui`"
+ExecStopPost=-/bin/rm -rf %t/tuxoniceui
+
+[Install]
+WantedBy=sleep.target
