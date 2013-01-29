@@ -1,0 +1,24 @@
+# Copyright 2013 SUN Bing
+# Distributed under the terms of the GNU General Public License v2
+
+require distutils googlecode [[ suffix=tar.gz ]]
+
+SUMMARY="Python bindings for the FreeType library"
+
+PLATFORMS="~amd64 ~x86"
+LICENCES="LGPL-2.1"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    run:
+        media-libs/freetype:2
+"
+
+src_install() {
+    default
+    distutils_src_install
+
+    edo rm -f ${IMAGE}/usr/Vera.ttf
+}
+
