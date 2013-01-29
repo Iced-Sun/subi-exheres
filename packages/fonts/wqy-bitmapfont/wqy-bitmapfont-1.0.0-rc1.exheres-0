@@ -1,4 +1,5 @@
 # Copyright 1999-2008 Gentoo Foundation
+# Copyright 2012,2013 SUN Bing
 # Distributed under the terms of the GNU General Public License v2
 
 FONT=${PN%-*}
@@ -21,6 +22,17 @@ src_install() {
     default
 
     insinto /usr/share/fonts/X11/${FONT}
-    doins *.pcf
+    for f in *.pcf; do
+        gzip -9 ${f}
+        doins ${f}.gz
+    done
+
+    # Install the fontconfig configuration
+    if has_version 'media-libs/fontconfig[>=2.10.1]' ; then
+        insinto /usr/share/fontconfig/conf.avail/
+    else
+        insinto /etc/fonts/conf.avail/
+    fi
+    doins 85-wqy-bitmapsong.conf
 }
 
