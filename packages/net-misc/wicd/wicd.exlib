@@ -25,8 +25,11 @@ DEPENDENCIES="
             gnome-bindings/pygobject[:2]
         )
         curses? ( dev-python/urwid[ncurses] )
+        || (
+            sys-apps/net-tools
+            sys-apps/iproute2
+        )
     recommendation:
-        sys-apps/net-tools
         net-wireless/wireless_tools
 	    net-wireless/wpa_supplicant
 	    || (
@@ -52,7 +55,9 @@ wicd_src_configure() {
         --no-install-acpi \
         --no-install-docs \
         --no-install-cli \
+        --no-install-i18n \
         --no-install-i18n-man \
+        --no-use-notifications \
         ${myconf}
 }
 
