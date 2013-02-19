@@ -1,0 +1,33 @@
+# Copyright 2013 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+FONT=${PN}
+
+SUMMARY="TTF versions of Dimitar Zhekov's excellent monospaced Terminus font"
+HOMEPAGE="http://files.ax86.net/${PN}/"
+DOWNLOADS="http://files.ax86.net/${PN}/${PV}/TerminusBold-${PV}.ttf
+           http://files.ax86.net/${PN}/${PV}/TerminusMedium-${PV}.ttf
+           http://files.ax86.net/${PN}/${PV}/TerminusMediumItalic-${PV}.ttf
+           http://files.ax86.net/${PN}/${PV}/COPYING"
+
+LICENCES="|| ( GPL-3 Apache-2.0 )"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+#WORK=${WORKBASE}/${PN}
+
+src_unpack() {
+    mkdir -p ${WORK}
+    pushd ${FETCHEDDIR}
+    edo cp ${ARCHIVES} ${WORK}
+    popd
+}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.ttf
+}
+
