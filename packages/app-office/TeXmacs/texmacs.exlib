@@ -21,37 +21,28 @@ MYOPTIONS="X qt imlib2 spell postscript examples
 DEPENDENCIES="
     build+run:
         dev-lang/guile:1.8
-        media-libs/freetype
+        media-libs/freetype:2
 
         X? ( x11-libs/libX11 )
         qt? ( x11-libs/qt:4 )
 
         imlib2? ( media-libs/imlib2 )
-        !imlib2? ( media-libs/libpng )
 
         postscript? ( app-text/ghostscript )
     run:
         spell? ( app-spell/aspell )
-    recommendation:
-        app-text/texlive
     suggestion:
-        app-spell/aspell
+        app-text/texlive
         media-gfx/ImageMagick
 "
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-fastalloc
     --disable-optimize
-
     --enable-pdf-renderer
-
     --without-axel
-
-    # broken
-#    cairo? ( x11-libs/cairo )
-#    --enable-experimental
-#    --with-cairo
 )
+
 DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt )
 DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( imlib2 "X x" "postscript gs")
 
