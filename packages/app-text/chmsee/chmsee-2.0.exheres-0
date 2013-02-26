@@ -1,4 +1,5 @@
-GITHUB_REVISION=fc6a4e80f6
+GITHUB_REVISION=91c40fef0c
+
 require chmsee
 
 PLATFORMS="~amd64"
