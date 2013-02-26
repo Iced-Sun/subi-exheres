@@ -4,7 +4,10 @@
 #    Copyright 1999-2008 Gentoo Foundation
 
 require cmake [ api=2 ] googlecode [ suffix=tar.xz ] systemd-service
-export_exlib_phases src_prepare src_install pkg_postinst pkg_postrm
+export_exlib_phases src_unpack src_install pkg_postinst pkg_postrm
+
+MY_ARCHIVES=( pinyin.tar.gz py_table-20121124.tar.gz py_stroke-20121124.tar.gz en_dict-20121020.tar.gz )
+MY_DOWNLOADS=${MY_ARCHIVES[@]/#/http://fcitx.googlecode.com/files/}
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
@@ -26,26 +29,28 @@ Feature
 *    M17N support (fcitx-m17n)
 *    Keyboard layout support (fcitx-keyboard)
 "
-DOWNLOADS+="
-    http://fcitx.googlecode.com/files/pinyin.tar.gz
-    http://fcitx.googlecode.com/files/en_dict-20120815.tar.gz
+DOWNLOADS+=" ${MY_DOWNLOADS}
     table? ( http://fcitx.googlecode.com/files/table.tar.gz )
 "
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug opencc gtk gtk3 qt table classic-ui kimpanel-ui gobject-introspection lua"
+MYOPTIONS="debug opencc gtk gtk3 qt table classic-ui kimpanel-ui gobject-introspection lua libxml2"
 
 DEPENDENCIES="
     build:
-        dev-util/intltool
         sys-devel/gettext
         x11-proto/xproto
     build+run:
-        app-text/iso-codes
-        x11-libs/libxkbfile
-        dev-libs/icu
-        dev-libs/libxml2
+        x11-libs/libX11
+        x11-libs/libXrender
+        x11-libs/libXfixes
+
+        libxml2? (
+            app-text/iso-codes
+            x11-libs/libxkbfile
+            dev-libs/libxml2
+        )
 
         classic-ui? (
             x11-libs/cairo[X]
@@ -75,28 +80,41 @@ RESTRICT="test"
 UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DENABLE_GETTEXT:BOOL=True
+
+    -DENABLE_X11:BOOL=True
+
+    # for gtk-immodules
+    -DENABLE_DBUS:BOOL=True
+    -DENABLE_GLIB2:BOOL=True
+
     -DENABLE_ENCHANT:BOOL=False
     -DENABLE_PRESAGE:BOOL=False
+    -DENABLE_ICU:BOOL=False
+    -DENABLE_BACKTRACE:BOOL=False
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG TABLE OPENCC LUA
+    DEBUG TABLE OPENCC LUA LIBXML2
     'classic-ui CAIRO' 'classic-ui PANGO'
-    'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' 'qt QT_IM_MODULE'
+    'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' QT 'qt QT_IM_MODULE'
     'gobject-introspection GIR'
 )
 
 update_gtk_immodules() {
     option gtk && gtk-query-immodules-2.0 > "${ROOT}"/etc/gtk-2.0/gtk.immodules
-    if option gtk3 ; then
-        gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
-    fi
+    option gtk3 && gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
 }
 
-fcitx_src_prepare() {
-    edo cp "${FETCHEDDIR}"/pinyin.tar.gz ${CMAKE_SOURCE}/data
-    edo cp "${FETCHEDDIR}"/en_dict-20120815.tar.gz ${CMAKE_SOURCE}/data
-    option table && edo cp "${FETCHEDDIR}"/table.tar.gz data/table
+fcitx_src_unpack() {
+    unpack --if-compressed ${ARCHIVES%% *}
+    for pkg in ${MY_ARCHIVES[@]}; do
+        edo cp "${FETCHEDDIR}/${pkg}" ${CMAKE_SOURCE}/data
+    done
+    option table && edo cp "${FETCHEDDIR}"/table.tar.gz ${CMAKE_SOURCE}/data/table
+
+    # FIXME: skipped in builtin-saveenv, why?
+    edo mkdir -p ${WORK}/build
 }
 
 fcitx_src_install() {
