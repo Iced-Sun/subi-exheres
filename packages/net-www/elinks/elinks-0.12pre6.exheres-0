@@ -3,10 +3,11 @@
 
 require elinks
 
-DOWNLOADS="http://elinks.or.cz/download/elinks-current-0.13.tar.bz2"
-
 PLATFORMS="~amd64 ~x86"
 
-DATE=`date +%Y%m%d`
-WORK=${WORKBASE}/${PNV}-${DATE}
+src_install () {
+    default
+
+    edo rm -rf ${IMAGE}/usr/share/locale
+}
 

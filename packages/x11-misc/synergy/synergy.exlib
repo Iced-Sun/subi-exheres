@@ -22,10 +22,10 @@ Redirecting the mouse and keyboard is as simple as moving the mouse off the edge
 Synergy is supported on Windows, Mac OS X and Linux.
 "
 HOMEPAGE="http://synergy-foss.org/"
+DOWNLOADS="http://synergy-foss.org/download/?file=${PNV}-Source.tar.gz"
 
 LICENCES="GPL-2"
 SLOT="0"
-
 MYOPTIONS=""
 
 DEPENDENCIES="

@@ -9,6 +9,7 @@ customizable and can be extended via Lua or Guile scripts. It is quite portable
 and runs on a variety of platforms.
 "
 HOMEPAGE="http://elinks.or.cz/"
+DOWNLOADS="${HOMEPAGE}/download/${PNV}.tar.bz2"
 
 LICENCES="GPL-2"
 SLOT="0"
@@ -21,10 +22,11 @@ DEPENDENCIES="
     build+run:
         app-arch/bzip2
         sys-libs/zlib
-        app-arch/xz
         js? ( dev-libs/xulrunner )
         gc? ( dev-libs/boehm-gc )
 "
+# notwork yet
+#        app-arch/xz
 
 RESTRICT="test" # Tests fail without multilib on amd64
 BUGS_TO="alip@exherbo.org"
@@ -92,7 +94,7 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
 
     --with-zlib
     --with-bzlib
-    --with-lzma
+    --without-lzma
 
     --with-openssl
     --without-gnutls
@@ -103,5 +105,4 @@ DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=(
 )
 
 DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( gc  'js spidermonkey' )
-
 
