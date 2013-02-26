@@ -4,7 +4,7 @@
 #    Copyright 1999-2008 Gentoo Foundation
 
 require cmake [ api=2 ] googlecode [ suffix=tar.xz ] systemd-service
-export_exlib_phases src_unpack src_install pkg_postinst pkg_postrm
+export_exlib_phases src_unpack src_install
 
 MY_ARCHIVES=( pinyin.tar.gz py_table-20121124.tar.gz py_stroke-20121124.tar.gz en_dict-20121020.tar.gz )
 MY_DOWNLOADS=${MY_ARCHIVES[@]/#/http://fcitx.googlecode.com/files/}
@@ -35,7 +35,7 @@ DOWNLOADS+=" ${MY_DOWNLOADS}
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug opencc gtk gtk3 qt table classic-ui kimpanel-ui gobject-introspection lua libxml2"
+MYOPTIONS="debug opencc qt table classic-ui kimpanel-ui gobject-introspection lua libxml2"
 
 DEPENDENCIES="
     build:
@@ -58,14 +58,6 @@ DEPENDENCIES="
         )
         kimpanel-ui? ( kde/kdeplasma-addons )
 
-        gtk? (
-            dev-libs/dbus-glib
-            x11-libs/gtk+:2
-        )
-        gtk3? (
-            dev-libs/dbus-glib
-            x11-libs/gtk+:3
-        )
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
 
         gobject-introspection? ( gnome-desktop/gobject-introspection )
@@ -84,10 +76,15 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 
     -DENABLE_X11:BOOL=True
 
-    # for gtk-immodules
-    -DENABLE_DBUS:BOOL=True
+    # fcitx-gclient, required by gtk-immodules
     -DENABLE_GLIB2:BOOL=True
+    -DENABLE_DBUS:BOOL=True
 
+    # use standalone fcitx-gtk
+    -DENABLE_GTK2_IM_MODULE:BOOL=False
+    -DENABLE_GTK3_IM_MODULE:BOOL=False
+
+    # miscs
     -DENABLE_ENCHANT:BOOL=False
     -DENABLE_PRESAGE:BOOL=False
     -DENABLE_ICU:BOOL=False
@@ -97,14 +94,9 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
     DEBUG TABLE OPENCC LUA LIBXML2
     'classic-ui CAIRO' 'classic-ui PANGO'
-    'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE' QT 'qt QT_IM_MODULE'
+    QT 'qt QT_IM_MODULE'
     'gobject-introspection GIR'
 )
-
-update_gtk_immodules() {
-    option gtk && gtk-query-immodules-2.0 > "${ROOT}"/etc/gtk-2.0/gtk.immodules
-    option gtk3 && gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
-}
 
 fcitx_src_unpack() {
     unpack --if-compressed ${ARCHIVES%% *}
@@ -124,13 +116,5 @@ fcitx_src_install() {
         insinto /usr/${LIBDIR}/systemd/user
         doins "${FILES}"/systemd/user/${PN}.service
     fi
-}
-
-fcitx_pkg_postinst() {
-    update_gtk_immodules
-}
-
-fcitx_pkg_postrm() {
-    update_gtk_immodules
 }
 

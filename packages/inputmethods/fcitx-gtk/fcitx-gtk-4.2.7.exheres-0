@@ -1,0 +1,46 @@
+# Copyright 2013 SUN Bing
+# Distributed under the terms of the GNU General Public License v2
+
+require cmake [ api=2 ] googlecode [ suffix=tar.xz project=fcitx ]
+
+SUMMARY="Standalone Gtk im module package for fcitx"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS="debug gtk gtk3
+           ( gtk gtk3 ) [[ number-selected = at-least-one ]]
+"
+
+DEPENDENCIES="
+    build+run:
+        inputmethods/fcitx
+        dev-libs/dbus-glib
+
+        gtk? ( x11-libs/gtk+:2 )
+        gtk3? ( x11-libs/gtk+:3 )
+"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+#    -DENABLE_SNOOPER:BOOL=False
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
+    'gtk GTK2_IM_MODULE' 'gtk3 GTK3_IM_MODULE'
+)
+
+update_gtk_immodules() {
+    option gtk && gtk-query-immodules-2.0 > "${ROOT}"/etc/gtk-2.0/gtk.immodules
+    option gtk3 && gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
+}
+
+pkg_postinst() {
+    default
+    update_gtk_immodules
+}
+
+pkg_postrm() {
+    default
+    update_gtk_immodules
+}
+
