@@ -33,11 +33,11 @@ DEPENDENCIES="
         )
         avahi? ( net-dns/avahi )
 
+        net-libs/libvncserver
         x11-libs/libxkbfile
         rdp? ( net-remote/FreeRDP )
         telepathy? ( net-im/telepathy-glib[>=0.9.0] )
 
-        net-libs/libvncserver
         vnc? (
             dev-libs/gnutls
             sys-libs/zlib
@@ -53,8 +53,6 @@ DEPENDENCIES="
 #        x11-apps/xprop
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
-    -DCMAKE_INSTALL_LIBDIR:STRING=${LIBDIR}
-
     -DWITH_PTHREAD=ON
     -DWITH_GCRYPT=ON
     -DWITH_GETTEXT=ON
@@ -67,8 +65,11 @@ CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
 )
 
 src_install() {
-    keepdir /usr/include/remmina
-
     cmake_src_install
+
+    edo rm -rf ${IMAGE}/var
+
+    insinto /usr/include/remmina
+    doins ${WORK}/remmina/include/remmina/*.h
 }
 

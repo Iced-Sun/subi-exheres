@@ -1,4 +1,4 @@
-# Copyright 2009-2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require cmake github [[ suffix=tar.gz ]]
@@ -6,22 +6,43 @@ require cmake github [[ suffix=tar.gz ]]
 HOMEPAGE="http://www.freerdp.com"
 SUMMARY="A Remote Desktop Protocol Implementation"
 
-LICENCES="GPL-2"
+LICENCES="Apache-2.0"
 SLOT="0"
-MYOPTIONS="pulseaudio cups alsa ffmpeg X"
+MYOPTIONS="alsa pulseaudio cups ffmpeg gstreamer X smartcard server
+    server [[ requires = X ]]
+    amd64_cpu_features: sse2
+"
 
 DEPENDENCIES="
     build+run:
         dev-libs/openssl
         sys-libs/zlib
+
+        X? (
+            x11-libs/libX11
+            x11-libs/libxkbfile
+        )
+
+        alsa? ( sys-sound/alsa-lib )
+        pulseaudio? ( media-sound/pulseaudio )
+
+        ffmpeg? ( media/ffmpeg )
+        gstreamer? ( media-libs/gstreamer )
+
+        cups? ( net-print/cups )
 "
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DWITH_CLIENT=ON
     -DWITH_DIRECTFB=OFF
-    -DWITH_PCSC=OFF
+    -DWITH_IPP=OFF
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
-    PULSEAUDIO CUPS FFMPEG ALSA "X X11" "X XKBFILE"
+    "X X11" "X XKBFILE"
+    ALSA "pulseaudio PULSE"
+    CUPS FFMPEG GSTREAMER SERVER
+    "smartcard PCSC"
+    "amd64_cpu_features:sse2 SSE2"
 )
 
