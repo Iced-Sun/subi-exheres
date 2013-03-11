@@ -2,6 +2,8 @@
 # Copyright 2012,2013 SUN Bing
 # Distributed under the terms of the GNU General Purpose License v2
 
+require xfont
+
 FONT=${PN%-*}
 
 SUMMARY="A high quality sans-serif style cjk outline font derived from \"Droid Sans Fallback\""
