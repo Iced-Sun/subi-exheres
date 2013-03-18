@@ -1,7 +1,7 @@
 # Copyright 2008 Richard Brown
 # Copyright 2009 Bo Ørsted Andresen
 # Copyright 2009 Thomas Anderson
-# Copyright 2010-2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require systemd-service
@@ -41,6 +41,8 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-mvp
     --disable-ffado
     --disable-roar
+    --disable-openal
+    --disable-solaris-output
 
     # misc sink
     --disable-fifo
@@ -59,7 +61,6 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
 
     # clients
     --enable-tcp
-    --disable-ipv6
     --disable-un
 
     # source
@@ -76,21 +77,22 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-mms
     --disable-soundcloud
     --disable-soup
+    --disable-despotify
 
     # decoder
     --disable-aac
     --disable-audiofile
+    --disable-fluidsynth
+    --disable-gme
+    --disable-mad
     --disable-mikmod
-    --disable-mpg123
     --disable-modplug
     --disable-mpc
-    --disable-gme
+    --disable-mpg123
     --disable-sidplay
     --disable-sndfile
-    --disable-fluidsynth
-    --disable-wildmidi
     --disable-wavpack
-    --disable-mad
+    --disable-wildmidi
 
     # metadata
     --disable-id3 # require zlib
@@ -102,11 +104,12 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
 
     # misc
     --enable-sqlite
-    --disable-lsr
     --enable-inotify
+    --disable-lsr
     --disable-largefile
     --disable-libwrap
     --disable-documentation
+    --disable-ipv6
 
     ###
     --with-zeroconf=no
