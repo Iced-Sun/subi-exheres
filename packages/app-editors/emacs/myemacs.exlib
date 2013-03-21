@@ -7,9 +7,9 @@
 require alternatives elisp-module
 
 if [[ -z $(ever range 3) ]]; then
-    require gnu [ suffix=bz2 ]
+    require gnu [ suffix=xz ]
 else
-    require gnu [ alpha=true subdir=pretest suffix=gz ]
+    require gnu [ alpha=true subdir=pretest suffix=xz ]
 fi
 
 if [[ $(ever range 3) == rc* ]]; then
