@@ -108,7 +108,7 @@
 +  /* mark it is CJK font or not when font opened,
 +     avoid calling "xftfont_is_cjk_font" many times. */
 +  xftfont_info->is_cjk = xftfont_is_cjk_font(xftfont_info);
-   UNBLOCK_INPUT;
+   unblock_input ();
  
    font->ascent = xftfont->ascent;
 @@ -625,20 +715,27 @@
@@ -119,7 +119,7 @@
 +  int cjk_padding = 0;
 +  int l_padding = 0;
 +  int r_padding = 0;
-   BLOCK_INPUT;
+   block_input ();
    XftGlyphExtents (xftfont_info->display, xftfont_info->xftfont, code, nglyphs,
  		   &extents);
 +  if(xftfont_info->is_cjk)
@@ -127,7 +127,7 @@
 +  /* cjk_padding may equals to 0, then all is zero, still ok */
 +  l_padding = cjk_padding >> 1; /* get half */
 +  r_padding = cjk_padding - l_padding; /* may not divided by 2 exactly */ 
-   UNBLOCK_INPUT;
+   unblock_input ();
    if (metrics)
      {
 -      metrics->lbearing = - extents.x;
@@ -172,6 +172,6 @@
 +                            x+offset, y, code+i, 1);
 +         }
 +  }
-   UNBLOCK_INPUT;
+   unblock_input ();
  
    return len;
