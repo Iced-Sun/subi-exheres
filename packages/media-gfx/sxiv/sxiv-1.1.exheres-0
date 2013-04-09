@@ -1,0 +1,6 @@
+GITHUB_REVISION="af69b2a7bbac973c837177de03616460393e28d2"
+
+require sxiv
+
+PLATFORMS="~amd64"
+
