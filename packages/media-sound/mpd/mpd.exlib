@@ -12,13 +12,11 @@ DESCRIPTION="
 Music Player Daemon (MPD) is a flexible, powerful, server-side application for playing music. Through plugins and libraries it can play a variety of sound files while being controlled by its network protocol.
 "
 HOMEPAGE="http://www.musicpd.org/"
-DOWNLOADS="mirror://sourceforge/musicpd/${PNV}.tar.bz2"
+DOWNLOADS="http://www.musicpd.org/download/mpd/stable/${PNV}.tar.xz"
 
 LICENCES="GPL-2"
 SLOT="0"
 MYOPTIONS="ffmpeg alsa"
-
-UPSTREAM_RELEASE_NOTES="http://sourceforge.net/projects/musicpd/files/${PN}/${PV}/${PNV}-release-notes.txt/download"
 
 DEPENDENCIES="
     build:

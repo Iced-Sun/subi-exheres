@@ -1,9 +1,9 @@
-# Copyright 2010, 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 MY_PNV=${PNV}-source
 WORK=${WORKBASE}/${MY_PNV}
-require googlecode [ suffix=tar.gz ]
+require googlecode [ suffix=zip ]
 
 export_exlib_phases src_compile src_install
 
