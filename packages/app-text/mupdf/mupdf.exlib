@@ -3,9 +3,7 @@
 
 MY_PNV=${PNV}-source
 WORK=${WORKBASE}/${MY_PNV}
-require googlecode [ suffix=zip ]
-
-export_exlib_phases src_compile src_install
+require googlecode [ suffix=zip ] flag-o-matic
 
 SUMMARY="a lightweight PDF and XPS viewer"
 DESCRIPTION="The renderer in MuPDF is tailored for high quality anti-aliased graphics. It renders
@@ -30,11 +28,15 @@ DEPENDENCIES="
         media-libs/freetype:2
 "
 
-mupdf_src_compile() {
-    emake CC=${CC} LD=${LD} OS=Linux build=$(option debug && echo debug || echo release) verbose=1
+DEFAULT_SRC_COMPILE_PARAMS=( verbose=y )
+pkg_setup() {
+    append-flags -fPIC
 }
 
-mupdf_src_install() {
-    emake build=$(option debug && echo debug || echo release) prefix=${IMAGE}/usr libdir=${IMAGE}/${LIBDIR} install
+src_install() {
+    emake install prefix="${IMAGE}"/usr libdir="${IMAGE}"/usr/${LIBDIR}
+
+    insinto /usr/share/applications
+    doins debian/${PN}.desktop
 }
 
