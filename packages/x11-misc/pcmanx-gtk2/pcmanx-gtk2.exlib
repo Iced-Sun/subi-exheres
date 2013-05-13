@@ -1,0 +1,18 @@
+# Copyright 2013 Bing SUN
+
+require googlecode [ suffix=tar.xz ]
+
+SUMMARY="User-friendly telnet client mainly targets BBS users"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        dev-util/intltool
+    build+run:
+        x11-libs/gtk+:2[>=2.4]
+        x11-libs/libXft
+"
+
