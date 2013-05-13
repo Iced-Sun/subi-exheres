@@ -115,6 +115,8 @@ myemacs_src_prepare () {
     # Compressing *.el files saves 25MB diskspace, which is not worth it on modern systems
     edo sed -i -e 's/@GZIP_PROG@//' {.,leim}/Makefile.in
 
+    edo rm -rf ${WORK}/lisp/org
+
     # http://lists.gnu.org/archive/html/emacs-devel/2012-04/msg00412.html
     # http://forum.ubuntu.org.cn/viewtopic.php?f=68&t=370220&sid=a433c8cd64fa646b5354473103801c68
     expatch "${FILES}"/emacs-cjk-monospace-v24.patch
