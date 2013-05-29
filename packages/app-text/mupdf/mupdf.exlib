@@ -33,6 +33,10 @@ pkg_setup() {
     append-flags -fPIC
 }
 
+src_prepare() {
+    edo rm -rf ${WORK}/thirdparty
+}
+
 src_install() {
     emake install prefix="${IMAGE}"/usr libdir="${IMAGE}"/usr/${LIBDIR}
 
