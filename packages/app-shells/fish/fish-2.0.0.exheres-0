@@ -8,6 +8,7 @@ SUMMARY="A smart and user-friendly command line shell for OS X, Linux, and the r
 
 HOMEPAGE="http://fishshell.com/"
 LICENCES="GPL-2"
+SLOT="0"
 PLATFORMS="~amd64"
 
 DEPENDENCIES="
