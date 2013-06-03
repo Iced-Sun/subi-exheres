@@ -1,4 +1,0 @@
-require pcmanx-gtk2
-
-PLATFORMS="~amd64"
-
