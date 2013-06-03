@@ -1,7 +1,7 @@
-# Copyright 2010-2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require googlecode [[ pn=osdlyrics project=osd-lyrics suffix=tar.gz ]] freedesktop-desktop
+require github [[ user=osdlyrics pn=osdlyrics ]] freedesktop-desktop
 
 SUMMARY="Download and show lyrics with your favorite media player"
 DESCRIPTION="OSD Lyrics is a lyrics show compatible with various media players. It is not a plugin but a standalone program. OSD Lyrics shows lyrics on your desktop, in the style similar to KaraOK. It also provides another displaying style, in which lyrics scroll from bottom to top. OSD Lyrics can download lyrics from the network automatically. "
