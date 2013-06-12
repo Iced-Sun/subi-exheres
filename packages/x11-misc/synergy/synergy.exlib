@@ -1,5 +1,5 @@
 # Copyright 2012 Quentin "Sardem FF7" Glidic <sardemff7+exherbo@sardemff7.net>
-# Copyright 2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2012,2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 # Based in part upon
 #  'synergy-1.4.2.exheres-0' from ::jedahan, which is:
@@ -9,8 +9,6 @@
 #     Copyright 1999-2011 Gentoo Foundation
 
 require cmake [ api=2 ] systemd-service
-
-export_exlib_phases src_install
 
 SUMMARY="Lets you easily share a single mouse and keyboard between multiple computers"
 DESCRIPTION="
@@ -42,7 +40,16 @@ DEPENDENCIES="
         x11-libs/libXtst
 "
 
-synergy_src_install() {
+src_prepare() {
+    default
+
+    pushd ${CMAKE_SOURCE}/tools
+    edo unzip cryptopp562.zip -d cryptopp562
+    edo rm -f cryptopp562/test.cpp
+    popd
+}
+
+src_install() {
     edo pushd "${CMAKE_SOURCE}"
 
     for b in ${PN}{c,s}; do
