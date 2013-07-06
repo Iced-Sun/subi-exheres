@@ -1,6 +1,0 @@
-SCM_REPOSITORY="git://git.savannah.gnu.org/${PN}.git"
-SCM_BRANCH="master"
-require scm-git autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.11 ] ] myemacs
-
-PLATFORMS="~amd64 ~x86"
-
