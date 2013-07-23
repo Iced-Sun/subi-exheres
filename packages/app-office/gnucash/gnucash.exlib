@@ -1,3 +1,4 @@
+# Copyright 2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Copyright 2009-2012 Wulf C. Krueger <philantrop@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -30,27 +31,35 @@ MYOPTIONS="debug examples ofx
 DEPENDENCIES="
     build:
         dev-util/pkg-config
-        dev-util/intltool
     build+run:
         dev-lang/guile:1.8[>=1.8.6]
-        dev-libs/glib:2[>=2.20.0]
-        dev-libs/gtkhtml:3.14
-        dev-libs/libxml2:2.0[>=2.6.32]
-        dev-libs/popt[>=1.14]
-        dev-scheme/slib[>=3.2.1]
-        gnome-platform/GConf:2
-        gnome-platform/libart_lgpl[>=2.3.20]
-        gnome-platform/libglade:2[>=2.6.3]
-        gnome-platform/libgnomeui:2[>=2.24.0]
-        office-libs/goffice:0.8[>=0.8.14]
-        office-libs/libgsf:1[>=1.14.11]
-        x11-libs/gtk+:2[>=2.16.0]
-        x11-libs/pango[>=1.24.0]
+        dev-libs/glib:2[>=2.36]
+        dev-libs/libxml2:2.0[>=2.5.10]
+        gnome-platform/GConf:2[>=2.22]
+        x11-libs/gtk+:2[>=2.24]
+
         aqbanking? (
             dev-libs/aqbanking[>=3.8.2] [[ description = [ qt3 support must be enabled ] ]]
             chipcard? ( dev-libs/libchipcard[>=4.2.7] )
         )
         ofx? ( finance/libofx[>=0.7.0] )
+
+        gnome-platform/libgnomecanvas
+        office-libs/goffice:0.8[>=0.7.0]
+        net-libs/webkit
+"
+
+_DEPENDENCIES="
+        dev-util/intltool
+    build+run:
+        dev-libs/popt[>=1.14]
+        dev-scheme/slib[>=3.2.1]
+        gnome-platform/libart_lgpl[>=2.3.20]
+        gnome-platform/libglade:2[>=2.6.3]
+        gnome-platform/libgnomeui:2[>=2.24.0]
+        office-libs/libgsf:1[>=1.14.11]
+
+        x11-libs/pango[>=1.24.0]
 "
 
 # The tests don't respect the configuration choices but try to test even stuff
@@ -95,13 +104,14 @@ gnucash_src_test() {
 }
 
 gnucash_src_install() {
-    gnome-2_src_install
+    default
+#    gnome-2_src_install
     keepdir /usr/share/gnucash/guile-modules/srfi
 
     # Clean up
-    edo rm "${IMAGE}"/usr/share/doc/${PNVR}/{COPYING,INSTALL,LICENSE,*win32-bin.txt}
-    if ! option examples ; then
-        edo rm -r "${IMAGE}"/usr/share/doc/${PNVR}/examples
-    fi
+#    edo rm "${IMAGE}"/usr/share/doc/${PNVR}/{COPYING,INSTALL,LICENSE,*win32-bin.txt}
+#    if ! option examples ; then
+#        edo rm -r "${IMAGE}"/usr/share/doc/${PNVR}/examples
+#    fi
 }
 
