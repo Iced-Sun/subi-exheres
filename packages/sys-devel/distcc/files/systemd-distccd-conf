@@ -1,0 +1,24 @@
+# SECURITY NOTICE:
+# It is HIGHLY recomended that you use a specific IP address for increased
+# security.
+LISTEN_ADDRESS=0.0.0.0
+
+# Set the TCP port to listen on
+LISTEN_PORT=3632
+
+# Instructs distccd to accept connections from the IP address IPADDR. A CIDR
+# mask length can be supplied optionally after a trailing slash, e.g.
+# 192.168.0.0/24, in which case addresses that match in the most significant
+# MASK bits will be allowed.
+ALLOW=192.168.0.0/24
+
+# Logging
+# You can change the log level here: [critical,error,warning, notice, info, debug]
+LOG_LEVEL=critical
+
+# set this for niceness
+# Default is 15
+NICENESS=15
+
+# Extra options
+EXTRA_OPTS=""

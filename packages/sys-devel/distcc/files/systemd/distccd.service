@@ -4,4 +4,4 @@ Description=distccd - distributed C/C++ compiler server
 [Service]
 User=nobody
 EnvironmentFile=/etc/conf.d/distccd.conf
-ExecStart=/usr/bin/distccd --listen ${ADDRESS} --port ${PORT} --allow ${ALLOW} --no-detach --no-fork --daemon ${EXTRA_OPTS}
+ExecStart=/usr/bin/distccd --listen ${LISTEN_ADDRESS} --port ${LISTEN_PORT} --allow ${ALLOW} --log-stderr --log-level ${LOG_LEVEL} --nice ${NICENESS} --no-detach --daemon ${EXTRA_OPTS}

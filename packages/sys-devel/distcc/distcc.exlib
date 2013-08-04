@@ -1,10 +1,8 @@
 # Copyright 2009 Pierre Lejeune <superheron@gmail.com>
-# Copyright 2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require googlecode systemd-service python
-
-export_exlib_phases src_install
+require googlecode systemd-service python [ has_lib=false ]
 
 SUMMARY="distcc: a fast, free distributed C/C++ compiler"
 DESCRIPTION="
@@ -16,8 +14,10 @@ is simple to install and use, and is usually much faster than a local compile.
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi baselayout gnome gtk ipv6
+MYOPTIONS="avahi baselayout gnome gtk ipv6 masquerade pump
     gnome [[ requires = [ gtk ] ]]
+    masquerade [[ description = [ Create a masquerade directory which contains links from the name of the real compiler to the distcc binary ] ]]
+    pump [[ description = [ Enable pump-mode for the client ] ]]
 "
 
 DEPENDENCIES="
@@ -25,13 +25,15 @@ DEPENDENCIES="
         dev-libs/popt
         avahi? ( net-dns/avahi )
         gtk? (
-            gnome-platform/libglade:2
             x11-libs/gtk+:2
-            gnome? (
-                gnome-platform/libgnome:2
-                gnome-platform/libgnomeui:2
-                x11-libs/pango
-            )
+        )
+        gnome? (
+            gnome-platform/libglade:2
+            gnome-platform/libgnome:2
+            gnome-platform/libgnomeui:2
+        )
+        pump? (
+            dev-lang/python:2[>=2.4]
         )
 "
 
@@ -44,34 +46,35 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
 DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( 'ipv6 rfc2553' )
 DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( avahi gnome gtk )
 
-distcc_src_install() {
-    emake DESTDIR="${IMAGE}" install-programs install-include-server
-    python_bytecompile
+src_install() {
+    emake DESTDIR="${IMAGE}" install-programs $(option pump && echo install-include-server || echo "")
 
-    # http://code.google.com/p/distcc/issues/detail?id=110
-    edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/bin/pump
-    edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/bin/pump
+    if option pump ; then
+        python_bytecompile
 
-    dodir /usr/libexec/distcc
-    insinto /usr/libexec/distcc
-    local f
-    for f in {${CHOST}-,}{gcc,g++,c++}; do
-        dosym /usr/bin/distcc /usr/libexec/distcc/${f}
-    done
+        # http://code.google.com/p/distcc/issues/detail?id=110
+        edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/bin/pump
+        edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/bin/pump
+    fi
+
+    if option masquerade ; then
+        dodir /usr/libexec/distcc
+        insinto /usr/libexec/distcc
+        local f
+        for f in {${CHOST}-,}{gcc,g++,c++}; do
+            dosym /usr/bin/distcc /usr/libexec/distcc/${f}
+        done
+    fi
 
     emagicdocs
     doman man/*.1
-
-    dodir /etc/distcc
-    insinto /etc/distcc
-    doins packaging/RedHat/conf/hosts
 
     if option baselayout ; then
         newinitd "${FILES}/${PN}-initd" distccd
         newconfd "${FILES}/${PN}-confd" distccd
     fi
 
-    option systemd && newconfd "${FILES}/systemd/distccd.conf" distccd.conf
+    option systemd && newconfd "${FILES}/systemd-distccd-conf" distccd.conf
     install_systemd_files
 }
 
