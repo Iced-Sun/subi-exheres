@@ -1,27 +1,36 @@
-# Copyright 2011 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2011-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-export_exlib_phases src_install
 SUMMARY="i3lock is a simple screen locker like slock"
 HOMEPAGE="http://i3wm.org/i3lock/"
-LICENCES="as-is"
+LICENCES="BSD-3"
+SLOT="0"
+
+MYOPTIONS="cairo"
+
 DEPENDENCIES="
     build:
-        dev-util/pkg-config
+        virtual/pkg-config
     build+run:
+        dev-libs/libev
+        sys-libs/pam
         x11-libs/libxcb
+        x11-libs/libxkbcommon
         x11-utils/xcb-util-image
         x11-utils/xcb-util-keysyms
         sys-libs/pam
-        x11-libs/cairo
+        cairo? ( x11-libs/cairo )
     "
 DOWNLOADS="http://i3wm.org/${PN}/${PNV}.tar.bz2"
 
-SLOT="0"
+src_compile() {
+    emake \
+        $(option cairo || echo NOLIBCAIRO=y)
+}
 
-i3lock_src_install() {
+src_install() {
     default
 
-    doman ${WORK}/i3lock.1
+    doman i3lock.1
 }
 
