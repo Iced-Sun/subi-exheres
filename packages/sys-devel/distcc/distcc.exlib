@@ -60,9 +60,9 @@ src_install() {
     if option masquerade ; then
         dodir /usr/libexec/distcc
         insinto /usr/libexec/distcc
-        local f
-        for f in {${CHOST}-,}{gcc,g++,c++}; do
-            dosym /usr/bin/distcc /usr/libexec/distcc/${f}
+        local sym
+        for sym in {${CHOST}-,}{gcc,g++,c++} clang{,++}; do
+            dosym /usr/bin/distcc /usr/libexec/distcc/${sym}
         done
     fi
 
