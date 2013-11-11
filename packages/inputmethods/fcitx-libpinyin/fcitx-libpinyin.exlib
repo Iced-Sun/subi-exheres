@@ -1,13 +1,11 @@
-# Copyright 2012 Bing Sun
+# Copyright 2012,2013 Bing Sun
 # Distributed under the terms of the GNU General Public License v2
 
-require cmake [ api=2 ] googlecode [ project=fcitx suffix=tar.xz ]
+require cmake
 
 SUMMARY="Libpinyin Wrapper for Fcitx"
 
-DOWNLOADS+="
-    http://fcitx.googlecode.com/files/${PNV}_dict.tar.xz
-"
+DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
 
 LICENCES="GPL-2"
 SLOT="0"
@@ -18,4 +16,6 @@ DEPENDENCIES="
         inputmethods/libpinyin
         inputmethods/fcitx
 "
+
+CMAKE_SRC_CONFIGURE_PARAMS=( -DENABLE_QT:BOOL=False )
 

@@ -1,67 +1,38 @@
+# Copyright 2013 Bing Sun
 # Copyright 2008,2009,2010 Hong Hao
 # Distributed under the terms of the GNU General Public License v2
 # Based in part upon 'fcitx-3.5.ebuild', which is:
 #    Copyright 1999-2008 Gentoo Foundation
 
-require cmake [ api=2 ] googlecode [ suffix=tar.xz ] systemd-service
-export_exlib_phases src_unpack src_install
-
-MY_ARCHIVES=( pinyin.tar.gz py_table-20121124.tar.gz py_stroke-20121124.tar.gz en_dict-20121020.tar.gz )
-MY_DOWNLOADS=${MY_ARCHIVES[@]/#/http://fcitx.googlecode.com/files/}
+require cmake systemd-service
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
-Fcitx [ˈfaɪtɪks] is a input method framework with extension support. Currently it supports linux and Unix system, like freebsd. It has three builtin Input Method Engine, Pinyin, QuWei and Table-based input methods.
-
-Feature
-*    Highly modularized (You can even drop all X support, if you only need fbterm based support).
-*    fbterm support (fcitx-fbterm)
-*    cloud pinyin support (fcitx-cloudpinyin)
-*    themable user interface (builtin classic-ui)
-*    kimpanel based user interface support (builtin kimpanel-ui)
-*    xlib-only user interface support (fcitx-ui-light)
-*    libgooglepinyin based pinyin engine (fcitx-googlepinyin)
-*    sunpinyin based pinyin engine (fcitx-sunpinyin)
-*    Integrated KDE Configure Tool (kcm-fcitx)
-*    GTK Based Configure Tool (fcitx-configtool)
-*    Korean support (fcitx-hangul)
-*    Japanese support (fcitx-mozc)
-*    M17N support (fcitx-m17n)
-*    Keyboard layout support (fcitx-keyboard)
+Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. It has three built-in Input Method Engine, Pinyin, QuWei and Table-based input methods.
 "
-DOWNLOADS+=" ${MY_DOWNLOADS}
-    table? ( http://fcitx.googlecode.com/files/table.tar.gz )
-"
+HOMEPAGE="https://fcitx-im.org"
+DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug opencc qt table classic-ui kimpanel-ui gobject-introspection lua libxml2"
+MYOPTIONS="debug opencc qt table classic-ui kimpanel-ui gobject-introspection"
 
 DEPENDENCIES="
     build:
-        sys-devel/gettext
-        x11-proto/xproto
+        dev-util/intltool
     build+run:
-        x11-libs/libX11
-        x11-libs/libXrender
         x11-libs/libXfixes
-
-        libxml2? (
-            app-text/iso-codes
-            x11-libs/libxkbfile
-            dev-libs/libxml2
-        )
 
         classic-ui? (
             x11-libs/cairo[X]
             x11-libs/pango
+            x11-libs/libXrender
         )
         kimpanel-ui? ( kde/kdeplasma-addons )
 
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
 
         gobject-introspection? ( gnome-desktop/gobject-introspection )
-        lua? ( dev-lang/lua )
         opencc? ( cjk/opencc[>=0.1.1] )
     recommendation:
         inputmethods/fcitx-configtool
@@ -89,28 +60,19 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DENABLE_PRESAGE:BOOL=False
     -DENABLE_ICU:BOOL=False
     -DENABLE_BACKTRACE:BOOL=False
+    -DENABLE_LUA:BOOL=False
+    -DENABLE_LIBXML2:BOOL=False
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG TABLE OPENCC LUA LIBXML2
+    DEBUG OPENCC
     'classic-ui CAIRO' 'classic-ui PANGO'
     QT 'qt QT_IM_MODULE'
     'gobject-introspection GIR'
 )
 
-fcitx_src_unpack() {
-    unpack --if-compressed ${ARCHIVES%% *}
-    for pkg in ${MY_ARCHIVES[@]}; do
-        edo cp "${FETCHEDDIR}/${pkg}" ${CMAKE_SOURCE}/data
-    done
-    option table && edo cp "${FETCHEDDIR}"/table.tar.gz ${CMAKE_SOURCE}/data/table
-
-    # FIXME: skipped in builtin-saveenv, why?
-    edo mkdir -p ${WORK}/build
-}
-
-fcitx_src_install() {
-    default
+src_install() {
+    cmake_src_install
 
     if option systemd ; then
         insinto /usr/${LIBDIR}/systemd/user
