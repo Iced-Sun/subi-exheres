@@ -16,7 +16,7 @@ DOWNLOADS="http://www.musicpd.org/download/mpd/stable/${PNV}.tar.xz"
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="ffmpeg alsa"
+MYOPTIONS="ffmpeg alsa doc debug"
 
 DEPENDENCIES="
     build:
@@ -31,54 +31,50 @@ DEPENDENCIES="
 WORK="${WORKBASE}/${PNV/_/~}"
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
-    # sink
+    # sink: audio playback
     --disable-jack
     --disable-pulse
     --disable-ao
     --disable-oss
-    --disable-mvp
-    --disable-ffado
     --disable-roar
     --disable-openal
     --disable-solaris-output
 
-    # misc sink
-    --disable-fifo
-    --disable-pipe-output
-    --disable-recorder-output
-
-    # stream sink
+    # sink: streaming
     --disable-httpd-output
     --disable-shout
 
-    # stream sink: encoder
+    # streaming encoder
     --disable-vorbis-encoder
     --disable-lame-encoder
     --disable-twolame-encoder
     --disable-wave-encoder
 
+    # sink: misc
+    --disable-fifo
+    --disable-pipe-output
+    --disable-recorder-output
+
     # clients
     --enable-tcp
     --disable-un
+    --disable-ipv6
 
-    # source
-    --disable-cdio-paranoia
-
-    # archive source
+    # source: archive
     --disable-bzip2
     --disable-zzip
     --disable-iso9660
 
-    # stream source
+    # source: streaming
+    --disable-cdio-paranoia
     --disable-curl
-    --disable-lastfm
     --disable-mms
     --disable-soundcloud
-    --disable-soup
     --disable-despotify
 
     # decoder
     --disable-aac
+    --disable-adplug
     --disable-audiofile
     --disable-fluidsynth
     --disable-gme
@@ -91,14 +87,13 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-sndfile
     --disable-wavpack
     --disable-wildmidi
+    --disable-opus
+    --disable-flac
+    --disable-vorbis
+    --without-tremor
 
     # metadata
     --disable-id3 # require zlib
-
-    # ogg, flac, vorbis
-    # for better tag display, enable the following
-    --disable-flac # required to display metaflac tags; it's both a demuxer and a decoder
-    --disable-vorbis # Required to display vorbis tags (FLAC, ogg)
 
     # misc
     --enable-sqlite
@@ -106,16 +101,11 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --disable-lsr
     --disable-largefile
     --disable-libwrap
-    --disable-documentation
-    --disable-ipv6
-
-    ###
+    --enable-libmpdclient
     --with-zeroconf=no
-    --without-tremor
-    --without-faad
 )
 
-DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( alsa ffmpeg "systemd systemd-daemon")
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( debug alsa ffmpeg "systemd systemd-daemon" "doc documentation" )
 
 mpd_src_install() {
     default
