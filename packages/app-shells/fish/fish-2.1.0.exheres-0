@@ -17,5 +17,5 @@ DEPENDENCIES="
 "
 DOWNLOADS="http://fishshell.com/files/${PV}/${PNV}.tar.gz"
 
-WORK=${WORKBASE}/${PN}
+#WORK=${WORKBASE}/${PN}
 

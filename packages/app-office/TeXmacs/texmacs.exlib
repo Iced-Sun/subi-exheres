@@ -39,8 +39,9 @@ DEPENDENCIES="
 DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-fastalloc
     --disable-optimize
-    --enable-pdf-renderer
+    --disable-pdf-renderer
     --without-axel
+    --without-sqlite3
 )
 
 DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( qt )
