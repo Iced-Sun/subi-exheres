@@ -2,4 +2,4 @@
 Description=Team Daemon
 
 [Service]
-ExecStart=/usr/bin/teamd -U -D -f /etc/teamd.conf
+ExecStart=/usr/bin/teamd -U -f /etc/teamd.conf
