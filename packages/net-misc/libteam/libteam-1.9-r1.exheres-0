@@ -1,7 +1,7 @@
 # Copyright 2013 Bing Sun
 # Distributed under the terms of the GNU General Public License v2
 
-require systemd-service [ systemd_files=[ "${WORK}"/teamd/redhat/systemd/teamd@.service ] ]
+require systemd-service
 
 SUMMARY="Library for controlling team network device"
 HOMEPAGE="http://libteam.org/"

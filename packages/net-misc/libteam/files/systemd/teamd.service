@@ -1,0 +1,5 @@
+[Unit]
+Description=Team Daemon
+
+[Service]
+ExecStart=/usr/bin/teamd -U -D -f /etc/teamd.conf
