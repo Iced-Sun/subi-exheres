@@ -18,3 +18,5 @@ DEPENDENCIES="
         sys-sound/alsa-lib
 "
 
+DEFAULT_SRC_COMPILE_PARAMS=( V=1 )
+
