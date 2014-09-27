@@ -1,0 +1,16 @@
+# Copyright 2014 Bing Sun
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=splunk ] cmake
+
+SUMMARY="Pion Network Library"
+
+LICENCES="BSL-1.0"
+SLOT="5"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        dev-libs/boost[>=1.35]
+"
+

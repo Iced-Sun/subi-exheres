@@ -1,0 +1,4 @@
+require pion-5
+
+PLATFORMS="~amd64 ~x86"
+
