@@ -20,7 +20,7 @@ PLATFORMS="~amd64"
 
 DEPENDENCIES="
     build:
-        dev-lang/ocaml[ocamlopt]
+        dev-lang/ocaml
 "
 #run: bibtex
 DOWNLOADS="http://www.lri.fr/~filliatr/ftp/bibtex2html/${PNV}.tar.gz"
