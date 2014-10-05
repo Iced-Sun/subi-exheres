@@ -1,4 +1,0 @@
-require libpinyin
-
-PLATFORMS="~amd64"
-

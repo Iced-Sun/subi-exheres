@@ -1,12 +1,13 @@
-# Copyright 2012, 2013 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2012-2014 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require sourceforge [ suffix=tar.gz ]
+require github
 
 SUMMARY="Library to deal with pinyin."
 LICENCES="GPL-2"
 SLOT="0"
 MYOPTIONS=""
+DOWNLOADS+=" http://downloads.sourceforge.net/libpinyin/models/model7.text.tar.gz"
 
 DEPENDENCIES="
     build:
@@ -14,4 +15,9 @@ DEPENDENCIES="
     build+run:
         sys-libs/db
 "
+
+src_unpack() {
+    default
+    edo mv -f *.table *.text ${WORK}/data
+}
 
