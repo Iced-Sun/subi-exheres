@@ -1,0 +1,6 @@
+GITHUB_TAG="v${PV}"
+
+require sxiv
+
+PLATFORMS="~amd64"
+
