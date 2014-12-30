@@ -1,0 +1,18 @@
+# Copyright 2014 Bing Sun
+# Distributed under the terms of the GNU General Public License v2
+
+require cmake
+
+SUMMARY="Fcitx table-other"
+
+DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz"
+
+LICENCES="GPL-2"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        inputmethods/fcitx[>=4.2.7][table]
+"
+
