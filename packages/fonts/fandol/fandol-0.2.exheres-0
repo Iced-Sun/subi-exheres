@@ -1,0 +1,26 @@
+# Copyright 2014 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont
+
+SUMMARY="Four basic fonts for Chinese typesetting"
+DESCRIPTION="Fandol fonts are designed for Chinese typesetting. The current version contains four styles: Song, Hei, Kai, Fang.
+
+All fonts are in OpenType format."
+HOMEPAGE="http://www.ctan.org/tex-archive/fonts/fandol"
+DOWNLOADS="mirror://ctan/fonts/${PN}.zip"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+WORK=${WORKBASE}/${PN}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.otf
+}
+
