@@ -1,4 +1,4 @@
-GITHUB_REVISION=91c40fef0c
+GITHUB_TAG=${PV}
 
 require chmsee
 
