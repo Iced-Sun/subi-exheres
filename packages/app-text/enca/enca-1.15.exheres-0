@@ -1,7 +1,7 @@
 # Copyright 2010-2013 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=nijel rev=${PV} ]
+require github [ user=nijel tag=${PV} ]
 
 SUMMARY="Enca is an Extremely Naive Charset Analyser"
 DESCRIPTION="Enca is an Extremely Naive Charset Analyser. It detects character set and encoding of text files and can also convert them to other encodings using either a built-in converter or external libraries and tools like libiconv, librecode, or cstocs.
