@@ -1,5 +1,5 @@
 # Copyright 2009 Pierre Lejeune <superheron@gmail.com>
-# Copyright 2013 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2013-2015 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require googlecode systemd-service python [ has_lib=false ]
@@ -53,16 +53,16 @@ src_install() {
         python_bytecompile
 
         # http://code.google.com/p/distcc/issues/detail?id=110
-        edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/bin/pump
-        edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/bin/pump
+        edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/$(exhost --target)/bin/pump
+        edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/$(exhost --target)/bin/pump
     fi
 
     if option masquerade ; then
-        dodir /usr/libexec/distcc
-        insinto /usr/libexec/distcc
+        dodir /usr/$(exhost --target)/libexec/distcc
+        insinto /usr/$(exhost --target)/libexec/distcc
         local sym
-        for sym in {${CHOST}-,}{gcc,g++,c++} clang{,++}; do
-            dosym /usr/bin/distcc /usr/libexec/distcc/${sym}
+        for sym in {$(exhost --target)-,}{gcc,g++,c++} clang{,++}; do
+            dosym ../../bin/distcc /usr/$(exhost --target)/libexec/distcc/${sym}
         done
     fi
 
