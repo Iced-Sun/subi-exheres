@@ -1,0 +1,53 @@
+# Copyright 2013-2015 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009 A Frederick Christensen <fauxmight@nosocomia.com>
+# Distributed under the terms of the GNU General Public License v2
+# Based in part on 'unison-2.27.57-r1.ebuild' from Gentoo, which is
+#     Copyright 1999-2008 Gentoo Foundation
+
+SLOT="0"
+
+SUMMARY="Bi-directional file synchronization tool written in OCaml"
+DESCRIPTION="
+    Unison allows two replicas of a collection of files and directories to
+    be stored on different hosts (or different disks on the same host),
+    modified separately, and then brought up to date by propagating the
+    changes in each replica to the other.
+"
+HOMEPAGE="http://www.seas.upenn.edu/~bcpierce/unison/"
+LICENCES="GPL-3"
+PLATFORMS="~amd64 ~x86"
+
+DEPENDENCIES="
+    build:
+        dev-lang/ocaml
+    build+run:
+        gtk? (
+            x11-libs/gtk+:2[>2.2]
+            dev-ocaml/lablgtk
+        )
+"
+DOWNLOADS="http://www.seas.upenn.edu/~bcpierce/unison/download/releases/${PNV}/${PNV}.tar.gz"
+MYOPTIONS="gtk"
+
+BUGS_TO="fauxmight@nosocomia.com"
+
+REMOTE_IDS="freshmeat:unison"
+UPSTREAM_CHANGELOG="http://www.seas.upenn.edu/~bcpierce/unison/download/releases/beta/unison-manual.html#news"
+UPSTREAM_DOCUMENTATION="http://www.seas.upenn.edu/~bcpierce/unison/download/releases/beta/unison-manual.html#news"
+
+RESTRICT="test" # fails in the middle in order to skip the remaining tests
+
+src_compile() {
+    emake -j1 CFLAGS="" NATIVE="true" THREADS="true" DEBUGGING="false" \
+        UISTYLE=$(option gtk && echo gtk2 || echo text)
+}
+
+src_test() {
+    emake selftest CFLAGS="" || die "selftest failed!"
+}
+
+src_install() {
+    dobin unison
+    emagicdocs
+}
+
