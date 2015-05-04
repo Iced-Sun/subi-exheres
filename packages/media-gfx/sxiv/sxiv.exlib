@@ -36,17 +36,17 @@ DEPENDENCIES="
         gif? ( media-libs/giflib )
 "
 
-
 BUGS_TO="oahong@oahong.me"
 
 DEFAULT_SRC_COMPILE_PARAMS=( CC=${CC} LDFLAGS=${LDFLAGS} CFLAGS="${CFLAGS}" )
+DEFAULT_SRC_INSTALL_PARAMS=( PREFIX=/usr/$(exhost --target) MANPREFIX=/usr/share/man )
 
 src_prepare() {
     default
 
-    # prefix
-    edo sed -i Makefile -e "s|/usr/local|/usr|"
-
+    # multiarch fix
+    edo sed -i Makefile -e "s|share/sxiv/exec|libexec/sxiv|"
+    
     # extra dependency
     edo sed -i Makefile -e "s|-DHAVE_LIBEXIF -DHAVE_GIFLIB|$(option exif -DHAVE_LIBEXIF) $(option gif -DHAVE_GIFLIB)|"
     edo sed -i Makefile -e "s|-lexif -lgif|$(option exif -lexif) $(option gif -lgif)|"
