@@ -43,9 +43,18 @@ BUGS_TO="oahong@gmail.com"
 RESTRICT="test"
 UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
 
+src_prepare() {
+    default
+
+    # the install destination config of fcitx is so broken to fix, just hack around
+    edo sed -i CMakeLists.txt -e "s|set(exec_prefix .*|set(exec_prefix /usr/$(exhost --target))|"
+    edo sed -i CMakeLists.txt -e "s|set(includedir .*|set(includedir /usr/$(exhost --target)/include)|"
+    edo sed -i cmake/FcitxMacro.cmake -e "s|set(FCITX4_FCITX_INCLUDEDIR .*|set(FCITX4_FCITX_INCLUDEDIR /usr/$(exhost --target)/include|"
+}
+
 CMAKE_SRC_CONFIGURE_PARAMS=(
-    # fcitx don't honor LIB_SUFFIX
-    -DLIB_INSTALL_DIR:PATH=/usr/${LIBDIR}
+    # the install destination config of fcitx is so broken to fix, just hack around
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr
 
     # default
     -DENABLE_GETTEXT:BOOL=True
@@ -80,14 +89,14 @@ src_install() {
     cmake_src_install
 
     if option systemd ; then
-        insinto /usr/${LIBDIR}/systemd/user
+        insinto /usr/$(exhost --target)/lib/systemd/user
         doins "${FILES}"/systemd/user/${PN}.service
     fi
 }
 
 update_gtk_immodules() {
-    option gtk && gtk-query-immodules-2.0 > "${ROOT}"/etc/gtk-2.0/gtk.immodules
-    option gtk3 && gtk-query-immodules-3.0 > "${ROOT}"/usr/${LIBDIR}/gtk-3.0/3.0.0/immodules.cache
+    option gtk && gtk-query-immodules-2.0 --update-cache
+    option gtk3 && gtk-query-immodules-3.0 --update-cache
 }
 
 pkg_postinst() {
