@@ -32,5 +32,17 @@ DEPENDENCIES="
 
 BUGS_TO="oahong@gmail.com"
 
+src_prepare() {
+    default
+
+    # the install destination config of fcitx is so broken to fix, just hack around
+    edo sed -i CMakeLists.txt -e "s|set(exec_prefix .*|set(exec_prefix /usr/$(exhost --target))|"
+}
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    # the install destination config of fcitx is so broken to fix, just hack around
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr
+)
+
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( 'gtk GTK2' GTK3 )
 

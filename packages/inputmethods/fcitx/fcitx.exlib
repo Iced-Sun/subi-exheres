@@ -49,6 +49,8 @@ src_prepare() {
     # the install destination config of fcitx is so broken to fix, just hack around
     edo sed -i CMakeLists.txt -e "s|set(exec_prefix .*|set(exec_prefix /usr/$(exhost --target))|"
     edo sed -i CMakeLists.txt -e "s|set(includedir .*|set(includedir /usr/$(exhost --target)/include)|"
+
+    # TODO: need install cmake directory to /usr/$host/lib/cmake; or not modify this file
     edo sed -i cmake/FcitxMacro.cmake -e "s|set(FCITX4_FCITX_INCLUDEDIR .*|set(FCITX4_FCITX_INCLUDEDIR /usr/$(exhost --target)/include|"
 }
 
