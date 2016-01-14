@@ -1,0 +1,42 @@
+# Copyright 2015 Bing SUN <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+#require systemd
+
+SUMMARY="the OpenSource IPsec-based VPN Solution"
+HOMEPAGE="http://www.${PN}.org/"
+DOWNLOADS="http://download.${PN}.org/${PNV}.tar.bz2"
+
+LICENCES="GPL-2 RSA DES"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        sys-kernel/linux-headers
+    build+run:
+        !net-misc/openswan
+	dev-libs/gmp
+"
+
+_DEFAULT_SRC_CONFIGURE_PARAMS=(
+    ## libstrongswan
+    aes des rc2 sha1 sha2 md5 random nonce x509 revocation constraints pubkey pkcs1 pkcs7 pkcs8 pkcs12 pgp dnskey s
+    shkey pem fips-prf gmp xcbc cmac hmac
+    
+    ## libcharon
+    attr resolve socket-default stroke updown xauth-generic
+
+    ## libhydra
+    kernel-netlink
+
+    ## libtnccs
+)
+
+src_install() {
+    default
+
+    # Fix permissions of docs and /etc.
+    edo chmod -R a-x "${IMAGE}"/etc/ipsec.d/
+}

@@ -41,7 +41,7 @@ src_prepare() {
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
     # the install destination config of fcitx is so broken to fix, just hack around
-    -DCMAKE_INSTALL_PREFIX:PATH=/usr
+    -DCMAKE_INSTALL_PREFIX:PATH="${PREFIX:=/usr/$(exhost --target)}"
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( 'gtk GTK2' GTK3 )

@@ -14,7 +14,7 @@ is simple to install and use, and is usually much faster than a local compile.
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi baselayout gnome gtk ipv6 masquerade pump
+MYOPTIONS="avahi gnome gtk ipv6 masquerade pump
     gnome [[ requires = [ gtk ] ]]
     masquerade [[ description = [ Create a masquerade directory which contains links from the name of the real compiler to the distcc binary ] ]]
     pump [[ description = [ Enable pump-mode for the client ] ]]
@@ -69,12 +69,7 @@ src_install() {
     emagicdocs
     doman man/*.1
 
-    if option baselayout ; then
-        newinitd "${FILES}/${PN}-initd" distccd
-        newconfd "${FILES}/${PN}-confd" distccd
-    fi
-
-    option systemd && newconfd "${FILES}/systemd-distccd-conf" distccd.conf
+    newconfd "${FILES}/systemd-distccd-conf" distccd.conf
     install_systemd_files
 }
 

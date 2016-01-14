@@ -56,7 +56,7 @@ src_prepare() {
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
     # the install destination config of fcitx is so broken to fix, just hack around
-    -DCMAKE_INSTALL_PREFIX:PATH=/usr
+    -DCMAKE_INSTALL_PREFIX:PATH="${PREFIX:=/usr/$(exhost --target)}"
 
     # default
     -DENABLE_GETTEXT:BOOL=True
@@ -90,10 +90,8 @@ CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
 src_install() {
     cmake_src_install
 
-    if option systemd ; then
-        insinto /usr/$(exhost --target)/lib/systemd/user
-        doins "${FILES}"/systemd/user/${PN}.service
-    fi
+    insinto /usr/$(exhost --target)/lib/systemd/user
+    doins "${FILES}"/systemd/user/${PN}.service
 }
 
 update_gtk_immodules() {
