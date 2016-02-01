@@ -1,0 +1,25 @@
+# Copyright 2016 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont
+
+SUMMARY="The iconic font and CSS toolkit"
+DESCRIPTION="Font Awesome gives you scalable vector icons that can instantly be customized — size, color, drop shadow, and anything that can be done with the power of CSS."
+
+HOMEPAGE="https://fortawesome.github.io/Font-Awesome/"
+DOWNLOADS="${HOMEPAGE}/assets/font-${PNV}.zip"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+WORK=${WORKBASE}/font-${PNV}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins fonts/FontAwesome.otf
+}
+
