@@ -1,35 +1,33 @@
-# Copyright 2013,2014 Bing Sun
+# Copyright 2013-2016 Bing Sun
 # Copyright 2008,2009,2010 Hong Hao
 # Distributed under the terms of the GNU General Public License v2
 # Based in part upon 'fcitx-3.5.ebuild', which is:
 #    Copyright 1999-2008 Gentoo Foundation
 
-require cmake systemd-service freedesktop-desktop gtk-icon-cache
+require cmake [ api=2 ] github gtk-icon-cache freedesktop-desktop
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
 Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. It has three built-in Input Method Engine, Pinyin, QuWei and Table-based input methods.
 "
 HOMEPAGE="https://fcitx-im.org"
-DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
+DOWNLOADS+=" http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="debug opencc gtk gtk3 qt table pinyin classic-ui gobject-introspection"
+MYOPTIONS="debug opencc gtk2 gtk3 qt table pinyin classic-ui gobject-introspection"
 
 DEPENDENCIES="
     build:
         dev-util/intltool
     build+run:
-        x11-libs/libXfixes
-
         classic-ui? (
             x11-libs/cairo[X]
             x11-libs/pango
             x11-libs/libXrender
         )
 
-        gtk? ( dev-libs/dbus-glib )
+        gtk2? ( dev-libs/dbus-glib )
         gtk3? ( dev-libs/dbus-glib )
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
 
@@ -46,66 +44,67 @@ UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh
 src_prepare() {
     default
 
-    # the install destination config of fcitx is so broken to fix, just hack around
-    edo sed -i CMakeLists.txt -e "s|set(exec_prefix .*|set(exec_prefix /usr/$(exhost --target))|"
-    edo sed -i CMakeLists.txt -e "s|set(includedir .*|set(includedir /usr/$(exhost --target)/include)|"
+    ## fix install path
+    edo sed -i CMakeLists.txt -e 's|set(prefix .*|set(prefix /usr)|'
+    for sub in . po doc data data/icon src/ui/classic; do
+        edo sed -i ${sub}/CMakeLists.txt -e 's|DESTINATION share/|DESTINATION ${prefix}/share/|'
+    done
 
     # TODO: need install cmake directory to /usr/$host/lib/cmake; or not modify this file
-    edo sed -i cmake/FcitxMacro.cmake -e "s|set(FCITX4_FCITX_INCLUDEDIR .*|set(FCITX4_FCITX_INCLUDEDIR /usr/$(exhost --target)/include|"
+    #edo sed -i cmake/FcitxMacro.cmake -e "s|set(FCITX4_FCITX_INCLUDEDIR .*|set(FCITX4_FCITX_INCLUDEDIR /usr/$(exhost --target)/include|"
 }
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
-    # the install destination config of fcitx is so broken to fix, just hack around
-    -DCMAKE_INSTALL_PREFIX:PATH="${PREFIX:=/usr/$(exhost --target)}"
+    ## fix install path
+    -DFCITX_PO_INSTALL_DIR:PATH=/usr/share/locale/
+    -DDBUS_SERVICE_DIR:PATH=/usr/share/dbus-1/services
+    -DSYSCONFDIR:PATH=/etc
 
     # default
-    -DENABLE_GETTEXT:BOOL=True
-    -DENABLE_X11:BOOL=True
-    -DENABLE_DBUS:BOOL=True
-
-    # fcitx-gclient, required by gtk-immodules
-    -DENABLE_GLIB2:BOOL=True
+    -DENABLE_GETTEXT:BOOL=TRUE
+    -DENABLE_X11:BOOL=TRUE
+    -DENABLE_DBUS:BOOL=TRUE
+    -DENABLE_XDGAUTOSTART:BOOL=TRUE
 
     # miscs
-    -DENABLE_ENCHANT:BOOL=False
-    -DENABLE_PRESAGE:BOOL=False
-    -DENABLE_ICU:BOOL=False
-    -DENABLE_BACKTRACE:BOOL=False
-    -DENABLE_LUA:BOOL=False
-    -DENABLE_LIBXML2:BOOL=False
-    # todo: install to correct place
-    -DENABLE_XDGAUTOSTART:BOOL=OFF
+    -DENABLE_ENCHANT:BOOL=FALSE
+    -DENABLE_PRESAGE:BOOL=FALSE
+    -DENABLE_ICU:BOOL=FALSE
+    -DENABLE_BACKTRACE:BOOL=FALSE
+    -DENABLE_LUA:BOOL=FALSE
+    -DENABLE_LIBXML2:BOOL=FALSE
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG OPENCC
+    DEBUG OPENCC PINYIN TABLE
+
     'classic-ui CAIRO' 'classic-ui PANGO'
-    'gtk GTK2_IM_MODULE'
-    'gtk3 GTK3_IM_MODULE'
+    'gtk2 GTK2_IM_MODULE' 'gtk2 GLIB2'
+    'gtk3 GTK3_IM_MODULE' 'gtk3 GLIB2'
     QT 'qt QT_IM_MODULE' 'qt QT_GUI'
+
     'gobject-introspection GIR'
-    PINYIN TABLE
 )
 
-src_install() {
-    cmake_src_install
-
-    insinto /usr/$(exhost --target)/lib/systemd/user
-    doins "${FILES}"/systemd/user/${PN}.service
-}
-
 update_gtk_immodules() {
-    option gtk && gtk-query-immodules-2.0 --update-cache
+    option gtk2 && gtk-query-immodules-2.0 --update-cache
     option gtk3 && gtk-query-immodules-3.0 --update-cache
-}
-
-pkg_postinst() {
-    default
-    update_gtk_immodules
 }
 
 pkg_postrm() {
     default
+
     update_gtk_immodules
+
+    gtk-icon-cache_pkg_postrm
+    freedesktop-desktop_pkg_postrm
 }
 
+pkg_postinst() {
+    default
+
+    update_gtk_immodules
+
+    freedesktop-desktop_pkg_postinst
+    gtk-icon-cache_pkg_postinst
+}
