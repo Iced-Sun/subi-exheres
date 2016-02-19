@@ -4,7 +4,7 @@
 # Based in part upon 'fcitx-3.5.ebuild', which is:
 #    Copyright 1999-2008 Gentoo Foundation
 
-require cmake [ api=2 ] github gtk-icon-cache freedesktop-desktop
+require cmake [ api=2 ] github gtk-icon-cache freedesktop-desktop freedesktop-mime
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
@@ -97,6 +97,7 @@ pkg_postrm() {
     update_gtk_immodules
 
     gtk-icon-cache_pkg_postrm
+    freedesktop-mime_pkg_postrm
     freedesktop-desktop_pkg_postrm
 }
 
@@ -106,5 +107,6 @@ pkg_postinst() {
     update_gtk_immodules
 
     freedesktop-desktop_pkg_postinst
+    freedesktop-mime_pkg_postinst
     gtk-icon-cache_pkg_postinst
 }
