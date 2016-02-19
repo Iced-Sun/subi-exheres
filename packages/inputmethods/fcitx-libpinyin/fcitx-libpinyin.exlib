@@ -1,21 +1,29 @@
-# Copyright 2012,2013 Bing Sun
+# Copyright 2012-2016 SUN Bing
 # Distributed under the terms of the GNU General Public License v2
 
-require cmake
+require fcitx-common
 
 SUMMARY="Libpinyin Wrapper for Fcitx"
 
-DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
-
-LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS=""
+MYOPTIONS="traditional-chinese [[ description = [ Input traditional Chinese characters with zhuyin ] ]]"
 
-DEPENDENCIES="
-    build+run:
-        inputmethods/libpinyin
-        inputmethods/fcitx
+DOWNLOADS+="
+ traditional-chinese? ( ${FCITX_DATA_URL}/model.text.20130308.tar.gz )
 "
 
-CMAKE_SRC_CONFIGURE_PARAMS=( -DENABLE_QT:BOOL=False )
+DEPENDENCIES="
+    build:
+        dev-util/intltool        
+    build+run:
+        inputmethods/libpinyin
+        inputmethods/fcitx[>=4.2.8]
+"
 
+CMAKE_SRC_CONFIGURE_PARAMS+=( -DENABLE_QT:BOOL=False )
+
+src_prepare() {
+    default
+    optionq traditional-chinese || edo sed -i CMakeLists.txt -e 's|set(LIBPINYIN_TOOLS_FOUND 1)|set(LIBPINYIN_TOOLS_FOUND 0)|'
+    fcitx-common_src_prepare
+}

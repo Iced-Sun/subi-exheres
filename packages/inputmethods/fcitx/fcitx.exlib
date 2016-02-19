@@ -4,16 +4,24 @@
 # Based in part upon 'fcitx-3.5.ebuild', which is:
 #    Copyright 1999-2008 Gentoo Foundation
 
-require cmake [ api=2 ] github gtk-icon-cache freedesktop-desktop freedesktop-mime
+FCITX_MODULES=(
+    spell:en_dict-20121020.tar.gz
+    pinyin-enhance:py_table-20121124.tar.gz
+    pinyin-enhance:py_stroke-20121124.tar.gz
+)
+
+require fcitx-common  gtk-icon-cache freedesktop-desktop freedesktop-mime
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
 Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. It has three built-in Input Method Engine, Pinyin, QuWei and Table-based input methods.
 "
-HOMEPAGE="https://fcitx-im.org"
-DOWNLOADS+=" http://download.fcitx-im.org/${PN}/${PNV}_dict.tar.xz"
+DOWNLOADS+="
+ ${FCITX_MODULES[@]/*:/${FCITX_DATA_URL}}
+ pinyin? ( ${FCITX_DATA_URL}/pinyin.tar.gz )
+ table? ( ${FCITX_DATA_URL}/table.tar.gz )
+"
 
-LICENCES="GPL-2"
 SLOT="0"
 MYOPTIONS="debug opencc gtk2 gtk3 qt table pinyin classic-ui gobject-introspection"
 
@@ -32,31 +40,15 @@ DEPENDENCIES="
         qt? ( x11-libs/qt:4[>=4.5][dbus] )
 
         gobject-introspection? ( gnome-desktop/gobject-introspection )
-        opencc? ( cjk/opencc[>=0.1.1] )
     recommendation:
         inputmethods/fcitx-configtool
 "
 
 BUGS_TO="oahong@gmail.com"
 RESTRICT="test"
-UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
 
-src_prepare() {
-    default
-
+CMAKE_SRC_CONFIGURE_PARAMS+=(
     ## fix install path
-    edo sed -i CMakeLists.txt -e 's|set(prefix .*|set(prefix /usr)|'
-    for sub in . po doc data data/icon src/ui/classic; do
-        edo sed -i ${sub}/CMakeLists.txt -e 's|DESTINATION share/|DESTINATION ${prefix}/share/|'
-    done
-
-    # TODO: need install cmake directory to /usr/$host/lib/cmake; or not modify this file
-    #edo sed -i cmake/FcitxMacro.cmake -e "s|set(FCITX4_FCITX_INCLUDEDIR .*|set(FCITX4_FCITX_INCLUDEDIR /usr/$(exhost --target)/include|"
-}
-
-CMAKE_SRC_CONFIGURE_PARAMS=(
-    ## fix install path
-    -DFCITX_PO_INSTALL_DIR:PATH=/usr/share/locale/
     -DDBUS_SERVICE_DIR:PATH=/usr/share/dbus-1/services
     -DSYSCONFDIR:PATH=/etc
 
@@ -67,16 +59,17 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DENABLE_XDGAUTOSTART:BOOL=TRUE
 
     # miscs
-    -DENABLE_ENCHANT:BOOL=FALSE
-    -DENABLE_PRESAGE:BOOL=FALSE
+    -DENABLE_ENCHANT:BOOL=FALSE  # spell
+    -DENABLE_PRESAGE:BOOL=FALSE  # spell
     -DENABLE_ICU:BOOL=FALSE
     -DENABLE_BACKTRACE:BOOL=FALSE
     -DENABLE_LUA:BOOL=FALSE
-    -DENABLE_LIBXML2:BOOL=FALSE
+    -DENABLE_LIBXML2:BOOL=FALSE  # xkb
+    -DENABLE_OPENCC:BOOL=FALSE
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG OPENCC PINYIN TABLE
+    DEBUG PINYIN TABLE
 
     'classic-ui CAIRO' 'classic-ui PANGO'
     'gtk2 GTK2_IM_MODULE' 'gtk2 GLIB2'
@@ -87,8 +80,36 @@ CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
 )
 
 update_gtk_immodules() {
-    option gtk2 && gtk-query-immodules-2.0 --update-cache
-    option gtk3 && gtk-query-immodules-3.0 --update-cache
+    optionq gtk2 && gtk-query-immodules-2.0 --update-cache
+    optionq gtk3 && gtk-query-immodules-3.0 --update-cache
+}
+
+src_unpack() {
+    ## don't unpack module/im data files
+    unpack --if-compressed ${PNV}.tar.gz
+}
+
+src_prepare() {
+    default
+    fcitx-common_src_prepare
+
+    ## respect table option
+    edo sed -i src/im/table/CMakeLists.txt -e 's|add_subdirectory(data)|if (ENABLE_TABLE) \n add_subdirectory(data) \n endif ()|'
+
+    ## fix install path
+    edo sed -i CMakeLists.txt -e 's|set(prefix .*|set(prefix /usr)|'
+
+    ## prepare data
+    for spec in ${FCITX_MODULES[@]}; do
+        if [[ -d src/module/${spec/:*/}/dict ]]; then
+	    edo cp "${FETCHEDDIR}"/${spec/*:/} src/module/${spec/:*/}/dict
+	else
+	    edo cp "${FETCHEDDIR}"/${spec/*:/} src/module/${spec/:*/}/data
+	fi
+    done
+
+    optionq pinyin && edo cp "${FETCHEDDIR}"/pinyin.tar.gz src/im/pinyin/data
+    optionq table && edo cp "${FETCHEDDIR}"/table.tar.gz src/im/table/data
 }
 
 pkg_postrm() {

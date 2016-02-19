@@ -1,0 +1,25 @@
+# Copyright 2012-2016 SUN Bing
+# Distributed under the terms of the GNU General Public License v2
+
+FCITX_DATA_URL="http://download.fcitx-im.org/data/"
+
+require cmake [ api=2 ] github [ user=fcitx ]
+export_exlib_phases src_prepare
+
+#HOMEPAGE="https://fcitx-im.org"
+LICENCES="GPL-2"
+UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    ## fix install path
+    -DFCITX_PO_INSTALL_DIR:PATH=/usr/share/locale/
+)
+
+fcitx-common_src_prepare() {
+    einfo "Fixing multiarch install destination (LIBDATAROOT)..."
+    for file in $(find . -iname CMakeLists.txt); do
+        edo sed -i ${file} -e 's|DESTINATION share/|DESTINATION /usr/share/|'
+    done
+
+    default
+}
