@@ -6,9 +6,24 @@ FCITX_DATA_URL="http://download.fcitx-im.org/data/"
 require cmake [ api=2 ] github [ user=fcitx ]
 export_exlib_phases src_prepare
 
-#HOMEPAGE="https://fcitx-im.org"
+HOMEPAGE="https://fcitx-im.org"
 LICENCES="GPL-2"
 UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
+
+BUGS_TO="oahong@gmail.com"
+
+DEPENDENCIES="
+    build:
+        dev-util/intltool
+        sys-devel/gettext
+"
+
+if [[ ${PN} != "fcitx" ]]; then
+    DEPENDENCIES+="
+    build+run:
+        inputmethods/fcitx[>=4.2.7]
+"
+fi
 
 CMAKE_SRC_CONFIGURE_PARAMS=(
     ## fix install path

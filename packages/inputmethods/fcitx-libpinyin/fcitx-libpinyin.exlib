@@ -12,12 +12,9 @@ DOWNLOADS+="
  traditional-chinese? ( ${FCITX_DATA_URL}/model.text.20130308.tar.gz )
 "
 
-DEPENDENCIES="
-    build:
-        dev-util/intltool        
+DEPENDENCIES+="
     build+run:
         inputmethods/libpinyin
-        inputmethods/fcitx[>=4.2.8]
 "
 
 CMAKE_SRC_CONFIGURE_PARAMS+=( -DENABLE_QT:BOOL=False )

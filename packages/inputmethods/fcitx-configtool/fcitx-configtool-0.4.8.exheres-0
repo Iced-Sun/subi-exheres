@@ -1,26 +1,19 @@
-# Copyright 2013 Bing Sun
+# Copyright 2013, 2016 Bing Sun
 # Copyright 2010 Hong Hao <oahong@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require cmake
+require fcitx-common
 
 SUMMARY="Simple configuration tool for fcitx"
 
-DOWNLOADS="http://download.fcitx-im.org/${PN}/${PNV}.tar.xz"
-
-LICENCES="GPL-2"
 SLOT="0"
 PLATFORMS="~amd64"
-MYOPTIONS="gtk gtk3"
+MYOPTIONS="gtk2 gtk3"
 
-DEPENDENCIES="
-    build:
-        dev-util/intltool
-        sys-devel/gettext
+DEPENDENCIES+="
     build+run:
-        inputmethods/fcitx[>=4.0.1]
         app-text/iso-codes
-        gtk? (
+        gtk2? (
             dev-libs/unique:1
             x11-libs/gtk+:2[>=2.22]
         )
@@ -30,19 +23,5 @@ DEPENDENCIES="
         )
 "
 
-BUGS_TO="oahong@gmail.com"
-
-src_prepare() {
-    default
-
-    # the install destination config of fcitx is so broken to fix, just hack around
-    edo sed -i CMakeLists.txt -e "s|set(exec_prefix .*|set(exec_prefix /usr/$(exhost --target))|"
-}
-
-CMAKE_SRC_CONFIGURE_PARAMS=(
-    # the install destination config of fcitx is so broken to fix, just hack around
-    -DCMAKE_INSTALL_PREFIX:PATH="${PREFIX:=/usr/$(exhost --target)}"
-)
-
-CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( 'gtk GTK2' GTK3 )
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( GTK2 GTK3 )
 
