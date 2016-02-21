@@ -1,0 +1,47 @@
+# Copyright 2016 SUN Bing
+# Copyright 2013 Thomas Witt
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=knopwob tag=v${PV} ]
+export_exlib_phases src_prepare
+
+SUMMARY="Daemon for displaying notifications"
+HOMEPAGE="http://www.knopwob.org/dunst/"
+
+LICENCES="BSD-3"
+SLOT="0"
+MYOPTIONS=""
+
+BUGS_TO="pyromaniac@thwitt.de"
+
+DEPENDENCIES="
+    build:
+        dev-lang/perl:* [[ description = [ pod2man is used to build the manpage ] ]]
+        virtual/pkg-config
+    build+run:
+        media-libs/freetype:2
+        dev-libs/glib[>=2.36]
+        sys-apps/dbus
+        x11-libs/cairo[X]
+        x11-libs/pango
+        x11-libs/libX11
+        x11-libs/libXft
+        x11-libs/libxdg-basedir
+        x11-libs/libXScrnSaver
+"
+
+DEFAULT_SRC_COMPILE_PARAMS=( PREFIX=/usr/$(exhost --target) MANPREFIX=/usr/share/man )
+DEFAULT_SRC_INSTALL_PARAMS=( PREFIX=/usr/$(exhost --target) MANPREFIX=/usr/share/man )
+
+dunst_src_prepare() {
+    default
+
+    ## multiarch hack
+    edo sed -i -e "s:shell which pkg-config:shell which $(exhost --tool-prefix)pkg-config:" config.mk
+    edo sed -i -e "s:-Os::" config.mk
+    edo sed -i -e "s:\${PREFIX}/share:/usr/share:" Makefile
+
+    ## disable xinerama
+    edo sed -i -e 's/${XINERAMALIBS} //g' "${WORK}/config.mk"
+    edo sed -i -e 's/${XINERAMAFLAGS} //g' "${WORK}/config.mk"
+}

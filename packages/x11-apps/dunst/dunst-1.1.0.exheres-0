@@ -1,0 +1,8 @@
+# Copyright 2016 SUN Bing
+# Copyright 2013 Thomas Witt
+# Distributed under the terms of the GNU General Public License v2
+
+require dunst
+
+PLATFORMS="~amd64"
+
