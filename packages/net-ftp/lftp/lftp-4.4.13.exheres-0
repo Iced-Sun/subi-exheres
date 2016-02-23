@@ -1,4 +1,0 @@
-require lftp
-
-PLATFORMS="~amd64 ~ppc64"
-
