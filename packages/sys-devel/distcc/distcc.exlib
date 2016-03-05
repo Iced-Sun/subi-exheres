@@ -14,7 +14,7 @@ is simple to install and use, and is usually much faster than a local compile.
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi gnome gtk ipv6 masquerade pump
+MYOPTIONS="avahi gnome gtk masquerade pump
     gnome [[ requires = [ gtk ] ]]
     masquerade [[ description = [ Create a masquerade directory which contains links from the name of the real compiler to the distcc binary ] ]]
     pump [[ description = [ Enable pump-mode for the client ] ]]
@@ -40,10 +40,11 @@ DEPENDENCIES="
 DEFAULT_SRC_CONFIGURE_PARAMS=(
     --hates=docdir
     --disable-Werror
+    --enable-rfc2553
     --with-docdir=/usr/share/doc/${PNVR}
     --without-included-popt
 )
-DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( 'ipv6 rfc2553' )
+
 DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( avahi gnome gtk )
 
 src_install() {
