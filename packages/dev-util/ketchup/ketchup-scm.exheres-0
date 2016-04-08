@@ -1,0 +1,35 @@
+# Copyright 2016 Bing SUN <subi.the.dream.walker@gmail.com>
+# Copyright 2009 Ali Polatel <alip@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=fgosew ]
+
+SUMMARY="Ketchup kernel grabber with support for kernel 4.x, fork of debian jessie package version"
+DESCRIPTION="
+Written in Python, the script automates the process of patching from one version
+of the Linux kernel to another. It caches the various patches, only downloading
+what's required to get you to the version you specify, also automatically
+verifying the kernel's gpg signature.
+"
+BUGS_TO="pipping@exherbo.org"
+
+UPSTREAM_CHANGELOG="http://github.com/fgosew/ketchup/blob/master"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/python:*[<3.0]
+"
+
+src_prepare() {
+    edo sed -i -e 's/python/env python2/' ketchup
+}
+
+src_install() {
+    dobin ketchup
+    doman debian/ketchup.1
+}
