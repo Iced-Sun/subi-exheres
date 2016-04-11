@@ -1,10 +1,10 @@
 # Copyright 2009 Pierre Lejeune <superheron@gmail.com>
-# Copyright 2013-2015 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2013-2016 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require googlecode systemd-service python [ has_lib=false ]
+require github systemd-service python [ has_lib=false ]
 
-SUMMARY="distcc: a fast, free distributed C/C++ compiler"
+SUMMARY="distributed builds for C, C++ and Objective C"
 DESCRIPTION="
 distcc is a program to distribute builds of C, C++, Objective C
 or Objective C++ code across several machines on a network.
@@ -14,27 +14,17 @@ is simple to install and use, and is usually much faster than a local compile.
 
 LICENCES="GPL-2"
 SLOT="0"
-MYOPTIONS="avahi gnome gtk masquerade pump
-    gnome [[ requires = [ gtk ] ]]
+MYOPTIONS="avahi masquerade pump distccd
     masquerade [[ description = [ Create a masquerade directory which contains links from the name of the real compiler to the distcc binary ] ]]
     pump [[ description = [ Enable pump-mode for the client ] ]]
+    distccd [[ description = [ Build the distcc daemon ] ]]
 "
 
 DEPENDENCIES="
     build+run:
         dev-libs/popt
         avahi? ( net-dns/avahi )
-        gtk? (
-            x11-libs/gtk+:2
-        )
-        gnome? (
-            gnome-platform/libglade:2
-            gnome-platform/libgnome:2
-            gnome-platform/libgnomeui:2
-        )
-        pump? (
-            dev-lang/python:2[>=2.4]
-        )
+        pump? ( dev-lang/python:2[>=2.4] )
 "
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
@@ -43,12 +33,28 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-rfc2553
     --with-docdir=/usr/share/doc/${PNVR}
     --without-included-popt
+    --without-gnome
+    --without-gtk
+    --without-libiberty
+    --without-auth
 )
 
-DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( avahi gnome gtk )
+DEFAULT_SRC_CONFIGURE_OPTION_WITHS=( avahi )
 
 src_install() {
     emake DESTDIR="${IMAGE}" install-programs $(option pump && echo install-include-server || echo "")
+
+    emagicdocs
+    doman man/*.1
+
+    if option masquerade ; then
+        dodir /usr/$(exhost --target)/libexec/distcc
+        insinto /usr/$(exhost --target)/libexec/distcc
+        local sym
+        for sym in $(exhost --tool-prefix){cc,cpp} $(exhost --tool-prefix){c++,g++,gcc,gcc-cpp} {$(exhost --tool-prefix),}{clang,clang++,clang-cpp}; do
+            dosym ../../bin/distcc /usr/$(exhost --target)/libexec/distcc/${sym}
+        done
+    fi
 
     if option pump ; then
         python_bytecompile
@@ -56,21 +62,17 @@ src_install() {
         # http://code.google.com/p/distcc/issues/detail?id=110
         edo sed -i -e 's/echo export PATH.*//' ${IMAGE}/usr/$(exhost --target)/bin/pump
         edo sed -i -e 's/PATH="$distcc_location:$PATH".*//' ${IMAGE}/usr/$(exhost --target)/bin/pump
+    else
+	rm -f ${IMAGE}/usr/share/doc/${PNVR}/README.pump
+	rm -f ${IMAGE}/usr/share/man/man1/{include_server,pump}.1
     fi
 
-    if option masquerade ; then
-        dodir /usr/$(exhost --target)/libexec/distcc
-        insinto /usr/$(exhost --target)/libexec/distcc
-        local sym
-        for sym in {$(exhost --target)-,}{gcc,g++,c++} clang{,++}; do
-            dosym ../../bin/distcc /usr/$(exhost --target)/libexec/distcc/${sym}
-        done
+    if optionq distccd ; then
+        newconfd "${FILES}/systemd-distccd-conf" distccd.conf
+    	install_systemd_files
+    else
+	rm -f ${IMAGE}/usr/$(exhost --target)/bin/distccd
+	rm -f ${IMAGE}/usr/share/man/man1/distccd.1
     fi
-
-    emagicdocs
-    doman man/*.1
-
-    newconfd "${FILES}/systemd-distccd-conf" distccd.conf
-    install_systemd_files
 }
 

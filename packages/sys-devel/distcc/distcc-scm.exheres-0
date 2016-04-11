@@ -1,0 +1,8 @@
+# Copyright 2016 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require distcc autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ]
+
+PLATFORMS="~amd64 ~x86"
+
+AT_M4DIR=( m4 )
