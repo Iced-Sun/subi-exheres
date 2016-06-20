@@ -1,0 +1,3 @@
+require freetype-py
+
+PLATFORMS="~amd64 ~x86"
