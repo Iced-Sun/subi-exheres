@@ -44,4 +44,8 @@ dunst_src_prepare() {
     ## disable xinerama
     edo sed -i -e 's/${XINERAMALIBS} //g' "${WORK}/config.mk"
     edo sed -i -e 's/${XINERAMAFLAGS} //g' "${WORK}/config.mk"
+
+    ## VERSION fix
+    # FIXME only do this if non-scm
+    edo echo ${PV} > "${WORK}/VERSION"
 }

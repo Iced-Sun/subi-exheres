@@ -1,14 +1,16 @@
-# Copyright 2009-2012 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2016 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require cmake github [[ user=FreeRDP suffix=tar.gz ]] freedesktop-desktop
+require github [[ user=FreeRDP ]] cmake freedesktop-desktop
 
-HOMEPAGE="http://remmina.sourceforge.net"
+HOMEPAGE="http://remmina.org"
 SUMMARY="The GTK+ Remote Desktop Client"
-DESCRIPTION="Remmina is a remote desktop client written in GTK+, aiming to be useful for system
+DESCRIPTION="
+Remmina is a remote desktop client written in GTK+, aiming to be useful for system
 administrators and travellers, who need to work with lots of remote computers in front of either
 large monitors or tiny netbooks. Remmina supports multiple network protocols in an integrated and
-consistant user interface. Currently RDP, VNC, XDMCP and SSH are supported. "
+consistant user interface. Currently RDP, VNC, XDMCP and SSH are supported.
+"
 
 LICENCES="GPL-2"
 SLOT="0"
