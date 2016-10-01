@@ -1,5 +1,0 @@
-require freerdp
-
-SLOT="0"
-PLATFORMS="~amd64 ~x86"
-

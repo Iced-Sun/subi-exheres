@@ -1,6 +1,0 @@
-GITHUB_REVISION=51fb4cc8063002ca383f7551e0e27803eec7586c
-
-require osd-lyrics
-
-PLATFORMS="~amd64"
-

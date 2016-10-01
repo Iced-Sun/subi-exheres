@@ -1,5 +1,0 @@
-[Unit]
-Description=Synergy server
-
-[Service]
-ExecStart=/usr/bin/synergys --config ${HOME}/.config/synergy/config --debug NOTE --no-restart --no-daemon

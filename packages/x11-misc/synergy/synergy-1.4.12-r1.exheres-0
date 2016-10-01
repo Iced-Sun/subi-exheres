@@ -1,8 +1,0 @@
-require synergy
-
-DOWNLOADS="http://${PN}.googlecode.com/files/${PNV}-Source.tar.gz"
-
-PLATFORMS="~amd64"
-
-CMAKE_SOURCE="${WORKBASE}"/${PNV}-Source
-

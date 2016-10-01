@@ -1,4 +1,0 @@
-require mupdf
-
-PLATFORMS="amd64"
-

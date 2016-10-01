@@ -1,7 +1,0 @@
-GITHUB_REVISION=616aed4ec2
-
-require freerdp
-
-SLOT="0"
-PLATFORMS="~amd64 ~x86"
-

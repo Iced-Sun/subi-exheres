@@ -1,6 +1,0 @@
-[Socket]
-#ListenStream=/run/mpd.socket
-ListenStream=6600
-
-[Install]
-WantedBy=sockets.target

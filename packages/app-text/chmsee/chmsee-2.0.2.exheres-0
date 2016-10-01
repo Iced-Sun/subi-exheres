@@ -1,6 +1,0 @@
-GITHUB_TAG=${PV}
-
-require chmsee
-
-PLATFORMS="~amd64"
-
