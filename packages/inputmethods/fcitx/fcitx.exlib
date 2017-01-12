@@ -9,8 +9,10 @@ FCITX_MODULES=(
     pinyin-enhance:py_table-20121124.tar.gz
     pinyin-enhance:py_stroke-20121124.tar.gz
 )
+require fcitx-common
 
-require fcitx-common  gtk-icon-cache freedesktop-desktop freedesktop-mime
+require systemd-service [ systemd_files=[ ] systemd_user_files=[ "$FILES"/systemd/user ] ]
+require gtk-icon-cache freedesktop-desktop freedesktop-mime
 
 SUMMARY="A Flexible Input Method Framework"
 DESCRIPTION="
@@ -110,6 +112,23 @@ src_prepare() {
 
     optionq pinyin && edo cp "${FETCHEDDIR}"/pinyin.tar.gz src/im/pinyin/data
     optionq table && edo cp "${FETCHEDDIR}"/table.tar.gz src/im/table/data
+}
+
+src_install() {
+    default
+
+    ## systemd unit
+    install_systemd_files
+
+    ## systemd environment
+    insinto "/usr/$(exhost --target)/lib/systemd/user.conf.d"
+    hereins 80-env-im-fcitx.conf <<EOF
+[Manager]
+DefaultEnvironment=XMODIFIERS=@im=fcitx
+DefaultEnvironment=GTK_IM_MODULE=`(optionq gtk2 || optionq gtk3) && echo fcitx || echo xim`
+DefaultEnvironment=QT_IM_MODULE=`(optionq qt) && echo fcitx || echo xim`
+
+EOF
 }
 
 pkg_postrm() {

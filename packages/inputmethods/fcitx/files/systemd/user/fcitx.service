@@ -1,0 +1,7 @@
+[Unit]
+Description=Fcitx Input Method
+Requires=xorg.socket
+After=xorg.socket
+
+[Service]
+ExecStart=/usr/bin/fcitx -D -r
