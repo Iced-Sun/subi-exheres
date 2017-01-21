@@ -1,8 +1,8 @@
-# Copyright 2015, 2016 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2015-2017 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2013 Elias Pipping <pipping@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=djcb tag=v${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp-optional
+require github [ user=djcb suffix=tar.gz release=${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp-optional
 
 SUMMARY="Collection of utilties for indexing and searching Maildirs"
 
