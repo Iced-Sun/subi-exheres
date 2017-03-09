@@ -1,0 +1,11 @@
+[Unit]
+Description=Fcitx Input Method at DISPLAY %i
+Requires=X@.target
+After=X@.target
+
+[Service]
+Environment=DISPLAY=:%i
+ExecStart=/usr/bin/fcitx -D
+
+[Install]
+WantedBy=X@.target

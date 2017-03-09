@@ -150,3 +150,4 @@ pkg_postinst() {
     freedesktop-mime_pkg_postinst
     gtk-icon-cache_pkg_postinst
 }
+
