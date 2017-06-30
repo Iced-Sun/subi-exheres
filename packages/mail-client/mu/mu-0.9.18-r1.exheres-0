@@ -2,7 +2,7 @@
 # Copyright 2013 Elias Pipping <pipping@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=djcb suffix=tar.gz release=${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp
+require github [ user=djcb suffix=tar.gz release=${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp [ with_opt=true ]
 
 SUMMARY="Collection of utilties for indexing and searching Maildirs"
 
@@ -38,4 +38,13 @@ src_prepare() {
 
     edo sed -e "s/^\(AC_PATH_PROG(.*\)pkg-config/\1${PKG_CONFIG}/" -i configure.ac
     autotools_src_prepare
+}
+
+## wtf???
+src_compile() {
+    default
+}
+
+src_install() {
+    default
 }
