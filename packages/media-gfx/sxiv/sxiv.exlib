@@ -1,8 +1,8 @@
-# Copyright 2012-2016 Bing SUN
+# Copyright 2012-2017 Bing SUN
 # Copyright 2012 Hong Hao <oahong@oahong.me>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=muennich ]
+require github [ user=muennich ] freedesktop-desktop
 
 SUMMARY="Simple (or small or suckless) X Image Viewer"
 DESCRIPTION="
@@ -52,5 +52,12 @@ src_prepare() {
     edo sed -i Makefile -e "s|-lexif|$(option exif -lexif)|"
     edo sed -i Makefile -e "s|-DHAVE_GIFLIB|$(option gif -DHAVE_GIFLIB)|"
     edo sed -i Makefile -e "s|-lgif|$(option gif -lgif)|"
+}
+
+src_install() {
+    default
+
+    insinto /usr/share/applications
+    doins sxiv.desktop
 }
 
