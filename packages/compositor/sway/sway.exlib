@@ -20,8 +20,9 @@ DEPENDENCIES="
     build+run:
         dev-libs/json-c
         dev-libs/pcre
+        sys-apps/dbus
         sys-libs/libcap
-        sys-libs/libinput
+        sys-libs/libinput[>=1.6.0]
         sys-libs/pam
         sys-libs/wayland
         sys-libs/wlc
@@ -46,6 +47,7 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -Denable-swaymsg:BOOL=TRUE
     -Denable-swaybar:BOOL=TRUE
     -Denable-swaybg:BOOL=TRUE
+    -Denable-tray:BOOL=TRUE
     -Denable-gdk-pixbuf:BOOL=TRUE
     -Denable-swaylock:BOOL=TRUE
     -Denable-binding-event:BOOL=TRUE
