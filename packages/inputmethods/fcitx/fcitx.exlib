@@ -1,4 +1,4 @@
-# Copyright 2013-2016 Bing Sun
+# Copyright 2013-2017 Bing Sun
 # Copyright 2008,2009,2010 Hong Hao
 # Distributed under the terms of the GNU General Public License v2
 # Based in part upon 'fcitx-3.5.ebuild', which is:
@@ -30,6 +30,7 @@ MYOPTIONS="debug opencc gtk2 gtk3 qt table pinyin classic-ui gobject-introspecti
 DEPENDENCIES="
     build:
         dev-util/intltool
+        kde-frameworks/extra-cmake-modules
     build+run:
         classic-ui? (
             x11-libs/cairo[X]

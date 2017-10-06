@@ -1,4 +1,4 @@
-# Copyright 2012-2016 SUN Bing
+# Copyright 2012-2017 SUN Bing
 # Distributed under the terms of the GNU General Public License v2
 
 require fcitx-common
@@ -9,7 +9,7 @@ SLOT="0"
 MYOPTIONS="traditional-chinese [[ description = [ Input traditional Chinese characters with zhuyin ] ]]"
 
 DOWNLOADS+="
- traditional-chinese? ( ${FCITX_DATA_URL}/model.text.20130308.tar.gz )
+  traditional-chinese? ( ${FCITX_DATA_URL}/model.text.20161206.tar.gz )
 "
 
 DEPENDENCIES+="
