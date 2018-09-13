@@ -1,0 +1,4 @@
+require iio-sensor-proxy
+
+PLATFORMS="~amd64"
+
