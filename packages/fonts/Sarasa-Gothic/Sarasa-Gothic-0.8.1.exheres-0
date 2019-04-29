@@ -1,0 +1,21 @@
+# Copyright 2019 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont github [ user=be5invis suffix=7z release=v${PV} pnv=sarasa-gothic-ttc-${PV} ]
+
+SUMMARY="a Chinese & Japanese programming font based on Iosevka and Source Han Sans"
+
+LICENCES="SIL-1.1"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+WORK=${WORKBASE}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.ttc
+}
+
