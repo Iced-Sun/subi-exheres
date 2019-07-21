@@ -1,4 +1,4 @@
-# Copyright 2012-2017 Bing SUN
+# Copyright 2012-2019 Bing SUN
 # Copyright 2012 Hong Hao <oahong@oahong.me>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -48,10 +48,8 @@ src_prepare() {
     edo sed -i Makefile -e "s|share/sxiv/exec|libexec/sxiv|"
     
     # extra dependency
-    edo sed -i Makefile -e "s|-DHAVE_LIBEXIF|$(option exif -DHAVE_LIBEXIF)|"
-    edo sed -i Makefile -e "s|-lexif|$(option exif -lexif)|"
-    edo sed -i Makefile -e "s|-DHAVE_GIFLIB|$(option gif -DHAVE_GIFLIB)|"
-    edo sed -i Makefile -e "s|-lgif|$(option gif -lgif)|"
+    edo sed -i Makefile -e "s|^\(HAVE_LIBEXIF = \).*|\1$(option exif 1 0)|"
+    edo sed -i Makefile -e "s|^\(HAVE_GIFLIB = \).*|\1$(option gif 1 0)|"
 }
 
 src_install() {
