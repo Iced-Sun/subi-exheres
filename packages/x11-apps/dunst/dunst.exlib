@@ -1,8 +1,8 @@
-# Copyright 2016-2018 SUN Bing
+# Copyright 2016-2019 SUN Bing
 # Copyright 2013 Thomas Witt
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=knopwob tag=v${PV} ] systemd-service
+require github [ user=dunst-project tag=v${PV} ] systemd-service
 export_exlib_phases src_prepare
 
 SUMMARY="Daemon for displaying notifications"
@@ -10,7 +10,7 @@ HOMEPAGE="http://www.knopwob.org/dunst/"
 
 LICENCES="BSD-3"
 SLOT="0"
-MYOPTIONS=""
+MYOPTIONS="systemd"
 
 BUGS_TO="pyromaniac@thwitt.de"
 
@@ -19,13 +19,12 @@ DEPENDENCIES="
         dev-lang/perl:* [[ description = [ pod2man is used to build the manpage ] ]]
         virtual/pkg-config
     build+run:
-        media-libs/freetype:2
+        x11-libs/gtk+
         dev-libs/glib[>=2.36]
-	x11-libs/gdk-pixbuf:2.0
         sys-apps/dbus
         x11-libs/cairo[X]
         x11-libs/pango
-        x11-libs/libX11
+	x11-libs/libXinerama
         x11-libs/libXScrnSaver
         x11-libs/libXrandr
         x11-libs/libnotify
