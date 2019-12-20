@@ -1,8 +1,8 @@
-# Copyright 2015-2018 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2015-2019 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2013 Elias Pipping <pipping@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user=djcb suffix=tar.xz release=v${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp [ with_opt=true ]
+require github [ user=djcb suffix=tar.xz release=$(ever range 1-2 ${PV}) ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.15 ] ] elisp [ with_opt=true ]
 
 SUMMARY="Collection of utilties for indexing and searching Maildirs"
 
@@ -17,7 +17,7 @@ DEPENDENCIES="
     build+run:
         dev-db/xapian-core[>=1.2]
         dev-libs/glib:2[>=2.24]
-        net-utils/gmime:2.6[>=2.6.7]
+        net-utils/gmime:3.0
 "
 
 DEFAULT_SRC_CONFIGURE_PARAMS=(
