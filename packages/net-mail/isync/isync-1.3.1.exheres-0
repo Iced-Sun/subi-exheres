@@ -1,0 +1,22 @@
+# Copyright 2019 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2013 Elias Pipping <pipping@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require sourceforge [ suffix=tar.gz ]
+
+SUMMARY="Command line application which synchronizes mailboxes"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="alternative-uid-mapping providers: libressl openssl [[ number-selected = exactly-one ]]"
+
+DEPENDENCIES="
+    build:
+        virtual/pkg-config
+    build+run:
+        alternative-uid-mapping? ( sys-libs/db:=[>=4.2] )
+        providers:libressl? ( dev-libs/libressl:= )
+        providers:openssl? ( dev-libs/openssl )
+"
+
