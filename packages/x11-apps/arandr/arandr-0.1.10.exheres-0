@@ -1,7 +1,7 @@
-# Copyright 2010 Bing Sun <subi.the.dream.walker@gmail.com>
+# Copyright 2010-2020 Bing Sun <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require distutils freedesktop-desktop
+require setup-py [ import=distutils blacklist=2 has_bin=true has_lib=true ] freedesktop-desktop
 
 SUMMARY="Another XRandR GUI"
 DESCRIPTION="Provide a simple visual front end for XRandR 1.2, client side X only (no xorg.conf involved, no pre-1.2 options).
@@ -25,6 +25,7 @@ DEPENDENCIES="
         dev-python/docutils
     run:
         x11-apps/xrandr
-        gnome-bindings/pygtk
+	gnome-bindings/pygobject
+	dev-python/pycairo
 "
 
