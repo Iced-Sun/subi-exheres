@@ -1,0 +1,22 @@
+# Copyright 2019 Danilo Spinella <danyspin97@protonmail.com>
+# Copyright 2020 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+WORK=${WORKBASE}/${PN}-v${PV}
+require meson
+
+SUMMARY="A launcher/menu program for wlroots based wayland compositors"
+DOWNLOADS="https://hg.sr.ht/~scoopta/${PN}/archive/v${PV}.tar.gz"
+
+LICENCES="GPL-3"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        virtual/pkg-config
+    build+run:
+        sys-libs/wayland
+        x11-libs/gtk+:3
+"
+
