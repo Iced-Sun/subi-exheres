@@ -25,7 +25,7 @@ DOWNLOADS+="
 "
 
 SLOT="0"
-MYOPTIONS="debug opencc gtk2 gtk3 qt table pinyin classic-ui gobject-introspection"
+MYOPTIONS="debug gtk2 gtk3 qt table pinyin classic-ui gobject-introspection"
 
 DEPENDENCIES="
     build:
@@ -69,6 +69,9 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
     -DENABLE_LUA:BOOL=FALSE
     -DENABLE_LIBXML2:BOOL=FALSE  # xkb
     -DENABLE_OPENCC:BOOL=FALSE
+    -DENABLE_XKB:BOOL=FALSE
+    -DENABLE_SNOOPER:BOOL=FALSE
+    -DENABLE_SPELL:BOOL=FALSE
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
@@ -77,7 +80,7 @@ CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
     'classic-ui CAIRO' 'classic-ui PANGO'
     'gtk2 GTK2_IM_MODULE' 'gtk2 GLIB2'
     'gtk3 GTK3_IM_MODULE' 'gtk3 GLIB2'
-    QT 'qt QT_IM_MODULE' 'qt QT_GUI'
+    'qt QT' 'qt QT_IM_MODULE' 'qt QT_GUI'
 
     'gobject-introspection GIR'
 )
