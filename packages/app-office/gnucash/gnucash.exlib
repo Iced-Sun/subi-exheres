@@ -1,0 +1,98 @@
+# Copyright 2020 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2013 Wulf C. Krueger <philantrop@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [[ suffix=tar.bz2 release=${PV} ]] cmake
+
+export_exlib_phases src_prepare
+
+SUMMARY="GnuCash is personal and small-business financial-accounting software"
+DESCRIPTION="
+Designed to be easy to use, yet powerful and flexible, GnuCash allows
+you to track bank accounts, stocks, income and expenses. As quick and
+intuitive to use as a checkbook register, it is based on professional
+accounting principles to ensure balanced books and accurate reports.
+"
+HOMEPAGE="http://${PN}.org"
+
+UPSTREAM_DOCUMENTATION="${HOMEPAGE}/docs.phtml [[ lang = en ]]"
+
+SLOT="0"
+LICENCES="GPL-2"
+
+MYOPTIONS="debug ofx
+    aqbanking [[ description = [ Enable HBCI/AqBanking support, for connecting to some internet banks ] ]]
+    chipcard  [[ description = [ Enable support for chipcard reading and processing ] requires = [ aqbanking ] ]]
+    dbi       [[ description = [ Enable SQLite/MySQL/PostgreSQL support via libdbi ] ]]
+    gnucash   [[ description = [ Build all of GnuCash, not just the library ] ]]
+    ( linguas: ar as bg brx ca cs da de doi el en_GB es_NI es eu fa fi fr gu he hi hu it ja kn ko
+               kok kok@latin ks lt lv mr nb ne nl pl pt_BR pt ro ru rw sk sv ta te tr uk ur vi zh_CN
+               zh_TW )
+"
+
+## gtest is hard-coded
+DEPENDENCIES="
+    build:
+	dev-cpp/gtest[googlemock]
+        dev-libs/boost[>=1.54.0]
+        dev-util/intltool
+	sys-devel/gettext
+        virtual/pkg-config
+    build+run:
+        dev-lang/guile:2.2
+        dev-libs/glib:2[>=2.40]
+	dev-libs/icu
+        dev-libs/libsecret[>=0.18]
+        dev-libs/libxml2:2.0[>=2.7.0]
+        dev-libs/libxslt
+        gnucash? (
+ 	    net-libs/webkit:4.0
+	    x11-libs/gtk+:3[>=3.10.0]
+        )
+        aqbanking? (
+            dev-libs/aqbanking[>=5.3.4]
+	    sys-libs/gwenhywfar[>=4.9.99]
+	    gnucash? ( sys-libs/gwenhywfar[>=4.9.99][providers:gtk3] )
+            chipcard? ( dev-libs/libchipcard[>=4.2.7] )
+        )
+        dbi? ( dev-libs/libdbi[>=0.8.3] )
+        ofx? ( finance/libofx[>=0.9.0] )
+    run:
+        gnucash? ( gnome-desktop/dconf )
+"
+
+# The tests don't respect the configuration choices but try to test even stuff
+# that's been explicitly disabled.
+RESTRICT="test"
+
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DWITH_PYTHON:BOOL=FALSE
+    -DDISABLE_NLS:BOOL=FALSE
+    -DALLOW_OLD_GETTEXT:BOOL=FALSE
+    -DENABLE_REGISTER2:BOOL=TRUE
+    -DCMAKE_BUILD_TYPE:STRING=Release
+
+    # must enable binreloc
+    -DENABLE_BINRELOC:BOOL=TRUE
+    -DCMAKE_INSTALL_DATAROOTDIR:PATH=/usr/$(exhost --target)/share/
+    
+    # fix gnucash building
+    -DCMAKE_EXE_LINKER_FLAGS="-lm"
+
+    # fix glib segfault
+    -DCOMPILE_GSCHEMAS:BOOL=TRUE
+
+    # fix GtkGUIManager symbol
+    -DDISABLE_DEPRECATED_GLIB:BOOL=FALSE
+    -DDISABLE_DEPRECATED_GTK:BOOL=FALSE
+    -DDISABLE_DEPRECATED_GNOME:BOOL=FALSE
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
+    AQBANKING GNUCASH OFX 'dbi SQL'
+)
+
+gnucash_src_prepare() {
+    edo sed -e 's|${CMAKE_CURRENT_BINARY_DIR}/gnucash.1|gnucash.1|' -i ${CMAKE_SOURCE}/doc/CMakeLists.txt
+}
+

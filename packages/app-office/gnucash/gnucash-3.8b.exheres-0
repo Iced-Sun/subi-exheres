@@ -1,0 +1,11 @@
+# Copyright 2020 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2009-2013 Wulf C. Krueger <philantrop@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+CMAKE_SOURCE=${WORKBASE}/${PN}-3.8
+
+require gnucash
+
+PLATFORMS="~amd64 ~x86"
+
+
