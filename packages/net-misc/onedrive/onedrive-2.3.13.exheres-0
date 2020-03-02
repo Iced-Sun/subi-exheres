@@ -1,0 +1,31 @@
+# Copyright 2020 SUN Bing
+# Distributed under the terms of the GNU General Public License v2
+
+require github [[ user=abraunegg tag=v${PV} ]]
+
+SUMMARY="OneDrive Client for Linux"
+DESCRIPTION="A complete tool to interact with OneDrive on Linux. Built following the UNIX philosophy"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+
+DEPENDENCIES="
+    build:
+        dev-lang/ldc-bin[>1.12.0]
+        dev-scm/git
+    build+run:
+        net-misc/curl
+        dev-db/sqlite:3[>=3.7.15]
+        x11-libs/libnotify
+"
+
+DEFAULT_SRC_CONFIGURE_PARAMS=(
+    --enable-notifications
+)
+
+
+#  --with-systemdsystemunitdir=DIR
+#  --with-systemduserunitdir=DIR
+#  --with-bash-completion-dir=DIR
+#  --with-zsh-completion-dir=DIR
