@@ -24,7 +24,6 @@ DEFAULT_SRC_CONFIGURE_PARAMS=(
     --enable-notifications
 )
 
-
 #  --with-systemdsystemunitdir=DIR
 #  --with-systemduserunitdir=DIR
 #  --with-bash-completion-dir=DIR

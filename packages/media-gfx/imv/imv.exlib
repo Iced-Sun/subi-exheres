@@ -1,0 +1,57 @@
+# Copyright 2019 Danilo Spinella <danyspin97@protonmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user='eXeC64' tag=v${PV} ]
+
+SUMMARY="Image viewer for X11/Wayland"
+
+LICENCES="MIT"
+
+MYOPTIONS="
+    ( jpeg png tiff svg ) [[ number-selected = at-least-one ]]
+    ( X wayland ) [[ number-selected = at-least-one ]]
+    ( providers: FreeImage )
+"
+
+DEPENDENCIES="
+    build:
+        app-doc/asciidoc
+    build+run:
+        x11-libs/pango
+        dev-libs/icu
+        x11-libs/libxkbcommon[X?][wayland?]
+        X? (
+            x11-libs/libX11
+            x11-dri/glu
+        )
+        wayland? (
+            sys-libs/wayland
+        )
+        jpeg? ( media-libs/libjpeg-turbo )
+        png? ( media-libs/libpng )
+        tiff? ( media-libs/tiff )
+        svg? ( gnome-desktop/librsvg:2 )
+"
+
+BUGS_TO="danyspin97@protonmail.com"
+
+DEFAULT_SRC_INSTALL_PARAMS=(
+    PREFIX=/usr
+    BINPREFIX=/usr/$(exhost --target)/bin
+)
+
+src_prepare() {
+    option X && edo sed -i -e 's|\(WINDOWS=\).*|\1x11|' "${WORK}"/config.mk
+    option wayland && edo sed -i -e 's|\(WINDOWS=\).*|\1wayland|' "${WORK}"/config.mk
+    option X && option wayland && edo sed -i -e 's|\(WINDOWS=\).*|\1all|' "${WORK}"/config.mk
+
+    option providers:FreeImage && edo sed -i -e 's|\(BACKEND_FREEIMAGE=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_FREEIMAGE=\).*|\1no|' "${WORK}"/config.mk
+    option tiff && edo sed -i -e 's|\(BACKEND_LIBTIFF=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBTIFF=\).*|\1no|' "${WORK}"/config.mk
+    option png && edo sed -i -e 's|\(BACKEND_LIBPNG=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBPNG=\).*|\1no|' "${WORK}"/config.mk
+    option jpeg && edo sed -i -e 's|\(BACKEND_LIBJPEG=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBJPEG=\).*|\1no|' "${WORK}"/config.mk
+
+    edo sed -i -e "s|pkg-config|$(exhost --tool-prefix)pkg-config|g" "${WORK}"/Makefile
+
+    default
+}
+
