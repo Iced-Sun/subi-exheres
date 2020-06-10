@@ -75,7 +75,7 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
     # must enable binreloc
     -DENABLE_BINRELOC:BOOL=TRUE
     -DCMAKE_INSTALL_DATAROOTDIR:PATH=/usr/$(exhost --target)/share/
-    
+
     # fix gnucash building
     -DCMAKE_EXE_LINKER_FLAGS="-lm"
 
@@ -95,4 +95,3 @@ CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
 gnucash_src_prepare() {
     edo sed -e 's|${CMAKE_CURRENT_BINARY_DIR}/gnucash.1|gnucash.1|' -i ${CMAKE_SOURCE}/doc/CMakeLists.txt
 }
-
