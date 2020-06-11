@@ -1,9 +1,0 @@
-# Copyright 2019 Danilo Spinella <danyspin97@protonmail.com>
-# Copyright 2020 SUN Bing <subi.the.dream.walker@gmail.com>
-# Distributed under the terms of the GNU General Public License v2
-
-SCM_REPOSITORY="https://hg.sr.ht/~scoopta/${PN}"
-require scm-hg wofi
-
-PLATFORMS="~amd64"
-
