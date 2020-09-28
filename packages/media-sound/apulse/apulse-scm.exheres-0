@@ -24,3 +24,5 @@ DEPENDENCIES="
 
 CMAKE_SRC_CONFIGURE_PARAMS=( -DAPULSEPATH:STRING=/usr/$(exhost --target)/lib )
 
+WORK=${WORKBASE}/apulse-scm
+
