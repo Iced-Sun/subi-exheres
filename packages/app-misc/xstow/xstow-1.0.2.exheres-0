@@ -13,7 +13,5 @@ MYOPTIONS=""
 DEPENDENCIES="
     build:
         virtual/pkg-config
-    build+run:
-        virtual/pkg-config
 "
 
