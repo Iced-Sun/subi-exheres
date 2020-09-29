@@ -18,7 +18,7 @@ DEPENDENCIES="
         app-doc/asciidoc
     build+run:
         x11-libs/pango
-        dev-libs/icu
+        dev-libs/icu:=
         x11-libs/libxkbcommon[X?][wayland?]
         X? (
             x11-libs/libX11
