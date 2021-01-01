@@ -2,9 +2,9 @@
 # Copyright 2009-2013 Wulf C. Krueger <philantrop@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [[ suffix=tar.bz2 release=${PV} ]] cmake
+require github [[ suffix=tar.bz2 release=${PV} ]] cmake [[ ninja=true ]]
 
-export_exlib_phases src_prepare
+export_exlib_phases src_install
 
 SUMMARY="GnuCash is personal and small-business financial-accounting software"
 DESCRIPTION="
@@ -67,15 +67,20 @@ DEPENDENCIES="
 RESTRICT="test"
 
 CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DWITH_PYTHON:BOOL=FALSE
-    -DDISABLE_NLS:BOOL=FALSE
-    -DALLOW_OLD_GETTEXT:BOOL=FALSE
-    -DENABLE_REGISTER2:BOOL=TRUE
     -DCMAKE_BUILD_TYPE:STRING=Release
 
-    # must enable binreloc
+    -DWITH_PYTHON:BOOL=FALSE
+    -DDISABLE_NLS:BOOL=FALSE
+
+    ## the install destination is too broken to fix
+    # CMAKE_INSTALL_DATADIR: borrowed/chartjs data/{accounts,checks,pixmaps} doc gnucash/{gnome,gtkbuilder,import-export,python} po
+    # CMAKE_INSTALL_DATAROOTDIR: (none)
+    # CMAKE_INSTALL_DOCDIR: . doc doc/examples
     -DENABLE_BINRELOC:BOOL=TRUE
-    -DCMAKE_INSTALL_DATAROOTDIR:PATH=/usr/$(exhost --target)/share/
+    #-DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc
+    -DCMAKE_INSTALL_DOCDIR:PATH=/usr/share/doc/${PNV}
+    -DCMAKE_INSTALL_DATAROOTDIR:PATH=/usr/$(exhost --target)/share
+    -DCMAKE_INSTALL_DATADIR:PATH=/usr/$(exhost --target)/share
 
     # fix gnucash building
     -DCMAKE_EXE_LINKER_FLAGS="-lm"
@@ -93,6 +98,7 @@ CMAKE_SRC_CONFIGURE_OPTION_WITHS=(
     AQBANKING GNUCASH OFX 'dbi SQL'
 )
 
-gnucash_src_prepare() {
-    edo sed -e 's|${CMAKE_CURRENT_BINARY_DIR}/gnucash.1|gnucash.1|' -i ${CMAKE_SOURCE}/doc/CMakeLists.txt
+gnucash_src_install() {
+    # skip emagicdoc
+    ninja_src_install
 }
