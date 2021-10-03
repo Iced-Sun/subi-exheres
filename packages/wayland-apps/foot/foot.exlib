@@ -1,0 +1,44 @@
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require gitlab [ user=dnkl new_download_scheme=true ] meson
+
+export_exlib_phases src_configure
+
+SUMMARY="A fast, lightweight and minimalistic Wayland terminal emulator"
+LICENCES="MIT"
+SLOT="0"
+
+MYOPTIONS="libnotify"
+
+DEPENDENCIES="
+    build:
+        sys-libs/ncurses
+        app-doc/scdoc
+    build+run:
+        media-libs/fontconfig
+        media-libs/freetype:=
+        x11-libs/pixman
+        sys-libs/wayland
+        x11-libs/libxkbcommon
+    suggestion:
+        x11-apps/xdg-utils
+"
+
+MESON_SRC_CONFIGURE_PARAMS=(
+    --wrap-mode=default
+    # app-doc/scdoc
+    -Ddocs=enabled
+    -Dime=true
+    # sys-libs/ncurses
+    -Dterminfo=enabled
+)
+
+foot_src_configure() {
+    default
+
+    esandbox allow_net --connect "inet:0.0.0.0/0@53"
+    esandbox allow_net --connect "inet:0.0.0.0/0@443"
+  
+    meson_src_configure
+}
