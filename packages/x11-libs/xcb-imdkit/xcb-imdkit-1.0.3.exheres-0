@@ -1,0 +1,26 @@
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=fcitx ] cmake [ api=2 ]
+SUMMARY="input method development support for xcb"
+
+LICENCES="LGPL-2.1"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        virtual/pkg-config
+        kde-frameworks/extra-cmake-modules[>=0.0.11]
+        dev-libs/uthash
+    build+run:
+        x11-libs/libxcb
+        x11-utils/xcb-util-keysyms
+        x11-utils/xcb-util
+"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DUSE_SYSTEM_UTHASH:BOOL=TRUE
+    -Wno-dev
+)
