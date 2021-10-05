@@ -1,0 +1,46 @@
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2017 Hong Hao <oahong@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+FCITX_MODULES=(
+    data:lm_sc.3gm.arpa-20140820.tar.bz2
+    data:dict.utf8-20210402.tar.xz
+    data:table.tar.gz
+)
+kenlm_REV=01c49fe
+
+require fcitx-common
+
+SUMMARY="A library to support generic input method implementation"
+
+LICENCES="LGPL-2.1"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+DOWNLOADS+="
+    https://github.com/kpu/kenlm/archive/${kenlm_REV}.tar.gz -> kenlm-${kenlm_REV}.tar.gz
+"
+
+DEPENDENCIES="
+    build:
+        dev-lang/python[>=3.0] [[ note = [ to convert opengram data ] ]]
+    build+run:
+        dev-libs/boost[>=1.61]
+"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DENABLE_TEST:BOOL=FALSE
+    -DENABLE_COVERAGE:BOOL=FALSE
+    -DENABLE_DOC:BOOL=FALSE
+)
+
+src_prepare() {
+    default
+
+    fcitx-common_src_prepare
+
+    edo cp "${FETCHEDDIR}"/kenlm-${kenlm_REV}.tar.gz ${CMAKE_SOURCE}/src/libime/core/kenlm-${kenlm_REV}.tar.gz
+    edo cd ${CMAKE_SOURCE}/src/libime/core
+    edo tar xf kenlm-${kenlm_REV}.tar.gz && rm kenlm-${kenlm_REV}.tar.gz
+    edo mv kenlm kenlm.orig && mv kenlm-${kenlm_REV}* kenlm
+}
