@@ -1,40 +1,60 @@
-# Copyright 2012-2016 SUN Bing
+# Copyright 2012-2021 SUN Bing
 # Distributed under the terms of the GNU General Public License v2
 
 FCITX_DATA_URL="http://download.fcitx-im.org/data/"
 
-require cmake [ api=2 ] github [ user=fcitx ]
-export_exlib_phases src_prepare
+if $(ever at_least 5 ${PV}); then
+    MY_PN=${PN/fcitx/fcitx5}
+else
+    MY_PN=${PN}
+fi
+
+require cmake [ cmake_minimum_version=3.6.0 ] github [ user=fcitx project=${MY_PN} ]
+export_exlib_phases src_unpack src_prepare
 
 HOMEPAGE="https://fcitx-im.org"
-LICENCES="GPL-2"
-UPSTREAM_DOCUMENTATION="http://fcitx.github.com/handbook/fcitx.html [[ lang = zh_CN ]]"
-
-BUGS_TO="oahong@gmail.com"
+LICENCES="LGPL-2.1"
+DOWNLOADS+="
+    ${FCITX_MODULES[@]/*:/${FCITX_DATA_URL}}
+"
 
 DEPENDENCIES="
     build:
-        dev-util/intltool
-        sys-devel/gettext
+        kde-frameworks/extra-cmake-modules
+        virtual/pkg-config
 "
 
 if [[ ${PN} != "fcitx" ]]; then
     DEPENDENCIES+="
     build+run:
-        inputmethods/fcitx[>=4.2.7]
+        inputmethods/fcitx
 "
 fi
 
-CMAKE_SRC_CONFIGURE_PARAMS=(
-    ## fix install path
-    -DFCITX_PO_INSTALL_DIR:PATH=/usr/share/locale/
-)
+CMAKE_SOURCE=${WORKBASE}/${MY_PN}-${PV}
+WORK=${WORKBASE}/build
+
+CMAKE_SRC_CONFIGURE_PARAMS=( -Wno-dev )
+
+fcitx-common_src_unpack() {
+    ## don't unpack module/im data files
+    unpack --if-compressed ${MY_PN}-${PV}.tar.gz
+
+    ## cmake_src_unpack
+    edo mkdir -p "${WORK}"
+}
 
 fcitx-common_src_prepare() {
-    einfo "Fixing multiarch install destination (LIBDATAROOT)..."
-    for file in $(find . -iname CMakeLists.txt); do
-        edo sed -i ${file} -e 's|DESTINATION share/|DESTINATION /usr/share/|'
-    done
-
+    ## cmake_src_prepare
+    edo cd "${CMAKE_SOURCE}"
     default
+
+    ## prepare data
+    for module in ${FCITX_MODULES[@]}; do
+        edo cp "${FETCHEDDIR}"/${module/*:/} ${module/:*/}
+    done
 }
+
+
+
+

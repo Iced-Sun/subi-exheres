@@ -1,157 +1,82 @@
-# Copyright 2013-2017 Bing Sun
-# Copyright 2008,2009,2010 Hong Hao
-# Distributed under the terms of the GNU General Public License v2
-# Based in part upon 'fcitx-3.5.ebuild', which is:
-#    Copyright 1999-2008 Gentoo Foundation
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
 
-FCITX_MODULES=(
-    spell:en_dict-20121020.tar.gz
-    pinyin-enhance:py_table-20121124.tar.gz
-    pinyin-enhance:py_stroke-20121124.tar.gz
-)
-require fcitx-common
+FCITX_MODULES=( src/modules/spell/dict:en_dict-20121020.tar.gz )
+require fcitx-common freedesktop-desktop gtk-icon-cache
 
-require systemd-service [ systemd_files=[ ] systemd_user_files=[ "$FILES"/systemd/user ] ]
-require gtk-icon-cache freedesktop-desktop freedesktop-mime
-
-SUMMARY="A Flexible Input Method Framework"
-DESCRIPTION="
-Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. It has three built-in Input Method Engine, Pinyin, QuWei and Table-based input methods.
-"
-DOWNLOADS+="
- ${FCITX_MODULES[@]/*:/${FCITX_DATA_URL}}
- pinyin? ( ${FCITX_DATA_URL}/pinyin.tar.gz )
- table? ( ${FCITX_DATA_URL}/table.tar.gz )
+SUMMARY="Fcitx 5 is a generic input method framework released under LGPL-2.1+"
+DESCRIPTION="Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. Fcitx supports typing with many languages all over the world with a large number of engines.
 "
 
 SLOT="0"
-MYOPTIONS="debug gtk2 gtk3 qt table pinyin classic-ui gobject-introspection"
+MYOPTIONS="X dbus emoji enchant wayland
+    enchant       [[ description = [ Used for word prediction (hinting) ] ]]
+    ( X wayland ) [[ number-selected = at-least-one ]]
+    ( providers: systemd [[ description = [ Use systemd for event loop and D-Bus IPC client ] ]] )
+"
 
 DEPENDENCIES="
     build:
-        dev-util/intltool
-        kde-frameworks/extra-cmake-modules
+        sys-devel/gettext
     build+run:
-        classic-ui? (
+        app-text/iso-codes
+        dev-libs/expat
+        dev-libs/fmt
+        dev-libs/json-c
+        sys-apps/util-linux [[ note = [ libuuid ] ]]
+        x11-apps/xkeyboard-config
+        x11-libs/libxkbcommon[X]
+        (
+            dev-libs/glib
             x11-libs/cairo[X]
+            x11-libs/gdk-pixbuf
             x11-libs/pango
-            x11-libs/libXrender
         )
-
-        gtk2? ( dev-libs/dbus-glib )
-        gtk3? ( dev-libs/dbus-glib )
-        qt? ( x11-libs/qt:4[>=4.5][dbus] )
-
-        gobject-introspection? ( gnome-desktop/gobject-introspection )
-    recommendation:
-        inputmethods/fcitx-configtool
+	X? (
+            x11-libs/libxcb
+            x11-libs/libxkbfile
+            x11-libs/xcb-imdkit
+            x11-utils/xcb-util
+            x11-utils/xcb-util-keysyms
+            x11-utils/xcb-util-wm
+	)
+        dbus? ( sys-apps/dbus )
+        emoji? ( app-text/cldr-emoji-annotation )
+        enchant? ( app-spell/enchant )
+        wayland? (
+            sys-libs/wayland
+            sys-libs/wayland-protocols
+            x11-dri/mesa[wayland]
+        )
+        providers:systemd? ( sys-apps/systemd )
+        !providers:systemd? ( dev-libs/libevent )
 "
 
-BUGS_TO="oahong@gmail.com"
 RESTRICT="test"
 
 CMAKE_SRC_CONFIGURE_PARAMS+=(
-    ## fix install path
-    -DDBUS_SERVICE_DIR:PATH=/usr/share/dbus-1/services
-    -DSYSCONFDIR:PATH=/etc
-
-    # default
-    -DENABLE_GETTEXT:BOOL=TRUE
-    -DENABLE_X11:BOOL=TRUE
-    -DENABLE_DBUS:BOOL=TRUE
+    # fix xdg-autostart install path
+    -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc/
+    -DENABLE_TEST:BOOL=FALSE
+    -DENABLE_COVERAGE:BOOL=FALSE
+    -DENABLE_DOC:BOOL=FALSE
+    -DENABLE_SERVER:BOOL=TRUE
+    -DENABLE_KEYBOARD:BOOL=TRUE
     -DENABLE_XDGAUTOSTART:BOOL=TRUE
-
-    # miscs
-    -DENABLE_ENCHANT:BOOL=FALSE  # spell
-    -DENABLE_PRESAGE:BOOL=FALSE  # spell
-    -DENABLE_ICU:BOOL=FALSE
-    -DENABLE_BACKTRACE:BOOL=FALSE
-    -DENABLE_LUA:BOOL=FALSE
-    -DENABLE_LIBXML2:BOOL=FALSE  # xkb
-    -DENABLE_OPENCC:BOOL=FALSE
-    -DENABLE_XKB:BOOL=FALSE
-    -DENABLE_SNOOPER:BOOL=FALSE
-    -DENABLE_SPELL:BOOL=FALSE
+    -DUSE_FLATPAK_ICON:BOOL=FALSE
+    -DENABLE_LIBUUID:BOOL=TRUE    
 )
 
-CMAKE_SRC_CONFIGURE_OPTION_ENABLES=(
-    DEBUG PINYIN TABLE
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( DBUS EMOJI ENCHANT WAYLAND "X X11" )
+CMAKE_SRC_CONFIGURE_OPTION_USES=( "providers:systemd SYSTEMD" )
 
-    'classic-ui CAIRO' 'classic-ui PANGO'
-    'gtk2 GTK2_IM_MODULE' 'gtk2 GLIB2'
-    'gtk3 GTK3_IM_MODULE' 'gtk3 GLIB2'
-    'qt QT' 'qt QT_IM_MODULE' 'qt QT_GUI'
-
-    'gobject-introspection GIR'
-)
-
-update_gtk_immodules() {
-    optionq gtk2 && gtk-query-immodules-2.0 --update-cache
-    optionq gtk3 && gtk-query-immodules-3.0 --update-cache
-}
-
-src_unpack() {
-    ## don't unpack module/im data files
-    unpack --if-compressed ${PNV}.tar.gz
-}
-
-src_prepare() {
-    default
-    fcitx-common_src_prepare
-
-    ## respect table option
-    edo sed -i src/im/table/CMakeLists.txt -e 's|add_subdirectory(data)|if (ENABLE_TABLE) \n add_subdirectory(data) \n endif ()|'
-
-    ## fix install path
-    edo sed -i CMakeLists.txt -e 's|set(prefix .*|set(prefix /usr)|'
-
-    ## prepare data
-    for spec in ${FCITX_MODULES[@]}; do
-        if [[ -d src/module/${spec/:*/}/dict ]]; then
-	    edo cp "${FETCHEDDIR}"/${spec/*:/} src/module/${spec/:*/}/dict
-	else
-	    edo cp "${FETCHEDDIR}"/${spec/*:/} src/module/${spec/:*/}/data
-	fi
-    done
-
-    optionq pinyin && edo cp "${FETCHEDDIR}"/pinyin.tar.gz src/im/pinyin/data
-    optionq table && edo cp "${FETCHEDDIR}"/table.tar.gz src/im/table/data
-}
-
-src_install() {
-    default
-
-    ## systemd unit
-    install_systemd_files
-
-    ## systemd environment
-    insinto "/usr/$(exhost --target)/lib/systemd/user.conf.d"
-    hereins 80-env-im-fcitx.conf <<EOF
-[Manager]
-DefaultEnvironment=XMODIFIERS=@im=fcitx
-DefaultEnvironment=GTK_IM_MODULE=`(optionq gtk2 || optionq gtk3) && echo fcitx || echo xim`
-DefaultEnvironment=QT_IM_MODULE=`(optionq qt) && echo fcitx || echo xim`
-
-EOF
+pkg_postinst() {
+    freedesktop-desktop_pkg_postinst
+    gtk-icon-cache_pkg_postinst
 }
 
 pkg_postrm() {
-    default
-
-    update_gtk_immodules
-
-    gtk-icon-cache_pkg_postrm
-    freedesktop-mime_pkg_postrm
     freedesktop-desktop_pkg_postrm
+    gtk-icon-cache_pkg_postrm
 }
 
-pkg_postinst() {
-    default
-
-    update_gtk_immodules
-
-    freedesktop-desktop_pkg_postinst
-    freedesktop-mime_pkg_postinst
-    gtk-icon-cache_pkg_postinst
-}
 
