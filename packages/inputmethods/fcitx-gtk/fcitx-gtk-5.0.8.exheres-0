@@ -34,3 +34,9 @@ pkg_postinst() {
     option gtk2 && gtk-query-immodules-2.0 --update-cache
     option gtk3 && gtk-query-immodules-3.0 --update-cache
 }
+
+pkg_postrm() {
+    option gtk2 && gtk-query-immodules-2.0 --update-cache
+    option gtk3 && gtk-query-immodules-3.0 --update-cache
+}
+
