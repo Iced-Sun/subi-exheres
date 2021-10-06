@@ -1,0 +1,30 @@
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require fcitx-common cmake [ cmake_minimum_version=3.16 ]
+
+SUMMARY="Qt library and IM module for fcitx5"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="qt5"
+
+DEPENDENCIES="
+    build:
+        sys-devel/gettext
+    build+run:
+        x11-libs/libX11
+        x11-libs/libxcb
+        x11-libs/libxkbcommon
+        qt5? ( x11-libs/qtbase:5[gui][>=5.1.0] )
+"
+
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DENABLE_QT4:BOOL=FALSE
+    -DENABLE_QT6:BOOL=FALSE
+
+    -DBUILD_ONLY_PLUGIN:BOOL=FALSE
+    -DBUILD_STATIC_PLUGIN:BOOL=FALSE
+    -DWITH_FCITX_PLUGIN_NAME:BOOL=TRUE
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( QT5 )
