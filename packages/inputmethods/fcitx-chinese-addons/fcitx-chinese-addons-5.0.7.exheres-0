@@ -1,0 +1,42 @@
+# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+FCITX_MODULES=(
+    modules/pinyinhelper:py_table-20121124.tar.gz
+    modules/pinyinhelper:py_stroke-20121124.tar.gz
+)
+
+require fcitx-common
+
+SUMMARY="Addons related to Chinese, including IME previous bundled inside fcitx4"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="gui opencc
+    gui    [[ description = [ Enable Configure Gui ] ]]
+    opencc [[ description = [ Enable OpenCC for chttrans ] ]]
+"
+
+DEPENDENCIES="
+    build:
+        sys-devel/gettext
+    build+run:
+        dev-libs/boost[>=1.61]
+        dev-libs/fmt
+        inputmethods/libime
+        net-misc/curl
+        opencc? ( cjk/opencc )
+        gui? (
+            inputmethods/fcitx-qt[qt5?]
+            x11-libs/qtbase:5
+        )
+"
+
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DENABLE_TEST:BOOL=FALSE
+    -DENABLE_COVERAGE:BOOL=FALSE
+    -DENABLE_BROWSER:BOOL=FALSE
+    -DUSE_WEBKIT:BOOL=FALSE
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( GUI OPENCC )
+
