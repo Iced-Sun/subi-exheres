@@ -6,7 +6,7 @@ require fcitx-common
 SUMMARY="gtk im module and glib based dbus client library"
 SLOT="0"
 PLATFORMS="~amd64"
-MYOPTIONS="gobject-introspection
+MYOPTIONS="gobject-introspection gtk2 gtk3 gtk4
     ( gtk2 gtk3 gtk4 ) [[ number-selected = at-least-one ]]
 "
 
