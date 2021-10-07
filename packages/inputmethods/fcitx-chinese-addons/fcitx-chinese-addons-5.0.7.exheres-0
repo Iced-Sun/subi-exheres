@@ -6,7 +6,7 @@ FCITX_MODULES=(
     modules/pinyinhelper:py_stroke-20121124.tar.gz
 )
 
-require fcitx-common
+require fcitx-common gtk-icon-cache
 
 SUMMARY="Addons related to Chinese, including IME previous bundled inside fcitx4"
 SLOT="0"
@@ -40,3 +40,10 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( GUI OPENCC )
 
+pkg_postinst() {
+    gtk-icon-cache_pkg_postinst
+}
+
+pkg_postrm() {
+    gtk-icon-cache_pkg_postrm
+}

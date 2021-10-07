@@ -49,6 +49,10 @@ DEPENDENCIES="
         )
         providers:systemd? ( sys-apps/systemd )
         !providers:systemd? ( dev-libs/libevent )
+    recommendation:
+        inputmethods/fcitx-configtool
+        inputmethods/fcitx-gtk
+        inputmethods/fcitx-qt
 "
 
 RESTRICT="test"
@@ -78,5 +82,3 @@ pkg_postrm() {
     freedesktop-desktop_pkg_postrm
     gtk-icon-cache_pkg_postrm
 }
-
-
