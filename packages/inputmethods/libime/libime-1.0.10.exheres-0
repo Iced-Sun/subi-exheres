@@ -4,7 +4,7 @@
 
 FCITX_MODULES=(
     data:lm_sc.3gm.arpa-20140820.tar.bz2
-    data:dict.utf8-20210402.tar.xz
+    data:dict.utf8-20211021.tar.xz
     data:table.tar.gz
 )
 kenlm_REV=01c49fe
