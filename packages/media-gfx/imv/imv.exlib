@@ -1,10 +1,13 @@
+# Copyright 2022 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2019 Danilo Spinella <danyspin97@protonmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require github [ user='eXeC64' tag=v${PV} ]
+require meson
 
-SUMMARY="Image viewer for X11/Wayland"
-
+SUMMARY="X11/Wayland Image Viewer"
+DESCRIPTION="imv is a command line image viewer intended for use with tiling window managers".
+HOMEPAGE="https://sr.ht/~exec64/imv/"
+DOWNLOADS="https://git.sr.ht/~exec64/${PN}/archive/v${PV}.tar.gz"
 LICENCES="MIT"
 
 MYOPTIONS="
@@ -14,12 +17,12 @@ MYOPTIONS="
 "
 
 DEPENDENCIES="
-    build:
-        app-doc/asciidoc
     build+run:
-        x11-libs/pango
         dev-libs/icu:=
+        dev-libs/inih
         x11-libs/libxkbcommon[X?][wayland?]
+        x11-libs/pango
+
         X? (
             x11-libs/libX11
             x11-dri/glu
@@ -27,31 +30,35 @@ DEPENDENCIES="
         wayland? (
             sys-libs/wayland
         )
+
         jpeg? ( media-libs/libjpeg-turbo )
         png? ( media-libs/libpng )
         tiff? ( media-libs/tiff )
-        svg? ( gnome-desktop/librsvg:2 )
+        svg? ( gnome-desktop/librsvg:2[>=2.44] )
 "
 
 BUGS_TO="danyspin97@protonmail.com"
 
-DEFAULT_SRC_INSTALL_PARAMS=(
-    PREFIX=/usr
-    BINPREFIX=/usr/$(exhost --target)/bin
+MESON_SOURCE=${WORKBASE}/${PN}-v${PV}
+
+MESON_SRC_CONFIGURE_PARAMS=(
+    -Dcontrib-commands=true
+    -Dtest=disabled
+    -Dman=disabled
 )
 
-src_prepare() {
-    option X && edo sed -i -e 's|\(WINDOWS=\).*|\1x11|' "${WORK}"/config.mk
-    option wayland && edo sed -i -e 's|\(WINDOWS=\).*|\1wayland|' "${WORK}"/config.mk
-    option X && option wayland && edo sed -i -e 's|\(WINDOWS=\).*|\1all|' "${WORK}"/config.mk
+MESON_SRC_CONFIGURE_OPTIONS=(
+    'X -Dwindows=x11'
+    'wayland -Dwindows=wayland'
+)
 
-    option providers:FreeImage && edo sed -i -e 's|\(BACKEND_FREEIMAGE=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_FREEIMAGE=\).*|\1no|' "${WORK}"/config.mk
-    option tiff && edo sed -i -e 's|\(BACKEND_LIBTIFF=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBTIFF=\).*|\1no|' "${WORK}"/config.mk
-    option png && edo sed -i -e 's|\(BACKEND_LIBPNG=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBPNG=\).*|\1no|' "${WORK}"/config.mk
-    option jpeg && edo sed -i -e 's|\(BACKEND_LIBJPEG=\).*|\1yes|' "${WORK}"/config.mk || edo sed -i -e 's|\(BACKEND_LIBJPEG=\).*|\1no|' "${WORK}"/config.mk
+MESON_SRC_CONFIGURE_OPTION_FEATURES=(
+    'tiff libtiff'
+    'png libpng'
+    'jpeg libjpeg'
+    'svg librsvg'
+)
 
-    edo sed -i -e "s|pkg-config|$(exhost --tool-prefix)pkg-config|g" "${WORK}"/Makefile
 
-    default
-}
+
 
