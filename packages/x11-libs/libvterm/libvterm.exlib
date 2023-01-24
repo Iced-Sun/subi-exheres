@@ -1,0 +1,20 @@
+# Copyright 2015 Jonathan Dahan <jonathan@jonathan.is>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Experimental libvterm fork for neovim, for terminal emulation"
+DESCRIPTION="An abstract C99 library which implements a VT220 or xterm-like terminal emulator. It doesn't use any particular graphics toolkit or output system, instead it invokes callback function pointers that its embedding program should provide it to draw on its behalf. It avoids calling malloc() during normal running state, allowing it to be used in embedded kernel situations."
+HOMEPAGE="https://www.leonerd.org.uk/code/${PN}"
+DOWNLOADS="${HOMEPAGE}/${PNV}.tar.gz"
+
+LICENCES="MIT"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+DEFAULT_SRC_COMPILE_PARAMS=(
+    PREFIX=/usr/$(exhost --target)
+)
+DEFAULT_SRC_INSTALL_PARAMS=(
+    "${DEFAULT_SRC_COMPILE_PARAMS[@]}"
+)
