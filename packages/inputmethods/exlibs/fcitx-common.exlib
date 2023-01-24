@@ -54,7 +54,3 @@ fcitx-common_src_prepare() {
         edo cp "${FETCHEDDIR}"/${module/*:/} ${module/:*/}
     done
 }
-
-
-
-
