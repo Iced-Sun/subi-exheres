@@ -1,11 +1,13 @@
-# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2021-2023 SUN Bing <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require gitlab [ user=dnkl new_download_scheme=true ] meson
+require meson
 
-export_exlib_phases src_configure
+export_exlib_phases src_configure src_install
 
 SUMMARY="A fast, lightweight and minimalistic Wayland terminal emulator"
+HOMEPAGE="https://codeberg.org/dnkl/${PN}"
+DOWNLOADS="https://codeberg.org/dnkl/${PN}/archive/${PV}.tar.gz -> ${PNV}.tar.gz"
 LICENCES="MIT"
 SLOT="0"
 
@@ -16,6 +18,7 @@ DEPENDENCIES="
         sys-libs/ncurses
         app-doc/scdoc
     build+run:
+        dev-libs/utf8proc
         media-libs/fontconfig
         media-libs/freetype:=
         x11-libs/pixman
@@ -25,22 +28,32 @@ DEPENDENCIES="
         x11-apps/xdg-utils
 "
 
+MESON_SOURCE=${WORKBASE}/${PN}
+
 MESON_SRC_CONFIGURE_PARAMS=(
     --wrap-mode=default
     # app-doc/scdoc
     -Ddocs=enabled
+    -Dthemes=true
     -Dime=true
+    # dev-libs/utf8proc
+    -Dgrapheme-clustering=enabled
+    -Dtests=false
     # sys-libs/ncurses
     -Dterminfo=enabled
 )
 
 foot_src_configure() {
-    default
-
     esandbox allow_net --connect "inet:0.0.0.0/0@53"
     esandbox allow_net --connect "inet:0.0.0.0/0@443"
     esandbox allow_net --connect "inet6:::/0@53"
     esandbox allow_net --connect "inet6:::/0@443"
-    
+
     meson_src_configure
+}
+
+foot_src_install() {
+    chown root:root -R ${MESON_SOURCE}/subprojects
+
+    meson_src_install
 }
