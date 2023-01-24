@@ -39,6 +39,8 @@ foot_src_configure() {
 
     esandbox allow_net --connect "inet:0.0.0.0/0@53"
     esandbox allow_net --connect "inet:0.0.0.0/0@443"
-  
+    esandbox allow_net --connect "inet6:::/0@53"
+    esandbox allow_net --connect "inet6:::/0@443"
+    
     meson_src_configure
 }
