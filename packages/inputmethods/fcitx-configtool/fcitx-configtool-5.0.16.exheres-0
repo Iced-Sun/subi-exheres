@@ -18,7 +18,7 @@ DEPENDENCIES="
         x11-apps/xkeyboard-config
         x11-libs/libX11
         x11-libs/libxkbfile
-        x11-libs/qtbase[gui][>=5.12.0]
+        x11-libs/qtbase:5[gui][>=5.12.0]
         x11-libs/qtx11extras
         qt? ( kde-frameworks/kitemviews )
         kcm? (
