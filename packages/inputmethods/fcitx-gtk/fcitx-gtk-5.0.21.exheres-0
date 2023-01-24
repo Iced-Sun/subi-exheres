@@ -17,8 +17,9 @@ DEPENDENCIES="
         x11-libs/libXext
         x11-libs/libxkbcommon[X]
         gobject-introspection? ( gnome-desktop/gobject-introspection )
-        gtk2? ( x11-libs/gtk+:2[X] )
+        gtk2? ( x11-libs/gtk+:2 )
         gtk3? ( x11-libs/gtk+:3[X] )
+	gtk4? ( x11-libs/gtk:4[>=4.2] )
 "
 
 CMAKE_SRC_CONFIGURE_PARAMS+=( -DENABLE_SNOOPER:BOOL=FALSE )
@@ -39,4 +40,3 @@ pkg_postrm() {
     option gtk2 && gtk-query-immodules-2.0 --update-cache
     option gtk3 && gtk-query-immodules-3.0 --update-cache
 }
-
