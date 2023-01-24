@@ -1,0 +1,36 @@
+# Copyright 2015-2022 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2013 Elias Pipping <pipping@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=djcb suffix=tar.xz release=v${PV} ] meson
+
+SUMMARY="Collection of utilties for indexing and searching Maildirs"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="emacs"
+
+DEPENDENCIES="
+    build:
+        sys-apps/texinfo
+        virtual/awk
+        virtual/gzip
+        virtual/pkg-config[>=0.9.0]
+    build+run:
+        dev-db/xapian-core[>=1.4]
+        dev-libs/glib:2[>=2.58]
+        net-utils/gmime:3.0[>=3.2]
+	emacs? ( app-editors/emacs )
+"
+
+MESON_SRC_CONFIGURE_PARAMS=(
+    --buildtype=release
+    -Dguile=disabled
+    -Dreadline=disabled
+)
+
+MESON_SRC_CONFIGURE_OPTION_SWITCHES=(
+    'emacs emacs emacs disable-emacs'
+)
+
