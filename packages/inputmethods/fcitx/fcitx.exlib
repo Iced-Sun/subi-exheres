@@ -1,6 +1,6 @@
 # Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
 
-FCITX_MODULES=( src/modules/spell/dict:en_dict-20121020.tar.gz )
+FCITX_MODULES=( src/modules/spell:en_dict-20121020.tar.gz )
 require fcitx-common freedesktop-desktop gtk-icon-cache
 
 SUMMARY="Fcitx 5 is a generic input method framework released under LGPL-2.1+"
@@ -67,7 +67,7 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
     -DENABLE_KEYBOARD:BOOL=TRUE
     -DENABLE_XDGAUTOSTART:BOOL=TRUE
     -DUSE_FLATPAK_ICON:BOOL=FALSE
-    -DENABLE_LIBUUID:BOOL=TRUE    
+    -DENABLE_LIBUUID:BOOL=TRUE
 )
 
 CMAKE_SRC_CONFIGURE_OPTION_ENABLES=( DBUS EMOJI ENCHANT WAYLAND "X X11" )
