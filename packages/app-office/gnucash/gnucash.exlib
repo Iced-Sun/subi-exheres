@@ -1,4 +1,4 @@
-# Copyright 2020-2022 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2020-2023 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2009-2013 Wulf C. Krueger <philantrop@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -47,8 +47,8 @@ DEPENDENCIES="
         dev-libs/libxml2:2.0[>=2.9.4]
         dev-libs/libxslt
         gnucash? (
- 	    net-libs/webkit:4.1
-            x11-libs/gtk+:3[>=3.22.29]
+	    net-libs/webkit:4.1
+            x11-libs/gtk+:3[>=3.22.30]
         )
         aqbanking? (
             dev-libs/aqbanking[>=5.3.4]
