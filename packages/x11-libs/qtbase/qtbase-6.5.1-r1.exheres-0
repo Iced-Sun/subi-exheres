@@ -1,0 +1,15 @@
+# Copyright 2014 Jorge Aparicio
+# Distributed under the terms of the GNU General Public License v2
+
+require qtbase-6
+
+PLATFORMS="~amd64 ~armv8"
+
+DEFAULT_SRC_PREPARE_PATCHES+=(
+    "${FILES}"/${PN}-no-tmpfile.patch
+    "${FILES}"/${PN}-${SLOT}-Only-warn-about-paths-outside-the-prefix.patch
+    "${FILES}"/${PN}-${SLOT}-FindMySQL-Improve-for-our-installation-layout.patch
+    "${FILES}"/${PNV}-Schannel-Reject-certificate-not-signed-by-a-configur.patch
+    "${FILES}"/${PNV}-Ssl-Copy-the-on-demand-cert-loading-bool-from-defaul.patch
+)
+

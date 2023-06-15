@@ -1,0 +1,292 @@
+# Copyright 2020 Heiko Becker <heirecka@exherbo.org>
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'qt-5.exlib', which is:
+#     Copyright 1999-2008 Gentoo Foundation
+#     Copyright 2008-2010 Bo Ørsted Andresen <zlin@exherbo.org>
+#     Copyright 2008-2009, 2010 Ingmar Vanhassel
+#     Copyright 2013-2018 Heiko Becker <heirecka@exherbo.org>
+
+require qt cmake [ ninja=true ]
+require flag-o-matic
+
+export_exlib_phases src_configure src_prepare src_compile src_install
+
+SUMMARY="Qt Cross-platform application framework for desktop and embedded development"
+DESCRIPTION="Contains the following modules:
+- QtCore: non-graphical classes used by other modules
+- QtConcurrent: Classes for writing multi-threaded programs w/o using low-level threading primitives
+- QtDBus: Classes for inter-process communication over the D-Bus protocol
+- QtGui: Base classes for graphical user interface (GUI) components
+- QtNetwork: Classes to make network programming easier and more portable
+- QtOpenGL: OpenGL support classes
+- QtPrintSupport: Classes to make printing easier and more portable
+- QtSql: Classes for database integration using SQL
+- QtTest: Classes for unit testing Qt applications and libraries
+- QtWidgets: Classes to extend Qt GUI with C++ widgets (belonged to QtGui in 4.x)
+- QtXml: C++ implementations of SAX and DOM"
+
+SQL_BACKENDS="mysql postgresql sqlite" # db2, interbase, oci, odbc
+
+MYOPTIONS="cups examples debug glib gui journald kms opengles sql
+    ( ${SQL_BACKENDS} ) [[ requires = sql ]]
+    sql? (
+        ( ${SQL_BACKENDS} ) [[ number-selected = at-least-one ]]
+    )
+    brotli      [[ description = [ Support for handling resources compressed with Brotli through QNetworkAccessManager ] ]]
+    cups        [[ requires    = gui ]]
+    examples    [[ requires    = gui ]]
+    glib        [[ description = [ Add support for the glib eventloop ] ]]
+    gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
+                   requires    = [ glib gui ] ]]
+    gui         [[ description = [ Build GUI related modules ]
+                   presumed    = true ]]
+    journald    [[ description = [ Support sending logging output directly to systemd-journald ] ]]
+    kerberos
+    kms         [[ description = [ KMS platform plugin to run a single-window per screen without X11 ]
+                   requires    = opengles ]]
+    libinput    [[ description = [ Support input devices via libinput ]
+                   requires = gui ]]
+    libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
+    opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ]
+                   requires    = gui ]]
+    sql         [[ description = [ Build the QtSQL module ] ]]
+    vulkan      [[ description = [ Support for rendering via the Vulkan graphics API ]
+                   requires = gui ]]
+    zstd        [[ description = [ Support for the zstd compression format with RCC ] ]]
+
+   ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
+
+    kerberos? ( ( providers: heimdal krb5 ) [[ number-selected = exactly-one ]] )
+"
+
+DEPENDENCIES="
+    build:
+        app-text/xmlstarlet [[ note = [ minifies some mimetype xml files ] ]]
+        virtual/pkg-config
+        doc? (
+            x11-libs/qttools:${SLOT}[>=6.5.1] [[
+                note = [ 6.5.1 due to qtattributionscanner incompatibilities ]
+            ]]
+        )
+        vulkan? ( sys-libs/vulkan-headers )
+    build+run:
+        dev-libs/double-conversion:=
+        dev-libs/pcre2[>=10.20]
+        sys-libs/zlib[>=1.0.8]
+        kms? ( x11-dri/libdrm )
+        libinput? ( sys-libs/libinput )
+        libproxy? ( net-libs/libproxy:1 )
+        mysql? ( virtual/mysql )
+        postgresql? ( dev-db/postgresql-client )
+        providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
+        sqlite? ( dev-db/sqlite:3 )
+        vulkan? ( sys-libs/vulkan-loader )
+        zstd? ( app-arch/zstd[>=1.3] )
+"
+
+# Packages that need QtSQL should depend on x11-libs/qtbase:5[sql]
+# option='sql' needs at least one SQL plugin, any-of mysql, postgresql, sqlite, (firebird, odbc)
+
+# Tests need a running X server and network access (last checked: 5.1.1)
+RESTRICT="test"
+
+qtbase_mkspecs_dir() {
+     # Allows us to define which mkspecs dir we want to use.
+    local spec
+
+    spec="linux"
+    if [[ ${CXX} == *c++* ]]; then
+        if cxx-is-gcc;then
+            spec+="-g++"
+        elif cxx-is-clang; then
+            spec+="-clang"
+            #if option providers:libc++; then
+            #    spec+="-libc++"
+            #fi
+        else
+            die "Unknown compiler ${CXX}; you will need to add a check for it to qt.exlib"
+        fi
+    else
+        die "Unknown compiler ${CXX}"
+    fi
+
+    echo "${spec}"
+}
+
+qtbase-6_src_prepare() {
+    cmake_src_prepare
+
+    # Fix the names of some unprefixed executables
+    edo sed -e "s:\(PKG_CONFIG.*=.\)\(pkg-config\):\1${PKG_CONFIG}:" \
+            -i "${CMAKE_SOURCE}"/mkspecs/features/qt_functions.prf
+}
+
+qtbase-6_src_configure() {
+    local host=$(exhost --target)
+
+    local myconf=(
+        ## cross-compiling
+        # Location of the host Qt installation when cross-compiling.
+        -DQT_HOST_PATH="/usr/$(exhost --build)/lib/qt6"
+
+        # Need prebuilded host tools
+        -DQt6HostInfo_DIR="/usr/$(exhost --build)/lib/cmake/Qt6HostInfo"
+
+        # CMake defaults to /usr/include, breaks quite a few building
+        -DSYSTEM_INCLUDE_DIRECTORIES="/usr/${host}/include"
+
+        -DINSTALL_BINDIR="/usr/${host}/lib/qt6/bin"
+        -DINSTALL_INCLUDEDIR="/usr/${host}/include/qt6"
+        -DINSTALL_PLUGINSDIR="/usr/${host}/lib/qt6/plugins"
+        -DINSTALL_MKSPECSDIR="/usr/${host}/lib/qt6/mkspecs"
+        -DINSTALL_ARCHDATADIR="/usr/${host}/lib/qt6"
+        -DINSTALL_DATADIR="../share/qt6"
+        -DINSTALL_DOCDIR="../share/doc/qt6"
+        -DINSTALL_EXAMPLESDIR="../share/qt6/examples"
+        -DINSTALL_SYSCONFDIR="/etc/xdg"
+
+        -DBUILD_SHARED_LIBS:BOOL=FALSE
+        -DBUILD_WITH_PCH:BOOL=TRUE
+
+        # Qt modules
+        -DFEATURE_concurrent:BOOL=OFF
+	-DFEATURE_dbus:BOOL=OFF
+        # TODO: Needs fixing with LibreSSL
+        -DFEATURE_network:BOOL=OFF
+        -DFEATURE_testlib:BOOL=OFF
+        -DFEATURE_xml:BOOL=OFF
+
+        -DFEATURE_dbus_linked:BOOL=OFF
+        -DFEATURE_directfb:BOOL=OFF
+        -DFEATURE_qmake:BOOL=OFF
+        # EGL Full Screen/Single Surface, probably only useful on embedded devices
+        -DFEATURE_eglfs:BOOL=ON
+        -DFEATURE_icu:BOOL=OFF
+        # INTEGRITY Real-Time OS
+        -DFEATURE_integrityhid:BOOL=OFF
+        -DFEATURE_linuxfb:BOOL=OFF
+        # Tracing
+        -DFEATURE_ctf:BOOL=OFF
+        # LTTng is an open source tracing framework for Linux
+        -DFEATURE_lttng:BOOL=OFF
+        # Use the system MIME database in $XDG_DATA_DIRS/mime instead of Qt's
+        # bundled copy
+        -DFEATURE_mimetype_database:BOOL=OFF
+        -DFEATURE_openssl_linked:BOOL=ON
+        -DFEATURE_pcre2:BOOL=ON
+        -DFEATURE_publicsuffix_system:BOOL=OFF
+        -DFEATURE_syslog:BOOL=OFF
+        -DFEATURE_system_proxies:BOOL=OFF
+        -DFEATURE_system_zlib:BOOL=ON
+
+        # Disable some SQL drivers
+        -DFEATURE_sql_db2:BOOL=OFF      # IBM DB2 (version 7.1 and above)
+        -DFEATURE_sql_ibase:BOOL=OFF    # Borland InterBase
+        -DFEATURE_sql_oci:BOOL=OFF      # Oracle Call Interface Driver
+        -DFEATURE_sql_odbc:BOOL=OFF     # Open Database Connectivity (ODBC) (e.g. MS SQL Server)
+
+        # Touchscreen access library - unwritten
+        -DFEATURE_tslib:BOOL=OFF
+
+        # Qnx
+        -DFEATURE_slog2:BOOL=OFF
+
+        # Only for gui?
+        -DINPUT_freetype="system"
+        -DINPUT_libjpeg="system"
+        -DINPUT_libmd4c="system"
+        -DINPUT_libpng="system"
+
+        -DQT_USE_CCACHE:BOOL=FALSE
+
+        $(cmake_option examples QT_BUILD_EXAMPLES)
+        $(qt_cmake_feature glib)
+
+        # GUI related switches
+        $(qt_cmake_feature gui)
+        $(qt_cmake_feature gui accessibility)
+        $(qt_cmake_feature gui egl)
+        $(qt_cmake_feature gui evdev)
+        $(qt_cmake_feature gui fontconfig)
+        $(qt_cmake_feature gui gbm)
+        $(qt_cmake_feature gui libudev)
+        $(qt_cmake_feature gui mtdev)
+        $(qt_cmake_feature gui opengl)
+        $(qt_cmake_feature gui sessionmanager)
+        $(qt_cmake_feature gui system_xcb_xinput)
+        $(qt_cmake_feature gui widgets)
+        $(qt_cmake_feature gui xcb)
+        $(qt_cmake_feature gui xkbcommon)
+        $(qt_cmake_feature gui xcb_xlib)
+        $(qt_cmake_feature gui xcb_native_painting)
+
+        $(qt_cmake_feature brotli)
+        $(qt_cmake_feature cups)
+        $(qt_cmake_feature gtk gtk3)
+        $(qt_cmake_feature journald)
+        $(qt_cmake_feature kerberos gssapi)
+        $(qt_cmake_feature kms)
+        $(qt_cmake_feature libinput)
+        $(qt_cmake_feature libproxy)
+        $(qt_cmake_feature mysql sql_mysql)
+        $(qt_cmake_feature opengles opengles2)
+        $(qt_cmake_feature postgresql sql_psql)
+        $(qt_cmake_feature sql)
+        $(qt_cmake_feature sqlite sql_sqlite)
+        $(qt_cmake_feature vulkan)
+        $(qt_cmake_feature zstd)
+    )
+
+    # TODO:
+    # - BUILD_CMAKE_TESTING:BOOL=OFF (Build tests for the Qt build system)
+    # - BUILD_TESTING:BOOL=OFF (Build the testing tree)
+
+    ecmake "${myconf[@]}" --loglevel=VERBOSE
+}
+
+qtbase-6_src_compile() {
+    # I just cannot figure out where the '-isystem /usr/include' comes from
+    #edo sed -e "s: -isystem /usr/include::" -i build.ninja
+
+    cmake_src_compile
+
+    if option doc ; then
+        # html_docs target builds html docs, qch_docs QCH files (assistant), docs both
+        eninja docs
+    fi
+}
+
+qtbase-6_src_install() {
+    cmake_src_install
+
+    # TODO: Check why this is empty
+    edo rmdir "${IMAGE}"/usr/$(exhost --target)/lib/cmake/Qt6/{ios,macos}
+    edo rmdir "${IMAGE}"/usr/$(exhost --target)/lib/cmake/Qt6/QtBuildInternals/QtStandaloneTestTemplateProject
+    edo rmdir "${IMAGE}"/usr/$(exhost --target)/lib/cmake/Qt6/QtBuildInternals
+
+    local host=$(exhost --target)
+
+    hereenvd 46qt6 <<EOF
+LDPATH=/usr/@TARGET@/lib/qt6
+QT_PLUGIN_PATH=/usr/host/lib/qt6/plugins
+COLON_SEPARATED="QT_PLUGIN_PATH"
+EOF
+
+    if option examples ; then
+        # The examples might add some empty dirs. Since the examples are additional documentation,
+        # there shouldn't be any empty dirs we might want to keep, so we remove them all in
+        # one go.
+        edo find "${IMAGE}"/usr/share/qt6/examples -type d -empty -delete
+    fi
+
+    # install documentation
+    option doc && DESTDIR="${IMAGE}" eninja install_docs
+
+    # TODO: Needs to be made co-installable with Qt5 in some way
+    # disable debug output from applications by default
+#    insinto /etc/xdg/QtProject
+#    hereins qtlogging.ini <<EOF
+#[Rules]
+#*.debug=false
+#EOF
+}
