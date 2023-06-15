@@ -90,29 +90,6 @@ DEPENDENCIES="
 # Tests need a running X server and network access (last checked: 5.1.1)
 RESTRICT="test"
 
-qtbase_mkspecs_dir() {
-     # Allows us to define which mkspecs dir we want to use.
-    local spec
-
-    spec="linux"
-    if [[ ${CXX} == *c++* ]]; then
-        if cxx-is-gcc;then
-            spec+="-g++"
-        elif cxx-is-clang; then
-            spec+="-clang"
-            #if option providers:libc++; then
-            #    spec+="-libc++"
-            #fi
-        else
-            die "Unknown compiler ${CXX}; you will need to add a check for it to qt.exlib"
-        fi
-    else
-        die "Unknown compiler ${CXX}"
-    fi
-
-    echo "${spec}"
-}
-
 qtbase-6_src_prepare() {
     cmake_src_prepare
 
