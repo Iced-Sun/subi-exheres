@@ -125,16 +125,6 @@ qtbase-6_src_configure() {
     local host=$(exhost --target)
 
     local myconf=(
-        ## cross-compiling
-        # Location of the host Qt installation when cross-compiling.
-        -DQT_HOST_PATH="/usr/$(exhost --build)/lib/qt6"
-
-        # Need prebuilded host tools
-        -DQt6HostInfo_DIR="/usr/$(exhost --build)/lib/cmake/Qt6HostInfo"
-
-        # CMake defaults to /usr/include, breaks quite a few building
-        -DSYSTEM_INCLUDE_DIRECTORIES="/usr/${host}/include"
-
         -DINSTALL_BINDIR="/usr/${host}/lib/qt6/bin"
         -DINSTALL_INCLUDEDIR="/usr/${host}/include/qt6"
         -DINSTALL_PLUGINSDIR="/usr/${host}/lib/qt6/plugins"
@@ -236,6 +226,20 @@ qtbase-6_src_configure() {
         $(qt_cmake_feature vulkan)
         $(qt_cmake_feature zstd)
     )
+
+    # cross-compile
+    if ! exhost --is-native -q; then
+        myconf+=(
+            # Location of the host Qt installation when cross-compiling.
+            -DQT_HOST_PATH="/usr/$(exhost --build)/lib/qt6"
+
+            # Need prebuilded host tools
+            -DQt6HostInfo_DIR="/usr/$(exhost --build)/lib/cmake/Qt6HostInfo"
+
+            # CMake defaults to /usr/include, breaks quite a few building
+            -DSYSTEM_INCLUDE_DIRECTORIES="/usr/${host}/include"
+	)
+    fi
 
     # TODO:
     # - BUILD_CMAKE_TESTING:BOOL=OFF (Build tests for the Qt build system)
