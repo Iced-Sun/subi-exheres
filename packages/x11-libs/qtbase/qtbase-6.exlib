@@ -86,6 +86,9 @@ DEPENDENCIES="
         )
         libproxy? ( net-libs/libproxy:1 )
         modules:qtdbus? ( sys-apps/dbus[>=1.2.0] [[ note = [ besides QtDBUs also needed for accessibility and xcb ] ]] )
+        providers:libressl? ( dev-libs/libressl:= )
+        providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
+        zstd? ( app-arch/zstd[>=1.3] )
 
         kms? ( x11-dri/libdrm )
         libinput? ( sys-libs/libinput )
@@ -93,10 +96,8 @@ DEPENDENCIES="
         postgresql? ( dev-db/postgresql-client )
         sqlite? ( dev-db/sqlite:3 )
         vulkan? ( sys-libs/vulkan-loader )
-        zstd? ( app-arch/zstd[>=1.3] )
 "
 
-#        providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
 
 # Packages that need QtSQL should depend on x11-libs/qtbase:5[sql]
 # option='sql' needs at least one SQL plugin, any-of mysql, postgresql, sqlite, (firebird, odbc)
@@ -124,9 +125,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DINSTALL_SYSCONFDIR="/etc/xdg"
 
     -DBUILD_WITH_PCH:BOOL=TRUE
-
-    # Support
-    -DFEATURE_system_zlib:BOOL=TRUE
 
     # Qt Core
     -DFEATURE_pcre2:BOOL=TRUE
@@ -157,13 +155,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     # see if we should add more options
     -DFEATURE_icu:BOOL=FALSE
     -DCMAKE_DISABLE_FIND_PACKAGE_ICU:BOOL=TRUE
-
-    -DFEATURE_openssl_linked:BOOL=OFF
-    -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenSSL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenSSLHeaders:BOOL=TRUE
-
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapZSTD:BOOL=TRUE
 
     -DCMAKE_DISABLE_FIND_PACKAGE_Libudev:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
@@ -295,12 +286,31 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
     # add-ons
 )
 
+########
+
+## support enabled for
+# TODO udev
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_openssl:BOOL=TRUE
+    -DFEATURE_openssl_linked:BOOL=TRUE
+    -DFEATURE_opensslv30:BOOL=FALSE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_zstd:BOOL=TRUE
+
+    -DFEATURE_system_zlib:BOOL=TRUE
+)
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "zstd FEATURE_zstd"
+)
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "zstd WrapZSTD"
+)
+
 ## Qt D-Bus
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "modules:qtdbus FEATURE_dbus"
     "modules:qtdbus FEATURE_dbus_linked"
 )
-
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "modules:qtdbus WrapDBus1"
 )
@@ -309,13 +319,11 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 CMAKE_SRC_CONFIGURE_PARAMS+=(
     -DFEATURE_network:BOOL=TRUE
 )
-
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "brotli FEATURE_brotli"
     "libproxy FEATURE_libproxy"
     "kerberos gssapi"
 )
-
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "brotli unofficial-brotli"
     "brotli WrapBrotli"
@@ -339,7 +347,6 @@ qtbase-6_src_configure() {
         $(qt_cmake_feature sql)
         $(qt_cmake_feature sqlite sql_sqlite)
         $(qt_cmake_feature vulkan)
-        $(qt_cmake_feature zstd)
     )
 
     # TODO:
