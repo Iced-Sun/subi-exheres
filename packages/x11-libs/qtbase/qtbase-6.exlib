@@ -27,24 +27,26 @@ DESCRIPTION="Contains the following modules:
 
 SQL_BACKENDS="mysql postgresql sqlite" # db2, interbase, oci, odbc
 
-MYOPTIONS="cups examples debug glib journald kms opengles sql
+MYOPTIONS="debug
+    brotli      [[ description = [ Support for handling resources compressed with Brotli through QNetworkAccessManager ] ]]
+    kerberos
+    libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
+
     ( ${SQL_BACKENDS} ) [[ requires = sql ]]
     sql? (
         ( ${SQL_BACKENDS} ) [[ number-selected = at-least-one ]]
     )
-    brotli      [[ description = [ Support for handling resources compressed with Brotli through QNetworkAccessManager ] ]]
+
     cups        [[ requires    = modules:qtgui ]]
     examples    [[ requires    = modules:qtgui ]]
     glib        [[ description = [ Add support for the glib eventloop ] ]]
     gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
                    requires    = [ glib modules:gui ] ]]
     journald    [[ description = [ Support sending logging output directly to systemd-journald ] ]]
-    kerberos
     kms         [[ description = [ KMS platform plugin to run a single-window per screen without X11 ]
                    requires    = opengles ]]
     libinput    [[ description = [ Support input devices via libinput ]
                    requires = modules:qtgui ]]
-    libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
     opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ]
                    requires    = modules:qtgui ]]
     sql         [[ description = [ Build the QtSQL module ] ]]
@@ -60,7 +62,6 @@ MYOPTIONS="cups examples debug glib journald kms opengles sql
         modules:
             qtdbus [[ description = [ Classes for inter-process communication over the D-Bus protocol ] ]]
             qtgui [[ description = [ Base classes for graphical user interface (GUI) components ] presumed = true ]]
-            qtnetwork [[ description = [ Classes to make network programming easier and more portable ] ]]
     )
 "
 
@@ -78,12 +79,16 @@ DEPENDENCIES="
         dev-libs/double-conversion:=
         dev-libs/pcre2[>=10.20]
         sys-libs/zlib[>=1.0.8]
-
+        brotli? ( app-arch/brotli )
+        kerberos? (
+            providers:heimdal? ( app-crypt/heimdal )
+            providers:krb5? ( app-crypt/krb5 )
+        )
+        libproxy? ( net-libs/libproxy:1 )
         modules:qtdbus? ( sys-apps/dbus[>=1.2.0] [[ note = [ besides QtDBUs also needed for accessibility and xcb ] ]] )
 
         kms? ( x11-dri/libdrm )
         libinput? ( sys-libs/libinput )
-        libproxy? ( net-libs/libproxy:1 )
         mysql? ( virtual/mysql )
         postgresql? ( dev-db/postgresql-client )
         sqlite? ( dev-db/sqlite:3 )
@@ -235,7 +240,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DFEATURE_widgets:BOOL=OFF
     -DFEATURE_printsupport:BOOL=OFF
 
-
     --loglevel=VERBOSE
 
 ### to sort out
@@ -275,10 +279,19 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DFEATURE_slog2:BOOL=OFF
 
         -DQT_USE_CCACHE:BOOL=FALSE
+)
 
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS=(
+    "modules:qtdbus WrapDBus1"
 )
 
 ## modules
+# enable modules that never pull in dependencies
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_network:BOOL=TRUE
+    -DFEATURE_test:BOOL=TRUE
+)
+
 CMAKE_SRC_CONFIGURE_OPTIONS=(
     # essentials
     "modules:qtdbus FEATURE_dbus"
@@ -288,13 +301,21 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
     "modules:qtgui FEATURE_widgets"
     #"modules:qtgui FEATURE_libudev"
 
-    "modules:qtnetwork FEATURE_network"
-
     # add-ons
 )
 
-CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS=(
-    "modules:qtdbus WrapDBus1"
+## Qt Network
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "brotli FEATURE_brotli"
+    "libproxy FEATURE_libproxy"
+    "kerberos gssapi"
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "brotli unofficial-brotli"
+    "brotli WrapBrotli"
+    "libproxy Libproxy"
+    "kerberos GSSAPI"
 )
 
 qtbase-6_src_configure() {
@@ -302,14 +323,12 @@ qtbase-6_src_configure() {
         $(cmake_option examples QT_BUILD_EXAMPLES)
         $(qt_cmake_feature glib)
 
-        $(qt_cmake_feature brotli)
         $(qt_cmake_feature cups)
         $(qt_cmake_feature gtk gtk3)
         $(qt_cmake_feature journald)
         $(qt_cmake_feature kerberos gssapi)
         $(qt_cmake_feature kms)
         $(qt_cmake_feature libinput)
-        $(qt_cmake_feature libproxy)
         $(qt_cmake_feature mysql sql_mysql)
         $(qt_cmake_feature postgresql sql_psql)
         $(qt_cmake_feature sql)
