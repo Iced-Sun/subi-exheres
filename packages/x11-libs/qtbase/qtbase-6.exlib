@@ -281,22 +281,13 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DQT_USE_CCACHE:BOOL=FALSE
 )
 
-CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS=(
-    "modules:qtdbus WrapDBus1"
-)
-
 ## modules
 # enable modules that never pull in dependencies
 CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DFEATURE_network:BOOL=TRUE
     -DFEATURE_test:BOOL=TRUE
 )
 
 CMAKE_SRC_CONFIGURE_OPTIONS=(
-    # essentials
-    "modules:qtdbus FEATURE_dbus"
-    "modules:qtdbus FEATURE_dbus_linked"
-
     "modules:qtgui FEATURE_gui"
     "modules:qtgui FEATURE_widgets"
     #"modules:qtgui FEATURE_libudev"
@@ -304,7 +295,21 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
     # add-ons
 )
 
+## Qt D-Bus
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "modules:qtdbus FEATURE_dbus"
+    "modules:qtdbus FEATURE_dbus_linked"
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "modules:qtdbus WrapDBus1"
+)
+
 ## Qt Network
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_network:BOOL=TRUE
+)
+
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "brotli FEATURE_brotli"
     "libproxy FEATURE_libproxy"
