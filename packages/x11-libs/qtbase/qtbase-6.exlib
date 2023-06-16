@@ -33,30 +33,35 @@ MYOPTIONS="cups examples debug glib gui journald kms opengles sql
         ( ${SQL_BACKENDS} ) [[ number-selected = at-least-one ]]
     )
     brotli      [[ description = [ Support for handling resources compressed with Brotli through QNetworkAccessManager ] ]]
-    cups        [[ requires    = gui ]]
-    examples    [[ requires    = gui ]]
+    cups        [[ requires    = modules:qtgui ]]
+    examples    [[ requires    = modules:qtgui ]]
     glib        [[ description = [ Add support for the glib eventloop ] ]]
     gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
-                   requires    = [ glib gui ] ]]
-    gui         [[ description = [ Build GUI related modules ]
-                   presumed    = true ]]
+                   requires    = [ glib modules:gui ] ]]
     journald    [[ description = [ Support sending logging output directly to systemd-journald ] ]]
     kerberos
     kms         [[ description = [ KMS platform plugin to run a single-window per screen without X11 ]
                    requires    = opengles ]]
     libinput    [[ description = [ Support input devices via libinput ]
-                   requires = gui ]]
+                   requires = modules:qtgui ]]
     libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
     opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ]
-                   requires    = gui ]]
+                   requires    = modules:qtgui ]]
     sql         [[ description = [ Build the QtSQL module ] ]]
     vulkan      [[ description = [ Support for rendering via the Vulkan graphics API ]
-                   requires = gui ]]
+                   requires = modules:qtgui ]]
     zstd        [[ description = [ Support for the zstd compression format with RCC ] ]]
 
-   ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
+    ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
 
     kerberos? ( ( providers: heimdal krb5 ) [[ number-selected = exactly-one ]] )
+
+    (
+        modules:
+            qtdbus [[ description = [ Classes for inter-process communication over the D-Bus protocol ] ]]
+            qtgui [[ description = [ Base classes for graphical user interface (GUI) components ] presumed = true ]]
+            qtnetwork [[ description = [ Classes to make network programming easier and more portable ] ]]
+    )
 "
 
 DEPENDENCIES="
@@ -78,11 +83,12 @@ DEPENDENCIES="
         libproxy? ( net-libs/libproxy:1 )
         mysql? ( virtual/mysql )
         postgresql? ( dev-db/postgresql-client )
-        providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
         sqlite? ( dev-db/sqlite:3 )
         vulkan? ( sys-libs/vulkan-loader )
         zstd? ( app-arch/zstd[>=1.3] )
 "
+
+#        providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
 
 # Packages that need QtSQL should depend on x11-libs/qtbase:5[sql]
 # option='sql' needs at least one SQL plugin, any-of mysql, postgresql, sqlite, (firebird, odbc)
@@ -98,37 +104,61 @@ qtbase-6_src_prepare() {
             -i "${CMAKE_SOURCE}"/mkspecs/features/qt_functions.prf
 }
 
-qtbase-6_src_configure() {
-    local host=$(exhost --target)
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -DINSTALL_BINDIR="/usr/$(exhost --target)/lib/qt6/bin"
+    -DINSTALL_INCLUDEDIR="/usr/$(exhost --target)/include/qt6"
+    -DINSTALL_PLUGINSDIR="/usr/$(exhost --target)/lib/qt6/plugins"
+    -DINSTALL_MKSPECSDIR="/usr/$(exhost --target)/lib/qt6/mkspecs"
+    -DINSTALL_ARCHDATADIR="/usr/$(exhost --target)/lib/qt6"
+    -DINSTALL_DATADIR="../share/qt6"
+    -DINSTALL_DOCDIR="../share/doc/qt6"
+    -DINSTALL_EXAMPLESDIR="../share/qt6/examples"
+    -DINSTALL_SYSCONFDIR="/etc/xdg"
 
-    local myconf=(
-        -DINSTALL_BINDIR="/usr/${host}/lib/qt6/bin"
-        -DINSTALL_INCLUDEDIR="/usr/${host}/include/qt6"
-        -DINSTALL_PLUGINSDIR="/usr/${host}/lib/qt6/plugins"
-        -DINSTALL_MKSPECSDIR="/usr/${host}/lib/qt6/mkspecs"
-        -DINSTALL_ARCHDATADIR="/usr/${host}/lib/qt6"
-        -DINSTALL_DATADIR="../share/qt6"
-        -DINSTALL_DOCDIR="../share/doc/qt6"
-        -DINSTALL_EXAMPLESDIR="../share/qt6/examples"
-        -DINSTALL_SYSCONFDIR="/etc/xdg"
+    -DBUILD_WITH_PCH:BOOL=TRUE
 
-        -DBUILD_SHARED_LIBS:BOOL=FALSE
-        -DBUILD_WITH_PCH:BOOL=TRUE
+    # Support
+    -DFEATURE_system_zlib:BOOL=TRUE
 
+    # Qt Core
+    -DFEATURE_pcre2:BOOL=TRUE
+
+    # see if we should add more options
+    -DFEATURE_icu:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_ICU:BOOL=TRUE
+
+    -DFEATURE_openssl_linked:BOOL=OFF
+    -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenSSL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenSSLHeaders:BOOL=TRUE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapZSTD:BOOL=TRUE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Libudev:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Libb2:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_DB2:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_MySQL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_PostgreSQL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Oracle:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_ODBC:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_SQLite3:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Interbase:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_GLIB2:BOOL=TRUE
+
+    --loglevel=VERBOSE
+
+### to sort out
         # Qt modules
         -DFEATURE_concurrent:BOOL=OFF
-	-DFEATURE_dbus:BOOL=OFF
         # TODO: Needs fixing with LibreSSL
-        -DFEATURE_network:BOOL=OFF
         -DFEATURE_testlib:BOOL=OFF
         -DFEATURE_xml:BOOL=OFF
 
-        -DFEATURE_dbus_linked:BOOL=OFF
         -DFEATURE_directfb:BOOL=OFF
         -DFEATURE_qmake:BOOL=OFF
         # EGL Full Screen/Single Surface, probably only useful on embedded devices
         -DFEATURE_eglfs:BOOL=ON
-        -DFEATURE_icu:BOOL=OFF
         # INTEGRITY Real-Time OS
         -DFEATURE_integrityhid:BOOL=OFF
         -DFEATURE_linuxfb:BOOL=OFF
@@ -139,12 +169,9 @@ qtbase-6_src_configure() {
         # Use the system MIME database in $XDG_DATA_DIRS/mime instead of Qt's
         # bundled copy
         -DFEATURE_mimetype_database:BOOL=OFF
-        -DFEATURE_openssl_linked:BOOL=ON
-        -DFEATURE_pcre2:BOOL=ON
         -DFEATURE_publicsuffix_system:BOOL=OFF
         -DFEATURE_syslog:BOOL=OFF
         -DFEATURE_system_proxies:BOOL=OFF
-        -DFEATURE_system_zlib:BOOL=ON
 
         # Disable some SQL drivers
         -DFEATURE_sql_db2:BOOL=OFF      # IBM DB2 (version 7.1 and above)
@@ -158,34 +185,29 @@ qtbase-6_src_configure() {
         # Qnx
         -DFEATURE_slog2:BOOL=OFF
 
-        # Only for gui?
-        -DINPUT_freetype="system"
-        -DINPUT_libjpeg="system"
-        -DINPUT_libmd4c="system"
-        -DINPUT_libpng="system"
-
         -DQT_USE_CCACHE:BOOL=FALSE
 
+)
+
+CMAKE_SRC_CONFIGURE_OPTIONS=(
+    "modules:qtdbus FEATURE_dbus"
+    "modules:qtdbus FEATURE_dbus_linked"
+
+    "modules:qtgui FEATURE_gui"
+    "modules:qtgui FEATURE_libudev"
+    "modules:qtgui FEATURE_widgets"
+
+    "modules:qtnetwork FEATURE_network"
+)
+
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS=(
+    "modules:qtdbus WrapDBus1"
+)
+
+qtbase-6_src_configure() {
+    CMAKE_SRC_CONFIGURE_PARAMS+=(
         $(cmake_option examples QT_BUILD_EXAMPLES)
         $(qt_cmake_feature glib)
-
-        # GUI related switches
-        $(qt_cmake_feature gui)
-        $(qt_cmake_feature gui accessibility)
-        $(qt_cmake_feature gui egl)
-        $(qt_cmake_feature gui evdev)
-        $(qt_cmake_feature gui fontconfig)
-        $(qt_cmake_feature gui gbm)
-        $(qt_cmake_feature gui libudev)
-        $(qt_cmake_feature gui mtdev)
-        $(qt_cmake_feature gui opengl)
-        $(qt_cmake_feature gui sessionmanager)
-        $(qt_cmake_feature gui system_xcb_xinput)
-        $(qt_cmake_feature gui widgets)
-        $(qt_cmake_feature gui xcb)
-        $(qt_cmake_feature gui xkbcommon)
-        $(qt_cmake_feature gui xcb_xlib)
-        $(qt_cmake_feature gui xcb_native_painting)
 
         $(qt_cmake_feature brotli)
         $(qt_cmake_feature cups)
@@ -204,9 +226,40 @@ qtbase-6_src_configure() {
         $(qt_cmake_feature zstd)
     )
 
+    # TODO:
+    # - BUILD_CMAKE_TESTING:BOOL=OFF (Build tests for the Qt build system)
+    # - BUILD_TESTING:BOOL=OFF (Build the testing tree)
+
+    CMAKE_SRC_CONFIGURE_PARAMS+=(
+        -DBUILD_SHARED_LIBS:BOOL=FALSE
+    )
+
+    # options used only if qtgui is enabled
+    if optionq modules:qtgui; then
+        CMAKE_SRC_CONFIGURE_PARAMS+=(
+            -DFEATURE_accessibility:BOOL=TRUE
+            -DFEATURE_egl:BOOL=TRUE
+            -DFEATURE_evdev:BOOL=TRUE
+            -DFEATURE_fontconfig:BOOL=TRUE
+            -DFEATURE_gbm:BOOL=TRUE
+            -DFEATURE_mtdev:BOOL=TRUE
+            -DFEATURE_opengl:BOOL=TRUE
+            -DFEATURE_sessionmanager:BOOL=TRUE
+            -DFEATURE_system_xcb_xinput:BOOL=TRUE
+            -DFEATURE_xcb:BOOL=TRUE
+            -DFEATURE_xkbcommon:BOOL=TRUE
+            -DFEATURE_xcb_xlib:BOOL=TRUE
+            -DFEATURE_xcb_native_painting:BOOL=TRUE
+            -DINPUT_freetype="system"
+            -DINPUT_libjpeg="system"
+            -DINPUT_libmd4c="system"
+            -DINPUT_libpng="system"
+        )
+    fi
+
     # cross-compile
     if ! exhost --is-native -q; then
-        myconf+=(
+        CMAKE_SRC_CONFIGURE_PARAMS+=(
             # Location of the host Qt installation when cross-compiling.
             -DQT_HOST_PATH="/usr/$(exhost --build)/lib/qt6"
 
@@ -214,15 +267,11 @@ qtbase-6_src_configure() {
             -DQt6HostInfo_DIR="/usr/$(exhost --build)/lib/cmake/Qt6HostInfo"
 
             # CMake defaults to /usr/include, breaks quite a few building
-            -DSYSTEM_INCLUDE_DIRECTORIES="/usr/${host}/include"
+            #-DSYSTEM_INCLUDE_DIRECTORIES="/usr/$(exhost --target)/include"
 	)
     fi
 
-    # TODO:
-    # - BUILD_CMAKE_TESTING:BOOL=OFF (Build tests for the Qt build system)
-    # - BUILD_TESTING:BOOL=OFF (Build the testing tree)
-
-    ecmake "${myconf[@]}" --loglevel=VERBOSE
+    cmake_src_configure
 }
 
 qtbase-6_src_compile() {
