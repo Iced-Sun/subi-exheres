@@ -38,7 +38,7 @@ MYOPTIONS="debug
         ( ${SQL_BACKENDS} ) [[ number-selected = at-least-one ]]
     )
 
-    cups        [[ requires    = modules:qtgui ]]
+    cups        [[ requires    = [ modules:qtgui modules:qtprintsupport ] ]]
     examples    [[ requires    = modules:qtgui ]]
     gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
                    requires    = [ glib modules:gui ] ]]
@@ -61,6 +61,7 @@ MYOPTIONS="debug
         modules:
             qtdbus [[ description = [ Classes for inter-process communication over the D-Bus protocol ] ]]
             qtgui [[ description = [ Base classes for graphical user interface (GUI) components ] presumed = true ]]
+	    qtprintsupport [[ description = [ Classes to make printing easier and more portable ] requires = [ modules: qtgui ] ]]
     )
 "
 
@@ -80,6 +81,7 @@ DEPENDENCIES="
         dev-libs/pcre2[>=10.20]
         sys-libs/zlib[>=1.0.8]
         brotli? ( app-arch/brotli )
+        cups? ( net-print/cups[>=1.4] )
         glib? ( dev-libs/glib:2 )
         kerberos? (
             providers:heimdal? ( app-crypt/heimdal )
@@ -150,7 +152,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     # embedded plugin: EGLFS, LinuxFB, DirectFB, or Wayland
 
     # see if we should add more options
-    -DCMAKE_DISABLE_FIND_PACKAGE_Libudev:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_DB2:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_MySQL:BOOL=TRUE
@@ -203,7 +204,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapHarfbuzz:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapPNG:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapFreetype:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Cups:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapJpeg:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_GTK3:BOOL=TRUE
 
@@ -220,7 +220,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DCMAKE_DISABLE_FIND_PACKAGE_Mtdev:BOOL=TRUE
 
     -DFEATURE_widgets:BOOL=OFF
-    -DFEATURE_printsupport:BOOL=OFF
 
     --loglevel=VERBOSE
 
@@ -231,7 +230,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DFEATURE_xml:BOOL=OFF
 
         -DFEATURE_directfb:BOOL=OFF
-        -DFEATURE_qmake:BOOL=OFF
         # EGL Full Screen/Single Surface, probably only useful on embedded devices
         # INTEGRITY Real-Time OS
         -DFEATURE_integrityhid:BOOL=OFF
@@ -254,8 +252,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         # Touchscreen access library - unwritten
         -DFEATURE_tslib:BOOL=OFF
 
-        # Qnx
-
         -DQT_USE_CCACHE:BOOL=FALSE
 )
 
@@ -263,7 +259,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 CMAKE_SRC_CONFIGURE_OPTIONS=(
     "modules:qtgui FEATURE_gui"
     "modules:qtgui FEATURE_widgets"
-    #"modules:qtgui FEATURE_libudev"
 
     # add-ons
 )
@@ -273,6 +268,9 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
 ## support enabled for
 # TODO udev
 CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_udev:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Libudev:BOOL=TRUE
+
     -DFEATURE_openssl:BOOL=TRUE
     -DFEATURE_openssl_linked:BOOL=TRUE
     -DFEATURE_opensslv30:BOOL=FALSE
@@ -334,16 +332,29 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "kerberos GSSAPI"
 )
 
+## Qt PrintSupport
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "modules:qtprintsupport FEATURE_printsupport"
+    "cups FEATURE_cups"
+)
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "cups Cups"
+)
+
 ## Qt Test
 CMAKE_SRC_CONFIGURE_PARAMS+=(
     -DFEATURE_testlib:BOOL=FALSE
+)
+
+## Core Tools
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+        -DFEATURE_qmake:BOOL=OFF
 )
 
 qtbase-6_src_configure() {
     CMAKE_SRC_CONFIGURE_PARAMS+=(
         $(cmake_option examples QT_BUILD_EXAMPLES)
 
-        $(qt_cmake_feature cups)
         $(qt_cmake_feature gtk gtk3)
         $(qt_cmake_feature kerberos gssapi)
         $(qt_cmake_feature kms)
@@ -403,9 +414,6 @@ qtbase-6_src_configure() {
 }
 
 qtbase-6_src_compile() {
-    # I just cannot figure out where the '-isystem /usr/include' comes from
-    #edo sed -e "s: -isystem /usr/include::" -i build.ninja
-
     cmake_src_compile
 
     if option doc ; then
