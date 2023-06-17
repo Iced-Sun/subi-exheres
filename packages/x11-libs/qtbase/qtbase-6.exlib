@@ -7,7 +7,6 @@
 #     Copyright 2013-2018 Heiko Becker <heirecka@exherbo.org>
 
 require qt cmake [ ninja=true ]
-require flag-o-matic
 
 export_exlib_phases src_configure src_prepare src_compile src_install
 
@@ -33,10 +32,7 @@ MYOPTIONS="debug
     kerberos
     libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
 
-    ( ${SQL_BACKENDS} ) [[ requires = sql ]]
-    sql? (
-        ( ${SQL_BACKENDS} ) [[ number-selected = at-least-one ]]
-    )
+    ( ${SQL_BACKENDS} ) [[ requires = [ modules: qtsql ] ]]
 
     cups        [[ requires    = [ modules:qtgui modules:qtprintsupport ] ]]
     examples    [[ requires    = modules:qtgui ]]
@@ -48,20 +44,19 @@ MYOPTIONS="debug
                    requires = modules:qtgui ]]
     opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ]
                    requires    = modules:qtgui ]]
-    sql         [[ description = [ Build the QtSQL module ] ]]
     vulkan      [[ description = [ Support for rendering via the Vulkan graphics API ]
                    requires = modules:qtgui ]]
     zstd        [[ description = [ Support for the zstd compression format with RCC ] ]]
 
     ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
-
-    kerberos? ( ( providers: heimdal krb5 ) [[ number-selected = exactly-one ]] )
+    kerberos?   ( ( providers: heimdal krb5 ) [[ number-selected = exactly-one ]] )
 
     (
         modules:
             qtdbus [[ description = [ Classes for inter-process communication over the D-Bus protocol ] ]]
             qtgui [[ description = [ Base classes for graphical user interface (GUI) components ] presumed = true ]]
 	    qtprintsupport [[ description = [ Classes to make printing easier and more portable ] requires = [ modules: qtgui ] ]]
+	    qtsql [[ description = [ Classes for database integration using SQL ] ]]
     )
 "
 
@@ -89,20 +84,17 @@ DEPENDENCIES="
         )
         libproxy? ( net-libs/libproxy:1 )
         modules:qtdbus? ( sys-apps/dbus[>=1.2.0] [[ note = [ besides QtDBUs also needed for accessibility and xcb ] ]] )
+        mysql? ( virtual/mysql )
+        postgresql? ( dev-db/postgresql-client )
         providers:libressl? ( dev-libs/libressl:= )
         providers:openssl? ( dev-libs/openssl:=[>=1.1.1] )
+        sqlite? ( dev-db/sqlite:3 )
         zstd? ( app-arch/zstd[>=1.3] )
 
         kms? ( x11-dri/libdrm )
         libinput? ( sys-libs/libinput )
-        mysql? ( virtual/mysql )
-        postgresql? ( dev-db/postgresql-client )
-        sqlite? ( dev-db/sqlite:3 )
         vulkan? ( sys-libs/vulkan-loader )
 "
-
-# Packages that need QtSQL should depend on x11-libs/qtbase:5[sql]
-# option='sql' needs at least one SQL plugin, any-of mysql, postgresql, sqlite, (firebird, odbc)
 
 # Tests need a running X server and network access (last checked: 5.1.1)
 RESTRICT="test"
@@ -144,7 +136,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DFEATURE_textmarkdownwriter:BOOL=FALSE
     -DFEATURE_evdev:BOOL=FALSE
     -DFEATURE_opengles2:BOOL=FALSE
-    -DINPUT_opengl=no
 
     # QPA Features
 
@@ -153,13 +144,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 
     # see if we should add more options
     -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_DB2:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_MySQL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_PostgreSQL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Oracle:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_ODBC:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_SQLite3:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Interbase:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_LTTngUST:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Backtrace:BOOL=TRUE
 
@@ -173,8 +157,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemJpeg:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemMd4c:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemPNG:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_OpenGL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenGL:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_WrapVulkanHeaders:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Client:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Server:BOOL=TRUE
@@ -242,12 +224,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DFEATURE_publicsuffix_system:BOOL=OFF
         -DFEATURE_system_proxies:BOOL=OFF
 
-        # Disable some SQL drivers
-        -DFEATURE_sql_db2:BOOL=OFF      # IBM DB2 (version 7.1 and above)
-        -DFEATURE_sql_ibase:BOOL=OFF    # Borland InterBase
-        -DFEATURE_sql_oci:BOOL=OFF      # Oracle Call Interface Driver
-        -DFEATURE_sql_odbc:BOOL=OFF     # Open Database Connectivity (ODBC) (e.g. MS SQL Server)
-
         # Touchscreen access library - unwritten
         -DFEATURE_tslib:BOOL=OFF
 
@@ -263,6 +239,11 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
 )
 
 ########
+#    -DINPUT_opengl=no
+#    -DCMAKE_DISABLE_FIND_PACKAGE_OpenGL:BOOL=TRUE
+#    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenGL:BOOL=TRUE
+#            #-DFEATURE_opengl:BOOL=TRUE
+# requires qtgui
 
 ## Qt modules and options
 CMAKE_SRC_CONFIGURE_PARAMS+=(
@@ -275,6 +256,8 @@ CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "modules:qtdbus FEATURE_dbus_linked"
 
     "modules:qtprintsupport FEATURE_printsupport"
+
+    "modules:qtsql FEATURE_sql"
 )
 
 ## support enabled for
@@ -349,7 +332,33 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 
 ## Core Tools
 CMAKE_SRC_CONFIGURE_PARAMS+=(
-        -DFEATURE_qmake:BOOL=OFF
+    -DFEATURE_qmake:BOOL=OFF
+)
+
+## Qt Sql Drivers
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_sql_db2:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_DB2:BOOL=TRUE
+
+    -DFEATURE_sql_ibase:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Interbase:BOOL=TRUE
+
+    -DFEATURE_sql_odbc:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_ODBC:BOOL=TRUE
+
+    -DFEATURE_sql_oci:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Oracle:BOOL=TRUE
+)
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "mysql FEATURE_sql_mysql"
+    "postgresql FEATURE_sql_psql"
+    "sqlite FEATURE_sql_sqlite"
+    "sqlite FEATURE_system_sqlite"
+)
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "mysql MySQL"
+    "postgresql PostgreSQL"
+    "sqlite SQLite3"
 )
 
 qtbase-6_src_configure() {
@@ -360,10 +369,6 @@ qtbase-6_src_configure() {
         $(qt_cmake_feature kerberos gssapi)
         $(qt_cmake_feature kms)
         $(qt_cmake_feature libinput)
-        $(qt_cmake_feature mysql sql_mysql)
-        $(qt_cmake_feature postgresql sql_psql)
-        $(qt_cmake_feature sql)
-        $(qt_cmake_feature sqlite sql_sqlite)
         $(qt_cmake_feature vulkan)
     )
 
@@ -383,7 +388,6 @@ qtbase-6_src_configure() {
             #-DFEATURE_fontconfig:BOOL=TRUE
             #-DFEATURE_gbm:BOOL=TRUE
             #-DFEATURE_mtdev:BOOL=TRUE
-            #-DFEATURE_opengl:BOOL=TRUE
             #-DFEATURE_sessionmanager:BOOL=TRUE
             #-DFEATURE_system_xcb_xinput:BOOL=TRUE
             #-DFEATURE_xcb:BOOL=TRUE
