@@ -29,6 +29,7 @@ SQL_BACKENDS="mysql postgresql sqlite" # db2, interbase, oci, odbc
 
 MYOPTIONS="debug
     brotli      [[ description = [ Support for handling resources compressed with Brotli through QNetworkAccessManager ] ]]
+    glib        [[ description = [ Add support for the glib eventloop ] ]]
     kerberos
     libproxy    [[ description = [ Use libproxy for system proxy settings ] ]]
 
@@ -39,10 +40,8 @@ MYOPTIONS="debug
 
     cups        [[ requires    = modules:qtgui ]]
     examples    [[ requires    = modules:qtgui ]]
-    glib        [[ description = [ Add support for the glib eventloop ] ]]
     gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
                    requires    = [ glib modules:gui ] ]]
-    journald    [[ description = [ Support sending logging output directly to systemd-journald ] ]]
     kms         [[ description = [ KMS platform plugin to run a single-window per screen without X11 ]
                    requires    = opengles ]]
     libinput    [[ description = [ Support input devices via libinput ]
@@ -76,10 +75,12 @@ DEPENDENCIES="
         )
         vulkan? ( sys-libs/vulkan-headers )
     build+run:
+        app-crypt/libb2
         dev-libs/double-conversion:=
         dev-libs/pcre2[>=10.20]
         sys-libs/zlib[>=1.0.8]
         brotli? ( app-arch/brotli )
+        glib? ( dev-libs/glib:2 )
         kerberos? (
             providers:heimdal? ( app-crypt/heimdal )
             providers:krb5? ( app-crypt/krb5 )
@@ -97,7 +98,6 @@ DEPENDENCIES="
         sqlite? ( dev-db/sqlite:3 )
         vulkan? ( sys-libs/vulkan-loader )
 "
-
 
 # Packages that need QtSQL should depend on x11-libs/qtbase:5[sql]
 # option='sql' needs at least one SQL plugin, any-of mysql, postgresql, sqlite, (firebird, odbc)
@@ -126,9 +126,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 
     -DBUILD_WITH_PCH:BOOL=TRUE
 
-    # Qt Core
-    -DFEATURE_pcre2:BOOL=TRUE
-
     # Qt Gui
     -DFEATURE_sessionmanager:BOOL=FALSE
     -DFEATURE_accessibility:BOOL=FALSE
@@ -153,12 +150,8 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     # embedded plugin: EGLFS, LinuxFB, DirectFB, or Wayland
 
     # see if we should add more options
-    -DFEATURE_icu:BOOL=FALSE
-    -DCMAKE_DISABLE_FIND_PACKAGE_ICU:BOOL=TRUE
-
     -DCMAKE_DISABLE_FIND_PACKAGE_Libudev:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Libb2:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_DB2:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_MySQL:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_PostgreSQL:BOOL=TRUE
@@ -166,10 +159,8 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DCMAKE_DISABLE_FIND_PACKAGE_ODBC:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_SQLite3:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Interbase:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_GLIB2:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_LTTngUST:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Backtrace:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Slog2:BOOL=TRUE
 
     -DCMAKE_DISABLE_FIND_PACKAGE_Libdrm:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_EGL:BOOL=TRUE
@@ -237,7 +228,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         # Qt modules
         -DFEATURE_concurrent:BOOL=OFF
         # TODO: Needs fixing with LibreSSL
-        -DFEATURE_testlib:BOOL=OFF
         -DFEATURE_xml:BOOL=OFF
 
         -DFEATURE_directfb:BOOL=OFF
@@ -252,9 +242,7 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DFEATURE_lttng:BOOL=OFF
         # Use the system MIME database in $XDG_DATA_DIRS/mime instead of Qt's
         # bundled copy
-        -DFEATURE_mimetype_database:BOOL=OFF
         -DFEATURE_publicsuffix_system:BOOL=OFF
-        -DFEATURE_syslog:BOOL=OFF
         -DFEATURE_system_proxies:BOOL=OFF
 
         # Disable some SQL drivers
@@ -267,17 +255,11 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
         -DFEATURE_tslib:BOOL=OFF
 
         # Qnx
-        -DFEATURE_slog2:BOOL=OFF
 
         -DQT_USE_CCACHE:BOOL=FALSE
 )
 
 ## modules
-# enable modules that never pull in dependencies
-CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DFEATURE_test:BOOL=TRUE
-)
-
 CMAKE_SRC_CONFIGURE_OPTIONS=(
     "modules:qtgui FEATURE_gui"
     "modules:qtgui FEATURE_widgets"
@@ -306,6 +288,27 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "zstd WrapZSTD"
 )
 
+## Qt Core
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_icu:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_ICU:BOOL=TRUE
+
+    -DFEATURE_mimetype_database:BOOL=FALSE
+
+    -DFEATURE_journald:BOOL=FALSE
+    -DFEATURE_syslog:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Slog2:BOOL=TRUE
+    -DFEATURE_slog2:BOOL=FALSE
+
+    -DFEATURE_pcre2:BOOL=TRUE
+)
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "glib FEATURE_glib"
+)
+CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
+    "glib GLIB2"
+)
+
 ## Qt D-Bus
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "modules:qtdbus FEATURE_dbus"
@@ -322,7 +325,7 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "brotli FEATURE_brotli"
     "libproxy FEATURE_libproxy"
-    "kerberos gssapi"
+    "kerberos FEATURE_gssapi"
 )
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "brotli unofficial-brotli"
@@ -331,14 +334,17 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "kerberos GSSAPI"
 )
 
+## Qt Test
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_testlib:BOOL=FALSE
+)
+
 qtbase-6_src_configure() {
     CMAKE_SRC_CONFIGURE_PARAMS+=(
         $(cmake_option examples QT_BUILD_EXAMPLES)
-        $(qt_cmake_feature glib)
 
         $(qt_cmake_feature cups)
         $(qt_cmake_feature gtk gtk3)
-        $(qt_cmake_feature journald)
         $(qt_cmake_feature kerberos gssapi)
         $(qt_cmake_feature kms)
         $(qt_cmake_feature libinput)
@@ -354,7 +360,7 @@ qtbase-6_src_configure() {
     # - BUILD_TESTING:BOOL=OFF (Build the testing tree)
 
     CMAKE_SRC_CONFIGURE_PARAMS+=(
-        -DBUILD_SHARED_LIBS:BOOL=FALSE
+        -DBUILD_SHARED_LIBS:BOOL=TRUE
     )
 
     # options used only if qtgui is enabled
