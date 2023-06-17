@@ -225,7 +225,6 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 
 ### to sort out
         # Qt modules
-        -DFEATURE_concurrent:BOOL=OFF
         # TODO: Needs fixing with LibreSSL
         -DFEATURE_xml:BOOL=OFF
 
@@ -264,6 +263,19 @@ CMAKE_SRC_CONFIGURE_OPTIONS=(
 )
 
 ########
+
+## Qt modules and options
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_qtconcurrent:BOOL=TRUE
+    -DFEATURE_network:BOOL=TRUE
+    -DFEATURE_testlib:BOOL=FALSE
+)
+CMAKE_SRC_CONFIGURE_OPTIONS+=(
+    "modules:qtdbus FEATURE_dbus"
+    "modules:qtdbus FEATURE_dbus_linked"
+
+    "modules:qtprintsupport FEATURE_printsupport"
+)
 
 ## support enabled for
 # TODO udev
@@ -308,18 +320,11 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 )
 
 ## Qt D-Bus
-CMAKE_SRC_CONFIGURE_OPTIONS+=(
-    "modules:qtdbus FEATURE_dbus"
-    "modules:qtdbus FEATURE_dbus_linked"
-)
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
     "modules:qtdbus WrapDBus1"
 )
 
 ## Qt Network
-CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DFEATURE_network:BOOL=TRUE
-)
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "brotli FEATURE_brotli"
     "libproxy FEATURE_libproxy"
@@ -334,7 +339,6 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 
 ## Qt PrintSupport
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
-    "modules:qtprintsupport FEATURE_printsupport"
     "cups FEATURE_cups"
 )
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
@@ -342,9 +346,6 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 )
 
 ## Qt Test
-CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DFEATURE_testlib:BOOL=FALSE
-)
 
 ## Core Tools
 CMAKE_SRC_CONFIGURE_PARAMS+=(
