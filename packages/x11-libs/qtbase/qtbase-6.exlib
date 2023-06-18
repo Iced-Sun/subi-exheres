@@ -12,17 +12,17 @@ export_exlib_phases src_configure src_prepare src_compile src_install
 
 SUMMARY="Qt Cross-platform application framework for desktop and embedded development"
 DESCRIPTION="Contains the following modules:
-- QtCore: non-graphical classes used by other modules
-- QtConcurrent: Classes for writing multi-threaded programs w/o using low-level threading primitives
+- QtCore: Core non-graphical classes used by other modules
+- QtConcurrent: Classes for writing multi-threaded programs without using low-level threading primitives
 - QtDBus: Classes for inter-process communication over the D-Bus protocol
 - QtGui: Base classes for graphical user interface (GUI) components
 - QtNetwork: Classes to make network programming easier and more portable
-- QtOpenGL: OpenGL support classes
+- QtOpenGL: C++ classes that make it easy to use OpenGL in Qt applications
 - QtPrintSupport: Classes to make printing easier and more portable
 - QtSql: Classes for database integration using SQL
 - QtTest: Classes for unit testing Qt applications and libraries
-- QtWidgets: Classes to extend Qt GUI with C++ widgets (belonged to QtGui in 4.x)
-- QtXml: C++ implementations of SAX and DOM"
+- QtWidgets: Classes to extend Qt GUI with C++ widgets
+- QtXml: Handling of XML in a Document Object Model (DOM) API"
 
 SQL_BACKENDS="mysql postgresql sqlite" # db2, interbase, oci, odbc
 
@@ -34,18 +34,15 @@ MYOPTIONS="debug
 
     ( ${SQL_BACKENDS} ) [[ requires = [ modules: qtsql ] ]]
 
-    cups        [[ requires    = [ modules:qtgui modules:qtprintsupport ] ]]
-    examples    [[ requires    = modules:qtgui ]]
+    cups        [[ requires    = [ modules: qtprintsupport ] ]]
+    examples
     gtk         [[ description = [ Enable GTK+ style support, this will install a Qt4 style that renders using GTK+, to blend in with a GTK+ desktop ]
-                   requires    = [ glib modules:gui ] ]]
+                   requires    = [ glib ] ]]
     kms         [[ description = [ KMS platform plugin to run a single-window per screen without X11 ]
                    requires    = opengles ]]
-    libinput    [[ description = [ Support input devices via libinput ]
-                   requires = modules:qtgui ]]
-    opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ]
-                   requires    = modules:qtgui ]]
-    vulkan      [[ description = [ Support for rendering via the Vulkan graphics API ]
-                   requires = modules:qtgui ]]
+    libinput    [[ description = [ Support input devices via libinput ] ]]
+    opengles    [[ description = [ Use OpenGL ES2 rather than standard desktop OpenGL ] ]]
+    vulkan      [[ description = [ Support for rendering via the Vulkan graphics API ] ]]
     zstd        [[ description = [ Support for the zstd compression format with RCC ] ]]
 
     ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
@@ -54,8 +51,7 @@ MYOPTIONS="debug
     (
         modules:
             qtdbus [[ description = [ Classes for inter-process communication over the D-Bus protocol ] ]]
-            qtgui [[ description = [ Base classes for graphical user interface (GUI) components ] presumed = true ]]
-	    qtprintsupport [[ description = [ Classes to make printing easier and more portable ] requires = [ modules: qtgui ] ]]
+	    qtprintsupport [[ description = [ Classes to make printing easier and more portable ] ]]
 	    qtsql [[ description = [ Classes for database integration using SQL ] ]]
     )
 "
@@ -120,50 +116,19 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
 
     -DBUILD_WITH_PCH:BOOL=TRUE
 
-    # Qt Gui
-    -DFEATURE_sessionmanager:BOOL=FALSE
-    -DFEATURE_accessibility:BOOL=FALSE
-    -DFEATURE_freetype:BOOL=FALSE
-    -DFEATURE_harfbuzz:BOOL=FALSE
-    -DFEATURE_gif:BOOL=FALSE
-    -DFEATURE_ico:BOOL=FALSE
-    -DFEATURE_jpeg:BOOL=FALSE
-    -DFEATURE_png:BOOL=FALSE
-    -DFEATURE_texthtmlparser:BOOL=FALSE
-    -DFEATURE_cssparser:BOOL=FALSE
-    -DFEATURE_textodfwriter:BOOL=FALSE
-    -DFEATURE_textmarkdownreader:BOOL=FALSE
-    -DFEATURE_textmarkdownwriter:BOOL=FALSE
-    -DFEATURE_evdev:BOOL=FALSE
-    -DFEATURE_opengles2:BOOL=FALSE
-
-    # QPA Features
-
-    # QPA backends
-    # embedded plugin: EGLFS, LinuxFB, DirectFB, or Wayland
-
     # see if we should add more options
     -DCMAKE_DISABLE_FIND_PACKAGE_Libsystemd:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_LTTngUST:BOOL=TRUE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapBacktrace:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Backtrace:BOOL=TRUE
 
     -DCMAKE_DISABLE_FIND_PACKAGE_Libdrm:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_EGL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemFreetype:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Fontconfig:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_gbm:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemHarfbuzz:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Libinput:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemJpeg:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemMd4c:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemPNG:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapVulkanHeaders:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Client:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Server:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Cursor:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Egl:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_Wayland:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_X11:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_XCB:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_RENDER:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_SHAPE:BOOL=TRUE
@@ -179,77 +144,34 @@ CMAKE_SRC_CONFIGURE_PARAMS=(
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_DRI3:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_EVENT:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB_EWMH:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_XCB_GLX:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XCB:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_X11_XCB:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XKB:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapHarfbuzz:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapPNG:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapFreetype:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapJpeg:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_GTK3:BOOL=TRUE
 
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapBacktrace:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_harfbuzz:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_PCRE2:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_ATSPI2:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_DirectFB:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_EGL:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_GLESv2:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_XKB_COMMON_X11:BOOL=TRUE
     -DCMAKE_DISABLE_FIND_PACKAGE_XRender:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Tslib:BOOL=TRUE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Mtdev:BOOL=TRUE
-
-    -DFEATURE_widgets:BOOL=OFF
 
     --loglevel=VERBOSE
 
 ### to sort out
-        # Qt modules
-        # TODO: Needs fixing with LibreSSL
-        -DFEATURE_xml:BOOL=OFF
-
-        -DFEATURE_directfb:BOOL=OFF
-        # EGL Full Screen/Single Surface, probably only useful on embedded devices
-        # INTEGRITY Real-Time OS
-        -DFEATURE_integrityhid:BOOL=OFF
-        -DFEATURE_linuxfb:BOOL=OFF
-        # Tracing
         -DFEATURE_ctf:BOOL=OFF
-        # LTTng is an open source tracing framework for Linux
         -DFEATURE_lttng:BOOL=OFF
-        # Use the system MIME database in $XDG_DATA_DIRS/mime instead of Qt's
-        # bundled copy
         -DFEATURE_publicsuffix_system:BOOL=OFF
         -DFEATURE_system_proxies:BOOL=OFF
-
-        # Touchscreen access library - unwritten
-        -DFEATURE_tslib:BOOL=OFF
 
         -DQT_USE_CCACHE:BOOL=FALSE
 )
 
-## modules
-CMAKE_SRC_CONFIGURE_OPTIONS=(
-    "modules:qtgui FEATURE_gui"
-    "modules:qtgui FEATURE_widgets"
-
-    # add-ons
-)
-
 ########
-#    -DINPUT_opengl=no
-#    -DCMAKE_DISABLE_FIND_PACKAGE_OpenGL:BOOL=TRUE
-#    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenGL:BOOL=TRUE
-#            #-DFEATURE_opengl:BOOL=TRUE
-# requires qtgui
-
 ## Qt modules and options
 CMAKE_SRC_CONFIGURE_PARAMS+=(
-    -DFEATURE_qtconcurrent:BOOL=TRUE
+    -DFEATURE_gui:BOOL=TRUE
     -DFEATURE_network:BOOL=TRUE
     -DFEATURE_testlib:BOOL=FALSE
+    -DFEATURE_widgets:BOOL=TRUE
+
+    -DFEATURE_qtconcurrent:BOOL=TRUE
+    -DFEATURE_xml:BOOL=TRUE
 )
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "modules:qtdbus FEATURE_dbus"
@@ -290,10 +212,11 @@ CMAKE_SRC_CONFIGURE_PARAMS+=(
 
     -DFEATURE_journald:BOOL=FALSE
     -DFEATURE_syslog:BOOL=FALSE
-    -DCMAKE_DISABLE_FIND_PACKAGE_Slog2:BOOL=TRUE
     -DFEATURE_slog2:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Slog2:BOOL=TRUE
 
     -DFEATURE_pcre2:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_PCRE2:BOOL=TRUE
 )
 CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "glib FEATURE_glib"
@@ -325,7 +248,7 @@ CMAKE_SRC_CONFIGURE_OPTIONS+=(
     "cups FEATURE_cups"
 )
 CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
-    "cups Cups"
+#    "cups Cups"
 )
 
 ## Qt Test
@@ -333,6 +256,113 @@ CMAKE_SRC_CONFIGURE_OPTION_DISABLE_FINDS+=(
 ## Core Tools
 CMAKE_SRC_CONFIGURE_PARAMS+=(
     -DFEATURE_qmake:BOOL=OFF
+)
+
+## Qt GUI
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_accessibility:BOOL=FALSE
+
+    -DFEATURE_freetype:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemFreetype:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapFreetype:BOOL=TRUE
+    -DINPUT_freetype=no
+
+    -DFEATURE_harfbuzz:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemHarfbuzz:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapHarfbuzz:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_harfbuzz:BOOL=TRUE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Fontconfig:BOOL=TRUE
+    -DFEATURE_fontconfig:BOOL=FALSE
+
+    # Image formats
+    -DFEATURE_gif:BOOL=FALSE
+    -DFEATURE_ico:BOOL=FALSE
+
+    -DFEATURE_jpeg:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemJpeg:BOOL=TRUE
+    -DINPUT_libjpeg=no
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapJpeg:BOOL=TRUE
+
+    -DFEATURE_png:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemPNG:BOOL=TRUE
+    -DINPUT_libpng=no
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapPNG:BOOL=TRUE
+
+    # Text formats
+    -DFEATURE_texthtmlparser:BOOL=FALSE
+    -DFEATURE_cssparser:BOOL=FALSE
+    -DFEATURE_textodfwriter:BOOL=FALSE
+    -DFEATURE_textmarkdownreader:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapSystemMd4c:BOOL=TRUE
+    -DINPUT_libmd4c=no
+    -DFEATURE_textmarkdownwriter:BOOL=FALSE
+
+    -DFEATURE_egl:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_EGL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_Wayland_Egl:BOOL=TRUE
+
+    -DINPUT_opengl=no
+    -DFEATURE_opengl:BOOL=FALSE
+    -DFEATURE_opengl_desktop:BOOL=FALSE
+    -DFEATURE_opengl_dynamic:BOOL=FALSE
+    -DFEATURE_opengles2:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_GLESv2:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_OpenGL:BOOL=TRUE
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapOpenGL:BOOL=TRUE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_WrapVulkanHeaders:BOOL=TRUE
+    -DFEATURE_vulkan:BOOL=FALSE
+
+    -DFEATURE_sessionmanager:BOOL=FALSE
+)
+
+## Features used by QPA backends
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DFEATURE_evdev:BOOL=FALSE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Libinput:BOOL=TRUE
+    -DFEATURE_libinput:BOOL=FALSE
+
+    -DFEATURE_integrityhid:BOOL=OFF
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Mtdev:BOOL=TRUE
+    -DFEATURE_mtdev:BOOL=FALSE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Tslib:BOOL=TRUE
+    -DFEATURE_tslib:BOOL=OFF
+
+    -DFEATURE_xkbcommon:BOOL=FALSE
+
+    # X11 specific
+    -DCMAKE_DISABLE_FIND_PACKAGE_X11:BOOL=TRUE
+
+    -DFEATURE_xcb_xlib:BOOL=FALSE
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_XKB_COMMON_X11:BOOL=TRUE
+    -DFEATURE_xkbcommon_x11:BOOL=FALSE
+)
+
+## QPA backends
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DCMAKE_DISABLE_FIND_PACKAGE_DirectFB:BOOL=TRUE
+    -DFEATURE_directfb:BOOL=FALSE
+
+    -DFEATURE_eglfs:BOOL=FALSE
+
+    -DFEATURE_linuxfb:BOOL=FALSE
+
+    -DFEATURE_vnc:BOOL=FALSE
+
+    # XCB
+    -DFEATURE_system_xcb_xinput:BOOL=FALSE
+    -DCMAKE_DISABLE_FIND_PACKAGE_XCB_GLX:BOOL=TRUE
+)
+
+## Qt Widgets
+CMAKE_SRC_CONFIGURE_PARAMS+=(
+    -DCMAKE_DISABLE_FIND_PACKAGE_GTK3:BOOL=TRUE
+    -DFEATURE_gtk3:BOOL=FALSE
 )
 
 ## Qt Sql Drivers
@@ -365,11 +395,8 @@ qtbase-6_src_configure() {
     CMAKE_SRC_CONFIGURE_PARAMS+=(
         $(cmake_option examples QT_BUILD_EXAMPLES)
 
-        $(qt_cmake_feature gtk gtk3)
         $(qt_cmake_feature kerberos gssapi)
         $(qt_cmake_feature kms)
-        $(qt_cmake_feature libinput)
-        $(qt_cmake_feature vulkan)
     )
 
     # TODO:
@@ -381,23 +408,11 @@ qtbase-6_src_configure() {
     )
 
     # options used only if qtgui is enabled
-    if optionq modules:qtgui; then
+    if optionq debug; then
         CMAKE_SRC_CONFIGURE_PARAMS+=(
-            #-DFEATURE_egl:BOOL=TRUE
-            #-DFEATURE_eglfs:BOOL=OFF
-            #-DFEATURE_fontconfig:BOOL=TRUE
             #-DFEATURE_gbm:BOOL=TRUE
-            #-DFEATURE_mtdev:BOOL=TRUE
-            #-DFEATURE_sessionmanager:BOOL=TRUE
-            #-DFEATURE_system_xcb_xinput:BOOL=TRUE
             #-DFEATURE_xcb:BOOL=TRUE
-            #-DFEATURE_xkbcommon:BOOL=TRUE
-            #-DFEATURE_xcb_xlib:BOOL=TRUE
             #-DFEATURE_xcb_native_painting:BOOL=TRUE
-            #-DINPUT_freetype="system"
-            #-DINPUT_libjpeg="system"
-            #-DINPUT_libmd4c="system"
-            #-DINPUT_libpng="system"
         )
     fi
 
