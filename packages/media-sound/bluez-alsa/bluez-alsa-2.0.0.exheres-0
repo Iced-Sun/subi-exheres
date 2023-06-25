@@ -1,0 +1,4 @@
+require bluez-alsa
+
+PLATFORMS="~amd64"
+

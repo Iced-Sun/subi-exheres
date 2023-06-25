@@ -1,4 +1,4 @@
-# Copyright 2021 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2021-2023 SUN Bing <subi.the.dream.walker@gmail.com>
 
 FCITX_MODULES=( src/modules/spell:en_dict-20121020.tar.gz )
 require fcitx-common freedesktop-desktop gtk-icon-cache
@@ -9,8 +9,8 @@ DESCRIPTION="Fcitx [ˈfaɪtɪks] is an input method framework with extension sup
 
 SLOT="0"
 MYOPTIONS="X dbus emoji enchant wayland
-    enchant       [[ description = [ Used for word prediction (hinting) ] ]]
-    ( X wayland ) [[ number-selected = at-least-one ]]
+    enchant              [[ description = [ Used for word prediction (hinting) ] ]]
+    ( X wayland )        [[ number-selected = at-least-one ]]
     ( providers: systemd [[ description = [ Use systemd for event loop and D-Bus IPC client ] ]] )
 "
 

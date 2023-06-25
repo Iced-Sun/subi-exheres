@@ -1,0 +1,28 @@
+# Copyright 2020 Bing Sun <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=Arkq tag=v${PV} ] autotools [ supported_autoconf=[ 2.5 ] supported_automake=[ 1.16 ] ]
+
+SUMMARY="Bluetooth Audio ALSA Backend"
+LICENCES="MIT"
+SLOT="0"
+MYOPTIONS="mp3 mpeg aac aptx ldac"
+
+DEPENDENCIES="
+    build:
+        virtual/pkg-config
+    build+run:
+        sys-sound/alsa-lib
+        net-wireless/bluez[>=5.0]
+        dev-libs/glib
+        media-libs/sbc
+        mp3? ( media-sound/lame )
+        mpeg? ( media-sound/mpg123 )
+        aac? ( media-libs/fdk-aac )
+        aptx? ( media-libs/libopenaptx )
+        ldac? ( media-libs/libldac )
+"
+
+DEFAULT_SRC_CONFIGURE_OPTION_ENABLES=( "mp3 mp3lame" "mpeg mpg123" aac aptx ldac )
+
+
