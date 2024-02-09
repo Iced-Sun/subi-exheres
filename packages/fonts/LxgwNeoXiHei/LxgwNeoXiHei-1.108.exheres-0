@@ -1,0 +1,37 @@
+# Copyright 2024 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont github [ user=lxgw suffix=ttf release=v${PV} ]
+
+SUMMARY="A Chinese sans-serif font derived from IPAex Gothic"
+
+LICENCES="IPA-1.0"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+DOWNLOADS="
+    https://github.com/lxgw/LxgwNeoXiHei/releases/download/v${PV}/LXGWFasmartGothic.ttf
+    https://github.com/lxgw/LxgwNeoXiHei/releases/download/v${PV}/${PN}.ttf
+    https://github.com/lxgw/LxgwNeoXiHei-Screen/releases/download/v${PV}/${PN}Screen.ttf
+    https://github.com/lxgw/LxgwNeoXiHei-Screen/releases/download/v${PV}/${PN}ScreenFull.ttf
+"
+
+WORK=${WORKBASE}
+
+src_prepare() {
+    default
+
+    edo cp -r \
+      "${FETCHEDDIR}"/LXGWFasmartGothic.ttf \
+      "${FETCHEDDIR}"/${PN}.ttf \
+      "${FETCHEDDIR}"/${PN}Screen.ttf \
+      "${FETCHEDDIR}"/${PN}ScreenFull.ttf \
+      ${WORK}
+}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.ttf
+}

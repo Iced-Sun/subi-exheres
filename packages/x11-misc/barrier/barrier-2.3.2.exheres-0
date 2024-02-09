@@ -1,0 +1,53 @@
+# Copyright 2017 Rasmus Thomsen <Rasmus.thomsen@protonmail.com>
+# Distributed under the terms of the GNU General Public License v2
+# Based in part upon 'synergy-1.8.8.ebuild' from Gentoo, which is:
+#     Copyright 1999-2017 Gentoo Foundation
+
+require cmake [ api=2 ] github [ user=symless tag=v${PV}-stable project=synergy-core ]
+
+SUMMARY="Share one mouse and keyboard between multiple computers"
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+
+MYOPTIONS="
+    ( providers: libressl openssl ) [[ number-selected = exactly-one ]]
+"
+
+DEPENDENCIES="
+    build:
+        x11-proto/xorgproto
+    build+run:
+        net-misc/curl
+        x11-libs/libICE
+        x11-libs/libSM
+        x11-libs/libX11
+        x11-libs/libXext
+        x11-libs/libXi
+        x11-libs/libXinerama
+        x11-libs/libXrandr
+        x11-libs/libXtst
+        providers:libressl? ( dev-libs/libressl:= )
+        providers:openssl? ( dev-libs/openssl )
+"
+
+# Restrict tests because they're broken and upstream currently
+# is too busy to fix them.
+RESTRICT=test
+
+WORK="${WORKBASE}/${PN}-core-${PV}-stable/"
+CMAKE_SOURCE="${WORKBASE}/${PN}-core-${PV}-stable/"
+
+# Broken with current Qt5
+CMAKE_SRC_CONFIGURE_PARAMS=( -DSYNERGY_BUILD_LEGACY_GUI:BOOL=OFF )
+
+src_install() {
+    dobin bin/${PN}{c,s} bin/syntool
+
+    insinto /etc
+    newins doc/synergy.conf.example synergy.conf
+    newman doc/${PN}c.man ${PN}c.1
+    newman doc/${PN}s.man ${PN}s.1
+    dodoc doc/synergy.conf.example* ChangeLog
+}

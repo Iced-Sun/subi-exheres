@@ -3,11 +3,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 FCITX_MODULES=(
-    data:lm_sc.arpa-20220810.tar.xz
-    data:dict-20220810.tar.xz
-    data:table.tar.gz
+    data:lm_sc.arpa-20230712.tar.xz
+    data:dict-20230412.tar.xz
+    data:table-20240108.tar.gz
 )
-kenlm_REV=01c49fe
+kenlm_REV=35f1458
 
 require fcitx-common
 

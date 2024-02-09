@@ -1,0 +1,33 @@
+# Copyright 2024 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont github [ user=lxgw suffix=ttf release=v${PV} ]
+
+SUMMARY="A Chinese sans-serif font derived from IPAex Gothic"
+
+LICENCES="IPA-1.0"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+DOWNLOADS="
+    https://github.com/lxgw/${PN}/releases/download/v${PV}/LXGWHeartSerifCHS.ttf
+    https://github.com/lxgw/${PN}/releases/download/v${PV}/${PN}CHS.ttf
+"
+
+WORK=${WORKBASE}
+
+src_prepare() {
+    default
+
+    edo cp -r \
+      "${FETCHEDDIR}"/LXGWHeartSerifCHS.ttf \
+      "${FETCHEDDIR}"/${PN}CHS.ttf \
+      ${WORK}
+}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.ttf
+}
