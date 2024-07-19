@@ -1,0 +1,26 @@
+# Copyright 2024 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+WORK="${WORKBASE}"/${PN}
+require meson
+
+SUMMARY="Efficient dynamic menu for Wayland"
+DESCRIPTION="wmenu is an efficient dynamic menu for Sway and wlroots based Wayland compositors. It provides a Wayland-native dmenu replacement which maintains the look and feel of dmenu."
+HOMEPAGE="https://codeberg.org/adnano/wmenu"
+DOWNLOADS="https://hg.sr.ht/~scoopta/${PN}/archive/v${PV}.tar.gz"
+DOWNLOADS="${HOMEPAGE}/archive/${PV}.tar.gz -> ${PNV}.tar.gz"
+
+LICENCES="MIT"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        app-doc/scdoc
+        virtual/pkg-config
+    build+run:
+        sys-libs/wayland
+	x11-libs/cairo
+	x11-libs/libxkbcommon
+	x11-libs/pango
+"
