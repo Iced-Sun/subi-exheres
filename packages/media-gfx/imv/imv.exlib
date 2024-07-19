@@ -1,4 +1,4 @@
-# Copyright 2022 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2022-2024 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2019 Danilo Spinella <danyspin97@protonmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -11,9 +11,8 @@ DOWNLOADS="https://git.sr.ht/~exec64/${PN}/archive/v${PV}.tar.gz"
 LICENCES="MIT"
 
 MYOPTIONS="
-    ( jpeg png tiff svg ) [[ number-selected = at-least-one ]]
+    ( jpeg jxl png tiff svg ) [[ number-selected = at-least-one ]]
     ( X wayland ) [[ number-selected = at-least-one ]]
-    ( providers: FreeImage )
 "
 
 DEPENDENCIES="
@@ -32,6 +31,7 @@ DEPENDENCIES="
         )
 
         jpeg? ( media-libs/libjpeg-turbo )
+	jxl? ( media-libs/libjxl )
         png? ( media-libs/libpng )
         tiff? ( media-libs/tiff )
         svg? ( gnome-desktop/librsvg:2[>=2.44] )
@@ -57,8 +57,5 @@ MESON_SRC_CONFIGURE_OPTION_FEATURES=(
     'png libpng'
     'jpeg libjpeg'
     'svg librsvg'
+    'jxl libjxl'
 )
-
-
-
-

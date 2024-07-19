@@ -1,4 +1,4 @@
-# Copyright 2023 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2023-2024 SUN Bing <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require freedesktop-desktop
@@ -6,7 +6,7 @@ require freedesktop-desktop
 SUMMARY="Business Chat & Collaboration Tool"
 DESCRIPTION="Empowering teams by messenger, Meetings, calendar, docs, and emails. It's all in one place."
 HOMEPAGE="https://www.feishu.cn"
-DOWNLOADS="https://sf3-cn.feishucdn.com/obj/ee-appcenter/6085d1c4/Feishu-linux_x64-${PV}.deb"
+DOWNLOADS="https://sf3-cn.feishucdn.com/obj/ee-appcenter/ec62a2df/Feishu-linux_x64-${PV}.deb"
 
 LICENCES="Unknown"
 SLOT="0"
