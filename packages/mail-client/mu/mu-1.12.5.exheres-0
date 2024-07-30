@@ -20,6 +20,7 @@ DEPENDENCIES="
     build+run:
         dev-db/xapian-core[>=1.4]
         dev-libs/glib:2[>=2.58]
+	dev-libs/libassuan:0
         net-utils/gmime:3.0[>=3.2]
 	emacs? ( app-editors/emacs )
 "
@@ -33,4 +34,3 @@ MESON_SRC_CONFIGURE_PARAMS=(
 MESON_SRC_CONFIGURE_OPTION_SWITCHES=(
     'emacs emacs emacs disable-emacs'
 )
-

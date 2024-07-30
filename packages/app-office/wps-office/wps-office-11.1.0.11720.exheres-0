@@ -1,0 +1,74 @@
+# Copyright 2024 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2013-2015 Hong Hao <oahong@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+REV=${PV##*.}
+MY_PNV=${PN}_${PV}.XA_amd64
+require gtk-icon-cache freedesktop-mime freedesktop-desktop
+
+SUMMARY="Kingsoft office for Linux"
+DESCRIPTION="
+WPS Office Suite is a great aid for business professionals, students,
+and teachers. It is also the most convenient choice as it is compatible
+with Microsoft Office, Google Docs, and Adobe PDF. You can click to
+install the latest version of 2021 online."
+HOMEPAGE="http://wps-community.org"
+DOWNLOADS="http://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/${REV%p*}/${MY_PNV}.deb"
+
+LICENCES="KINGSOFT-EULA"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    run:
+        dev-libs/glib
+        dev-libs/libxml2
+        media-libs/fontconfig
+        media-libs/freetype
+        media-libs/libpng:=1.2
+        x11-libs/libICE
+        x11-libs/libSM
+        x11-libs/libX11
+        x11-libs/libXext
+        x11-libs/libXrender
+     suggestion:
+	net-print/cups
+        x11-fonts/deepin-opensymbol [[ note = [ An open source alternative to symbol fonts ] ]]
+"
+
+RESTRICT="strip"
+WORK=${WORKBASE}
+
+pkg_setup() {
+    exdirectory --allow /opt
+}
+
+src_unpack() {
+    default
+
+    unpack ./data.tar.xz
+    # Fix for icu>=71.1
+    edo rm -rf opt/kingsoft/wps-office/office6/libstdc++.so.6*
+
+    # unnecessary crafts
+    edo rm -rf etc/{cron.d,logrotate.d}
+}
+
+src_install() {
+    edo cp -aR etc opt usr "${IMAGE}"
+    dodir /usr/$(exhost --target)
+    edo mv "${IMAGE}"/usr/{bin,$(exhost --target)}
+}
+
+pkg_postinst() {
+    gtk-icon-cache_pkg_postinst
+    freedesktop-mime_pkg_postinst
+    freedesktop-desktop_pkg_postinst
+}
+
+pkg_postrm() {
+    gtk-icon-cache_pkg_postrm
+    freedesktop-mime_pkg_postrm
+    freedesktop-desktop_pkg_postrm
+}
