@@ -1,4 +1,4 @@
-# Copyright 2015-2022 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2015-2024 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2013 Elias Pipping <pipping@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -20,7 +20,6 @@ DEPENDENCIES="
     build+run:
         dev-db/xapian-core[>=1.4]
         dev-libs/glib:2[>=2.58]
-	dev-libs/libassuan:0
         net-utils/gmime:3.0[>=3.2]
 	emacs? ( app-editors/emacs )
 "
