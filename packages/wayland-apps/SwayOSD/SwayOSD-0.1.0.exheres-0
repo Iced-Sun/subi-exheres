@@ -1,0 +1,20 @@
+# Copyright 2025 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require meson [ rust=true ] github [ user=ErikReider tag=v${PV} ]
+
+SUMMARY="A OSD window for common actions like volume and capslock."
+DESCRIPTION="A GTK based on screen display for keyboard shortcuts like caps-lock and volume"
+
+LICENCES="GPL-3"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        dev-lang/sassc
+    build+run:
+        dev-libs/glib
+        wayland-libs/gtk-layer-shell
+"

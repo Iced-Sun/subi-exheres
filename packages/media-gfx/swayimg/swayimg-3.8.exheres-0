@@ -1,0 +1,38 @@
+# Copyright 2025 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=artemsen tag=refs/tags/v${PV} ] meson
+
+SUMMARY="Image viewer for Wayland"
+DESCRIPTION="Fully customizable and lightweight image viewer for Wayland based display servers."
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS="exr heif avif jpeg jxl png svg tiff sixel webp gif exif"
+
+DEPENDENCIES="
+    build:
+    build+run:
+        dev-libs/json-c
+        media-libs/fontconfig
+        sys-libs/wayland
+        x11-libs/libxkbcommon
+        exr? ( media-libs/openexr[>=3.1] )
+        heif? ( media-libs/libheif )
+        avif? ( media-libs/libavif )
+        jpeg? ( media-libs/libjpeg-turbo )
+        png? ( media-libs/libpng )
+        svg? ( gnome-desktop/librsvg:2[>=2.46] )
+        jxl? ( media-lib/libjxl )
+        tiff? ( media-libs/tiff:6 )
+        webp? ( media-libs/libwebp )
+        gif? ( media-libs/giflib )
+        exif? ( media-libs/libexif )
+"
+
+MESON_SOURCE=${WORKBASE}/${PN}-${PV}
+
+MESON_SRC_CONFIGURE_OPTION_FEATURES=(
+  exr gif heif avif jpeg jxl png svg tiff sixel webp exif
+)

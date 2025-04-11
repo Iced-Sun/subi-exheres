@@ -15,4 +15,3 @@ DEPENDENCIES="
     build+run:
         sys-libs/wayland
 "
-

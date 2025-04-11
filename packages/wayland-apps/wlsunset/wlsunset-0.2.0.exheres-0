@@ -4,4 +4,3 @@
 require wlsunset
 
 PLATFORMS="~amd64"
-

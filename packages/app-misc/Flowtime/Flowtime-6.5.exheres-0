@@ -1,0 +1,22 @@
+# Copyright 2025 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=Diego-Ivan tag=v${PV} ] meson
+
+SUMMARY="Spend your time wisely"
+LICENCES="GPL-3"
+
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        dev-lang/vala
+        sys-devel/gettext
+	dev-util/desktop-file-utils
+    build+run:
+	dev-libs/libadwaita:1[>=1.4]
+	dev-libs/libxml2
+	sys-libs/libportal[>=0.7.1][providers:gtk4]
+"

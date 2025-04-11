@@ -1,0 +1,24 @@
+# Copyright 2023-2024 SUN Bing
+# Distributed under the terms of the GNU General Purpose License v2
+
+require xfont github [ user=lxgw suffix=tar.gz release=v${PV} pnv=lxgw-wenkai-v${PV} ]
+
+SUMMARY="An open-source Chinese font derived from Fontworks' Klee One"
+
+LICENCES="SIL-1.1"
+SLOT="0"
+PLATFORMS="~amd64 ~x86"
+MYOPTIONS=""
+
+src_prepare() {
+    default
+
+    edo cp -r "${FETCHEDDIR}"/LXGWWenKai*.ttf ${WORK}
+}
+
+src_install() {
+    default
+
+    insinto /usr/share/fonts/X11/${FONT}
+    doins *.ttf
+}
