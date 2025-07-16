@@ -1,0 +1,68 @@
+# Copyright 2025 BING Sun
+# Copyright 2018 Alexander Kapshuna <kapsh@kap.sh>
+# Distributed under the terms of the GNU General Public License v2
+
+require gtk-icon-cache
+require freedesktop-desktop
+
+SUMMARY="Free Universal Database Tool"
+DESCRIPTION="DBeaver Community is a free cross-platform database tool for developers, database administrators, analysts, and everyone working with data. It supports all popular SQL databases like MySQL, MariaDB, PostgreSQL, SQLite, Apache Family, and more.
+"
+HOMEPAGE="https://dbeaver.io"
+DOWNLOADS="${HOMEPAGE}/files/${PV}/${PN}-ce-${PV}-linux.gtk.x86_64-nojdk.tar.gz"
+
+LICENCES="Apache-2.0"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    run:
+        dev-libs/glib:2
+        virtual/jre:*
+    recommendation:
+        dev-libs/libsecret:1
+"
+
+UPSTREAM_DOCUMENTATION="https://github.com/dbeaver/dbeaver/wiki"
+
+WORK="${WORKBASE}/${PN}"
+
+pkg_setup() {
+    exdirectory --allow /opt
+}
+
+src_prepare() {
+    edo rm -r p2/org.eclipse.equinox.p2.repository # empty dir
+}
+
+src_install() {
+    local dest=/opt/${PN}
+
+    insinto ${dest}
+    doins -r .
+
+    exeinto ${dest}
+    doexe dbeaver
+
+    dodir /usr/$(exhost --target)/bin
+    dosym ${dest}/dbeaver /usr/$(exhost --target)/bin/dbeaver
+
+    insinto /usr/share/icons/hicolor/128x128/apps/
+    doins dbeaver.png
+
+    insinto /usr/share/applications
+    doins "${FILES}/dbeaver.desktop"
+
+    emagicdocs
+}
+
+pkg_postinst() {
+    freedesktop-desktop_pkg_postinst
+    gtk-icon-cache_pkg_postinst
+}
+
+pkg_postrm() {
+    freedesktop-desktop_pkg_postrm
+    gtk-icon-cache_pkg_postrm
+}
