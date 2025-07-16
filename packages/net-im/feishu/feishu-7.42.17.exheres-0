@@ -1,4 +1,4 @@
-# Copyright 2023-2024 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2023-2025 SUN Bing <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require freedesktop-desktop
@@ -6,21 +6,17 @@ require freedesktop-desktop
 SUMMARY="Business Chat & Collaboration Tool"
 DESCRIPTION="Empowering teams by messenger, Meetings, calendar, docs, and emails. It's all in one place."
 HOMEPAGE="https://www.feishu.cn"
-DOWNLOADS="https://sf3-cn.feishucdn.com/obj/ee-appcenter/ec62a2df/Feishu-linux_x64-${PV}.deb"
+DOWNLOADS="https://sf3-cn.feishucdn.com/obj/ee-appcenter/91e64286/Feishu-linux_x64-${PV}.deb"
 
 LICENCES="Unknown"
 SLOT="0"
 PLATFORMS="~amd64"
 MYOPTIONS=""
 
-# https://aur.archlinux.org/packages/feishu-bin
+# segfault without cups
 DEPENDENCIES="
-    build:
-        app-arch/dpkg
     run:
-        x11-libs/libXrender
-    install:
-        sys-apps/debianutils
+        net-print/cups
 "
 
 RESTRICT="strip"
@@ -38,6 +34,7 @@ src_unpack() {
 }
 
 src_install() {
+    keepdir opt/bytedance/feishu/webcontent/extensions
     edo cp -aR opt usr "${IMAGE}"
     dodir /usr/$(exhost --target)
     edo mv "${IMAGE}"/usr/{bin,$(exhost --target)}
