@@ -1,0 +1,50 @@
+# Copyright 2025 SUN Bing <subi.the.dream.walker@gmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+require gtk-icon-cache
+require freedesktop-desktop
+
+SUMMARY="Connecting a billion people with calls, chats, and more"
+HOMEPAGE="https://www.wechat.com"
+DOWNLOADS="https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb"
+
+LICENCES="Unknown"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    run:
+"
+
+RESTRICT="strip"
+WORK=${WORKBASE}
+
+pkg_setup() {
+    exdirectory --allow /opt
+}
+
+src_unpack() {
+    default
+
+    unpack ./data.tar.xz
+    edo rm -f control.tar.gz data.tar.xz debian-binary
+}
+
+src_install() {
+    # empty
+    edo rm -rf usr/bin
+
+    edo cp -aR opt usr "${IMAGE}"
+
+    dodir /usr/$(exhost --target)/bin
+    dosym /opt/wechat/wechat /usr/$(exhost --target)/bin/wechat
+}
+
+pkg_postinst() {
+    freedesktop-desktop_pkg_postinst
+}
+
+pkg_postrm() {
+    freedesktop-desktop_pkg_postrm
+}
