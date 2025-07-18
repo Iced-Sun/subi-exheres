@@ -56,7 +56,10 @@ DEPENDENCIES="
 	    gnucash? ( sys-libs/gwenhywfar[>=4.9.99][providers:gtk3] )
             chipcard? ( dev-libs/libchipcard[>=4.2.7] )
         )
-        dbi? ( dev-libs/libdbi[>=0.8.3] )
+        dbi? (
+	    dev-libs/libdbi[>=0.8.3]
+	    dev-libs/libdbi-drivers
+	)
         ofx? ( finance/libofx[>=0.9.0] )
     run:
         gnucash? ( gnome-desktop/dconf )
