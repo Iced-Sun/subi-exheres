@@ -1,15 +1,15 @@
-# Copyright 2021-2024 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2021-2026 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2017 Hong Hao <oahong@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 FCITX_MODULES=(
-    data:lm_sc.arpa-20230712.tar.xz
-    data:dict-20240416.tar.zst
-    data:table-20240108.tar.gz
+    data:lm_sc.arpa-20250113.tar.zst
+    data:dict-20250327.tar.zst
+    data:table-20240108.tar.zst
 )
 kenlm_REV=35f1458
 
-require fcitx-common
+require fcitx-common [ tag=${PV} ]
 
 SUMMARY="A library to support generic input method implementation"
 

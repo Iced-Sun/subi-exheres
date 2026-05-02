@@ -1,7 +1,8 @@
-# Copyright 2021-2023 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2021-2026 SUN Bing <subi.the.dream.walker@gmail.com>
 
+myexparam tag=
 FCITX_MODULES=( src/modules/spell:en_dict-20121020.tar.gz )
-require fcitx-common freedesktop-desktop gtk-icon-cache
+require fcitx-common [ tag=$(exparam tag) ] freedesktop-desktop gtk-icon-cache
 
 SUMMARY="Fcitx 5 is a generic input method framework released under LGPL-2.1+"
 DESCRIPTION="Fcitx [ˈfaɪtɪks] is an input method framework with extension support. Currently it supports Linux and Unix systems like freebsd. Fcitx supports typing with many languages all over the world with a large number of engines.
@@ -17,11 +18,10 @@ MYOPTIONS="X dbus emoji enchant wayland
 DEPENDENCIES="
     build:
         sys-devel/gettext
+        dev-libs/json
     build+run:
         app-text/iso-codes
         dev-libs/expat
-        dev-libs/fmt
-        dev-libs/json-c
         sys-apps/util-linux [[ note = [ libuuid ] ]]
         x11-apps/xkeyboard-config
         x11-libs/libxkbcommon[X]

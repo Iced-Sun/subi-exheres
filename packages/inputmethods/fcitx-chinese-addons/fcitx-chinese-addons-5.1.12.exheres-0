@@ -3,10 +3,10 @@
 
 FCITX_MODULES=(
     modules/pinyinhelper:py_table-20121124.tar.gz
-    modules/pinyinhelper:py_stroke-20121124.tar.gz
+    modules/pinyinhelper:py_stroke-20250329.tar.gz
 )
 
-require fcitx-common gtk-icon-cache
+require fcitx-common [ tag=${PV} ] gtk-icon-cache
 
 SUMMARY="Addons related to Chinese, including IME previous bundled inside fcitx4"
 SLOT="0"

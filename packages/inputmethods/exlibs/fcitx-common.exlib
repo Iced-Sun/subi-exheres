@@ -1,7 +1,7 @@
-# Copyright 2012-2023 SUN Bing
+# Copyright 2012-2026 SUN Bing
 # Distributed under the terms of the GNU General Public License v2
 
-FCITX_DATA_URL="http://download.fcitx-im.org/data/"
+FCITX_DATA_URL="https://download.fcitx-im.org/data/"
 
 if $(ever at_least 5 ${PV}); then
     MY_PN=${PN/fcitx/fcitx5}
@@ -9,7 +9,8 @@ else
     MY_PN=${PN}
 fi
 
-require cmake [ cmake_minimum_version=3.6.0 ] github [ user=fcitx project=${MY_PN} ]
+myexparam tag=
+require cmake [ cmake_minimum_version=3.6.0 ] github [ user=fcitx project=${MY_PN} tag=$(exparam tag) ]
 export_exlib_phases src_unpack src_prepare
 
 HOMEPAGE="https://fcitx-im.org"
