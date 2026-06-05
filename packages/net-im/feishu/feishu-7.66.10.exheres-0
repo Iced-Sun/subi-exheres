@@ -1,4 +1,4 @@
-# Copyright 2023-2025 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2023-2026 SUN Bing <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 require freedesktop-desktop
@@ -6,17 +6,18 @@ require freedesktop-desktop
 SUMMARY="Business Chat & Collaboration Tool"
 DESCRIPTION="Empowering teams by messenger, Meetings, calendar, docs, and emails. It's all in one place."
 HOMEPAGE="https://www.feishu.cn"
-DOWNLOADS="https://sf3-cn.feishucdn.com/obj/ee-appcenter/91e64286/Feishu-linux_x64-${PV}.deb"
+DOWNLOADS="https://lf6-ug-sign.feishucdn.com/ee-appcenter/289abaac/Feishu-linux_x64-${PV}.deb"
 
 LICENCES="Unknown"
 SLOT="0"
 PLATFORMS="~amd64"
-MYOPTIONS=""
+MYOPTIONS="wayland"
 
 # segfault without cups
 DEPENDENCIES="
     run:
         net-print/cups
+	wayland? ( sys-libs/wayland )
 "
 
 RESTRICT="strip"
@@ -35,9 +36,15 @@ src_unpack() {
 
 src_install() {
     keepdir opt/bytedance/feishu/webcontent/extensions
+
+    edo rm -rf usr/bin
     edo cp -aR opt usr "${IMAGE}"
-    dodir /usr/$(exhost --target)
-    edo mv "${IMAGE}"/usr/{bin,$(exhost --target)}
+
+    args=$(option wayland && echo --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime --wayland-text-input-version=3)
+    herebin feishu <<EOF
+#!/bin/bash
+exec /opt/bytedance/feishu/bytedance-feishu $args
+EOF
 }
 
 pkg_postinst() {
