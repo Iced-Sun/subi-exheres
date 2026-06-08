@@ -15,6 +15,7 @@ MYOPTIONS=""
 
 DEPENDENCIES="
     run:
+        app-crypt/krb5
 "
 
 RESTRICT="strip"

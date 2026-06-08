@@ -1,7 +1,7 @@
 # Copyright 2021-2023 SUN Bing <subi.the.dream.walker@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-require fcitx-common
+require fcitx-common [ tag=${PV} ]
 
 SUMMARY="gtk im module and glib based dbus client library"
 SLOT="0"

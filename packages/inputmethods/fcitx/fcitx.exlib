@@ -24,10 +24,10 @@ DEPENDENCIES="
         dev-libs/expat
         sys-apps/util-linux [[ note = [ libuuid ] ]]
         x11-apps/xkeyboard-config
-        x11-libs/libxkbcommon[X]
+        x11-libs/libxkbcommon[X?]
         (
             dev-libs/glib
-            x11-libs/cairo[X]
+            x11-libs/cairo[X?]
             x11-libs/gdk-pixbuf
             x11-libs/pango
         )
