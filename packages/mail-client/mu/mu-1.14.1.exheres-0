@@ -1,4 +1,4 @@
-# Copyright 2015-2024 SUN Bing <subi.the.dream.walker@gmail.com>
+# Copyright 2015-2026 SUN Bing <subi.the.dream.walker@gmail.com>
 # Copyright 2013 Elias Pipping <pipping@exherbo.org>
 # Distributed under the terms of the GNU General Public License v2
 
@@ -18,10 +18,10 @@ DEPENDENCIES="
         virtual/gzip
         virtual/pkg-config[>=0.9.0]
     build+run:
-        dev-db/xapian-core[>=1.4]
-        dev-libs/glib:2[>=2.58]
-        net-utils/gmime:3.0[>=3.2]
-	emacs? ( app-editors/emacs )
+        dev-db/xapian-core[>=1.4.22]
+        dev-libs/glib:2[>=2.80]
+        net-utils/gmime:3.0[>=3.2.13]
+	emacs? ( app-editors/emacs[>=28.1] )
 "
 
 MESON_SRC_CONFIGURE_PARAMS=(

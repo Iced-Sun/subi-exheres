@@ -10,12 +10,6 @@ SLOT="0"
 PLATFORMS="~amd64 ~x86"
 MYOPTIONS=""
 
-src_prepare() {
-    default
-
-    edo cp -r "${FETCHEDDIR}"/LXGWWenKai*.ttf ${WORK}
-}
-
 src_install() {
     default
 

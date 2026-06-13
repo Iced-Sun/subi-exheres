@@ -11,7 +11,8 @@ and teachers. It is also the most convenient choice as it is compatible
 with Microsoft Office, Google Docs, and Adobe PDF. You can click to
 install the latest version of 2021 online."
 HOMEPAGE="http://wps-community.org"
-DOWNLOADS="https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/${REV}/${PN}_${PV}_amd64.deb"
+#DOWNLOADS="https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/${REV}/${PN}_${PV}_amd64.deb"
+DOWNLOADS="https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb"
 
 LICENCES="KINGSOFT-EULA"
 SLOT="0"
@@ -49,7 +50,7 @@ src_unpack() {
     edo rm -rf opt/kingsoft/wps-office/office6/libstdc++.so.6*
 
     # unnecessary crafts
-    edo rm -rf etc
+    edo rm -rf etc usr/lib
 }
 
 src_install() {
